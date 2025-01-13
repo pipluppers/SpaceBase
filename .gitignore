@@ -1,0 +1,20 @@
+# Executables and debug files
+*.dll
+*.pdb
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+[Bb]in/
+[Oo]nj/
+
+# Miscellaneous
+.vs/
+*.suo
+*.user
+*.obj
+*.json
+*.cache
+*.targets
+*.g.i.cs
