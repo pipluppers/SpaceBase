@@ -1,6 +1,7 @@
 # Executables and debug files
 *.dll
 *.pdb
+*.exe
 
 # Build results
 [Dd]ebug/
