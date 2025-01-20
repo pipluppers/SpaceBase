@@ -21,5 +21,10 @@
         {
             _isCurrentPlayer = isCurrentPlayer;
         }
+
+        public void ResetGold()
+        {
+            Gold = Income;
+        }
     }
 }

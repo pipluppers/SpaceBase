@@ -3,13 +3,14 @@
     public class Game
     {
         private readonly List<Player> _players;
-        private bool _gameOver = false;
         private List<Card> _sector1Cards = [];
         private List<Card> _sector2Cards = [];
         private List<Card> _sector3Cards = [];
         private List<Card> _sectorFinalCards = [];
         private int _turnCount = 0;
         private int _currentPlayer = 0;
+
+        internal event EventHandler<DiceRollEventArgs> DiceRollEvent;
 
         public Game(int numPlayers)
         {
@@ -25,12 +26,7 @@
             _turnCount = 1;
             _currentPlayer = 0;
 
-            while (!IsGameOver())
-            {
-
-                UpdateNextPlayer();
-                ++_turnCount;
-            }
+            PlayGame();
         }
 
         /// <summary>
@@ -39,6 +35,25 @@
         private void CacheCards()
         {
             throw new NotImplementedException();
+        }
+
+        private void PlayGame()
+        {
+            while (!IsGameOver())
+            {
+                // Broadcast PreDiceRollEvent
+
+                RollDice();
+
+                // Broadcast PlayerMoveEvent
+                //   Current player can choose to buy and/or use charge cubes
+                //   Other players can choose to use charge cubes
+
+                // Reset current player's gold to income if applicable
+
+                UpdateNextPlayer();
+                ++_turnCount;
+            }
         }
 
         private void RollDice()
