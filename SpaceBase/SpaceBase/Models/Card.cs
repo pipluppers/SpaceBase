@@ -18,5 +18,15 @@
         public int Cost { get => _cost; }
 
         public delegate void Effect();
+
+        public void ActivateActiveEffect()
+        {
+
+        }
+
+        public void ActivateDeployedEffect()
+        {
+
+        }
     }
 }

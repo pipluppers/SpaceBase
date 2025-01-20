@@ -11,7 +11,7 @@
         private int _currentPlayer = 0;
         private bool _isGameOver = false;
 
-        internal event EventHandler<DiceRollEventArgs>? DiceRollEvent;
+        internal event DiceRollEventHandler<DiceRollEventArgs>? DiceRollEvent;
 
         public Game(int numPlayers)
         {

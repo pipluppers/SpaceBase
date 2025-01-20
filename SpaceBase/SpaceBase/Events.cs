@@ -6,6 +6,8 @@
         public int Dice2 { get; } = dice2;
     }
 
+    public delegate void DiceRollEventHandler<DiceRollEventArgs>(object sender, DiceRollEventArgs e);
+
     public class GameOverEventArgs(int playerID)
     {
         public int PlayerID { get; } = playerID;

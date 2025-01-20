@@ -72,6 +72,30 @@
             _isCurrentPlayer = isCurrentPlayer;
         }
 
+        public void ChooseDiceRoll(int dice1, int dice2)
+        {
+            // TODO Display popup screen for user to click individual sectors or sum sector
+
+            //string? userText = string.Empty;
+            //int choice = 0;
+
+            //Console.Write($"Dice roll 1: {dice1}, Dice roll 2: {dice2}\nClick '1' to choose both or '2' to choose the sum: ");
+            //userText = Console.ReadLine();
+
+            //if (!int.TryParse(userText, out choice) || choice != 1 || choice != 2)
+            //{
+            //    int remainingAttempts = 10;
+            //    while (remainingAttempts-- >= 0)
+            //    {
+            //        Console.Write($"Invalid choice. Click '1' to choose both or '2' to choose the sum: ");
+            //        userText = Console.ReadLine();
+
+            //        if (int.TryParse(userText, out choice))
+            //            break;
+            //    }
+            //}
+        }
+
         /// <summary>
         /// Resets the player's gold to their cinom
         /// </summary>
