@@ -9,12 +9,20 @@
         private List<Card> _sectorFinalCards = [];
         private int _turnCount = 0;
         private int _currentPlayer = 0;
+        private bool _isGameOver = false;
 
-        internal event EventHandler<DiceRollEventArgs> DiceRollEvent;
+        internal event EventHandler<DiceRollEventArgs>? DiceRollEvent;
 
         public Game(int numPlayers)
         {
             _players = new List<Player>(numPlayers);
+            for (int i = 0; i < numPlayers; ++i)
+            {
+                var player = new Player(i + 1);
+                player.GameOverEvent += BeginGameOverRoutine;
+
+                _players.Add(player);
+            }
         }
 
         public void StartGame()
@@ -23,10 +31,17 @@
 
             CacheCards();
 
+            // TODO Each player draws a card. Player order is determined by highest cost
+
             _turnCount = 1;
             _currentPlayer = 0;
 
             PlayGame();
+        }
+
+        private void BeginGameOverRoutine(object sender, GameOverEventArgs args)
+        {
+            _isGameOver = true;
         }
 
         /// <summary>
@@ -39,7 +54,7 @@
 
         private void PlayGame()
         {
-            while (!IsGameOver())
+            while (!_isGameOver)
             {
                 // Broadcast PreDiceRollEvent
 
@@ -59,30 +74,6 @@
         private void RollDice()
         {
 
-        }
-
-        /// <summary>
-        /// Checks if the game is over. If any player has over the victory threshold amount of points, then the game is over.
-        /// </summary>
-        /// 
-        /// <returns>True if game is over. Else false.</returns>
-        /// 
-        /// <remarks>
-        /// The standard victory threshold if 40 points but players may modify this as they wish at the beginning of the game.
-        /// </remarks>
-        private bool IsGameOver()
-        {
-            // Prevent infinite game
-            if (_turnCount >= 100)
-                return true;
-
-            foreach (var player in _players)
-            {
-                if (player.VictoryPoints >= Constants.VictoryThreshold)
-                    return true;
-            }
-
-            return false;
         }
 
         /// <summary>

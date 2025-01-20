@@ -10,5 +10,4 @@ namespace SpaceBase
     public partial class App : Application
     {
     }
-
 }

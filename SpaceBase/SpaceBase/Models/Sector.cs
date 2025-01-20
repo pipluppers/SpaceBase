@@ -6,7 +6,7 @@
         private Card _activeCard;
         private readonly List<Card> _deployedCards;
 
-        internal Sector(int id, Card card)
+        public Sector(int id, Card card)
         {
             _id = id;
             _activeCard = card;
