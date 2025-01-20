@@ -27,10 +27,13 @@ namespace SpaceBaseTests
                 var card = new Card(i, cost);
                 var sector = new Sector(i, card);
 
-                Assert.That(sector.ID, Is.EqualTo(i));
-                Assert.That(sector.ActiveCard.SectorID, Is.EqualTo(i));
-                Assert.That(sector.ActiveCard.Cost, Is.EqualTo(cost));
-                Assert.That(sector.DeployedCards.Count, Is.EqualTo(0));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(sector.ID, Is.EqualTo(i));
+                    Assert.That(sector.ActiveCard.SectorID, Is.EqualTo(i));
+                    Assert.That(sector.ActiveCard.Cost, Is.EqualTo(cost));
+                    Assert.That(sector.DeployedCards.Count, Is.EqualTo(0));
+                });
             }
         }
 
@@ -47,9 +50,12 @@ namespace SpaceBaseTests
             var sector = new Sector(sectorID, card1);
             sector.AddCard(card2);
 
-            Assert.That(sector.DeployedCards.Count, Is.EqualTo(1));
-            Assert.That(sector.DeployedCards[0].Cost, Is.EqualTo(cost1));
-            Assert.That(sector.ActiveCard.Cost, Is.EqualTo(cost2), "The second card should now be the active card.");
+            Assert.Multiple(() =>
+            {
+                Assert.That(sector.DeployedCards.Count, Is.EqualTo(1));
+                Assert.That(sector.DeployedCards[0].Cost, Is.EqualTo(cost1));
+                Assert.That(sector.ActiveCard.Cost, Is.EqualTo(cost2), "The second card should now be the active card.");
+            });
         }
     }
 }

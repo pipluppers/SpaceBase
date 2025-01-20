@@ -28,10 +28,13 @@ namespace SpaceBaseTests
             
             for (int i = 0; i < 12; ++i)
             {
-                Assert.That(sectors[i].ID, Is.EqualTo(i + 1));
-                Assert.That(sectors[i].ActiveCard.SectorID, Is.EqualTo(i + 1));
-                Assert.That(sectors[i].ActiveCard.Cost, Is.EqualTo(0), "The beginning cards should not have any cost.");
-                Assert.That(sectors[i].DeployedCards.Count, Is.EqualTo(0));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(sectors[i].ID, Is.EqualTo(i + 1));
+                    Assert.That(sectors[i].ActiveCard.SectorID, Is.EqualTo(i + 1));
+                    Assert.That(sectors[i].ActiveCard.Cost, Is.EqualTo(0), "The beginning cards should not have any cost.");
+                    Assert.That(sectors[i].DeployedCards.Count, Is.EqualTo(0));
+                });
             }
         }
     }

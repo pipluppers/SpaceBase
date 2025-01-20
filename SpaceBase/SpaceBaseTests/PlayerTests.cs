@@ -22,10 +22,13 @@ namespace SpaceBaseTests
         {
             var player = new Player(1);
 
-            Assert.That(player.Gold, Is.EqualTo(5), "Each player should start with 5 gold.");
-            Assert.That(player.Income, Is.EqualTo(0));
-            Assert.That(player.VictoryPoints, Is.EqualTo(0));
-            Assert.That(player.ChargeCubes, Is.EqualTo(0));
+            Assert.Multiple(() =>
+            {
+                Assert.That(player.Gold, Is.EqualTo(5), "Each player should start with 5 gold.");
+                Assert.That(player.Income, Is.EqualTo(0));
+                Assert.That(player.VictoryPoints, Is.EqualTo(0));
+                Assert.That(player.ChargeCubes, Is.EqualTo(0));
+            });
         }
 
         [TestCase(0, 0, TestName = "ResetWillSetPlayerGoldToIncome_0Gold_0Income")]
@@ -37,8 +40,11 @@ namespace SpaceBaseTests
             player.AddGold(gold);
             player.AddIncome(income);
 
-            Assert.That(player.Gold, Is.EqualTo(5 + gold), "The 5 is from the player's starting amount.");
-            Assert.That(player.Income, Is.EqualTo(income));
+            Assert.Multiple(() =>
+            {
+                Assert.That(player.Gold, Is.EqualTo(5 + gold), "The 5 is from the player's starting amount.");
+                Assert.That(player.Income, Is.EqualTo(income));
+            });
 
             player.ResetGold();
             Assert.That(player.Gold, Is.EqualTo(income));
