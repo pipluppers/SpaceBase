@@ -3,17 +3,27 @@
     public class Game
     {
         private readonly List<Player> _players;
-        private bool _gameOver = false;
         private List<Card> _sector1Cards = [];
         private List<Card> _sector2Cards = [];
         private List<Card> _sector3Cards = [];
         private List<Card> _sectorFinalCards = [];
         private int _turnCount = 0;
         private int _currentPlayer = 0;
+        private bool _isGameOver = false;
+
+        internal event DiceRollEventHandler<DiceRollEventArgs>? DiceRollEvent;
 
         public Game(int numPlayers)
         {
             _players = new List<Player>(numPlayers);
+            for (int i = 0; i < numPlayers; ++i)
+            {
+                var player = new Player(i + 1);
+                player.GameOverEvent += BeginGameOverRoutine;
+                DiceRollEvent += player.ChooseDiceRoll;
+
+                _players.Add(player);
+            }
         }
 
         public void StartGame()
@@ -22,15 +32,17 @@
 
             CacheCards();
 
+            // TODO Each player draws a card. Player order is determined by highest cost
+
             _turnCount = 1;
             _currentPlayer = 0;
 
-            while (!IsGameOver())
-            {
+            PlayGame();
+        }
 
-                UpdateNextPlayer();
-                ++_turnCount;
-            }
+        private void BeginGameOverRoutine(object sender, GameOverEventArgs args)
+        {
+            _isGameOver = true;
         }
 
         /// <summary>
@@ -41,33 +53,32 @@
             throw new NotImplementedException();
         }
 
-        private void RollDice()
+        private void PlayGame()
         {
+            while (!_isGameOver)
+            {
+                // Broadcast PreDiceRollEvent
 
+                RollDice();
+
+                // Broadcast PlayerMoveEvent
+                //   Current player can choose to buy and/or use charge cubes
+                //   Other players can choose to use charge cubes
+
+                // Reset current player's gold to income if applicable
+
+                UpdateNextPlayer();
+                ++_turnCount;
+            }
         }
 
-        /// <summary>
-        /// Checks if the game is over. If any player has over the victory threshold amount of points, then the game is over.
-        /// </summary>
-        /// 
-        /// <returns>True if game is over. Else false.</returns>
-        /// 
-        /// <remarks>
-        /// The standard victory threshold if 40 points but players may modify this as they wish at the beginning of the game.
-        /// </remarks>
-        private bool IsGameOver()
+        private void RollDice()
         {
-            // Prevent infinite game
-            if (_turnCount >= 100)
-                return true;
+            Random random = new();
+            int dice1 = random.Next() % 6;
+            int dice2 = random.Next() % 6;
 
-            foreach (var player in _players)
-            {
-                if (player.VictoryPoints >= Constants.VictoryThreshold)
-                    return true;
-            }
-
-            return false;
+            DiceRollEvent?.Invoke(this, new DiceRollEventArgs(dice1, dice2));
         }
 
         /// <summary>
