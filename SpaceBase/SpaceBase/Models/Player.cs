@@ -72,7 +72,7 @@
             _isCurrentPlayer = isCurrentPlayer;
         }
 
-        public void ChooseDiceRoll(int dice1, int dice2)
+        public void ChooseDiceRoll(object sender, DiceRollEventArgs args)
         {
             // TODO Display popup screen for user to click individual sectors or sum sector
 

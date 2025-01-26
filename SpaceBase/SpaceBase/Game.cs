@@ -20,6 +20,7 @@
             {
                 var player = new Player(i + 1);
                 player.GameOverEvent += BeginGameOverRoutine;
+                DiceRollEvent += player.ChooseDiceRoll;
 
                 _players.Add(player);
             }
@@ -73,7 +74,11 @@
 
         private void RollDice()
         {
+            Random random = new();
+            int dice1 = random.Next() % 6;
+            int dice2 = random.Next() % 6;
 
+            DiceRollEvent?.Invoke(this, new DiceRollEventArgs(dice1, dice2));
         }
 
         /// <summary>
