@@ -51,14 +51,14 @@ namespace SpaceBaseTests
         }
 
         [Test]
-        public void GameOverEventFiresAt40Points()
+        public void PlayerReachedVictoryThresholdEventFiresAt40Points()
         {
             int playerID = 42;
             var player = new Player(playerID);
-            player.GameOverEvent += (sender, e) =>
+            player.PlayerReachedVictoryThresholdEvent += (sender, e) =>
             {
                 Assert.That(e.PlayerID, Is.EqualTo(playerID));
-                Assert.Pass("GameOver event fired.");
+                Assert.Pass("PlayerReachedVictoryThreshold event fired.");
             };
 
             player.AddVictoryPoints(39);

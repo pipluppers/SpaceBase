@@ -4,19 +4,20 @@ namespace SpaceBase
 {
     public class PlayWindowViewModel : ViewModelBase
     {
-        private string _name;
-        private RoutedCommand _quitCommand;
-
         public PlayWindowViewModel()
         {
-            _quitCommand = new("Quit", GetType());
-            _name = "DA";
-            Name = "Hallo";
-
+            _quitGameCommand = new(QuitGame);
         }
 
-        public string Name { get => _name; set => SetProperty(ref _name, value); }
+        #region Commands
 
-        public ICommand QuitCommand { get => _quitCommand; }
+        private readonly RelayCommand _quitGameCommand;
+        public ICommand QuitGameCommand { get => _quitGameCommand; }
+        private void QuitGame()
+        {
+            Application.Current.Shutdown();
+        }
+
+        #endregion Commands
     }
 }

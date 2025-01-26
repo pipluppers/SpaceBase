@@ -17,10 +17,7 @@ namespace SpaceBaseApplication
                 DataContext = new PlayWindowViewModel()
             };
 
-            while (true)
-            {
-                playWindow.Show();
-            }
+            playWindow.Show();
         }
     }
 }

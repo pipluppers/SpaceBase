@@ -14,7 +14,7 @@
             ID = id;
         }
 
-        public event GameOverEventHandler<GameOverEventArgs>? GameOverEvent;
+        public event PlayerReachedVictoryThresholdEvent<PlayerReachedVictoryThresholdEventArgs>? PlayerReachedVictoryThresholdEvent;
 
         public Board Board { get => _board; }
         public int ID { get; }
@@ -64,7 +64,7 @@
             VictoryPoints += victoryPoints;
 
             if (VictoryPoints >= Constants.VictoryThreshold)
-                GameOverEvent?.Invoke(this, new GameOverEventArgs(ID));
+                PlayerReachedVictoryThresholdEvent?.Invoke(this, new PlayerReachedVictoryThresholdEventArgs(ID));
         }
 
         public void UpdateCurrentPlayer(bool isCurrentPlayer)
