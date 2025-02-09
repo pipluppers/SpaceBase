@@ -20,7 +20,7 @@ namespace SpaceBaseTests
         [Test]
         public void CanCreatePlayer()
         {
-            var player = new Player(1);
+            var player = new HumanPlayer(1);
 
             Assert.Multiple(() =>
             {
@@ -36,7 +36,7 @@ namespace SpaceBaseTests
         [TestCase(12, 3, TestName = "ResetWillSetPlayerGoldToIncome_12Gold_3Income")]
         public void ResetWillSetPlayerGoldToIncome(int gold, int income)
         {
-            var player = new Player(1);
+            var player = new HumanPlayer(1);
             player.AddGold(gold);
             player.AddIncome(income);
 
@@ -54,7 +54,7 @@ namespace SpaceBaseTests
         public void PlayerReachedVictoryThresholdEventFiresAt40Points()
         {
             int playerID = 42;
-            var player = new Player(playerID);
+            var player = new HumanPlayer(playerID);
             player.PlayerReachedVictoryThresholdEvent += (sender, e) =>
             {
                 Assert.That(e.PlayerID, Is.EqualTo(playerID));

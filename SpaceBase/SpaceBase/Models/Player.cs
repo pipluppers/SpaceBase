@@ -1,6 +1,6 @@
 ﻿namespace SpaceBase.Models
 {
-    public class Player
+    public abstract class Player(int id)
     {
         private readonly Board _board = new();
         private int _gold = 5;
@@ -9,15 +9,10 @@
         private int _chargeCubes = 0;
         private bool _isCurrentPlayer = false;
 
-        public Player(int id)
-        {
-            ID = id;
-        }
-
         public event PlayerReachedVictoryThresholdEvent<PlayerReachedVictoryThresholdEventArgs>? PlayerReachedVictoryThresholdEvent;
 
         public Board Board { get => _board; }
-        public int ID { get; }
+        public int ID { get; } = id;
         public int Gold { get => _gold; private set => _gold = value; }
         public int Income { get => _income; private set => _income = value; }
         public int VictoryPoints { get => _victoryPoints; private set => _victoryPoints = value; }
@@ -72,7 +67,24 @@
             _isCurrentPlayer = isCurrentPlayer;
         }
 
-        public void ChooseDiceRoll(object sender, DiceRollEventArgs args)
+        /// <summary>
+        /// Resets the player's gold to their cinom
+        /// </summary>
+        public void ResetGold()
+        {
+            Gold = Income;
+        }
+
+        #region Overridable methods
+
+        public abstract void ChooseDiceRoll(object sender, DiceRollEventArgs args);
+
+        #endregion Overridable methods
+    }
+
+    public class HumanPlayer(int id) : Player(id)
+    {
+        public override void ChooseDiceRoll(object sender, DiceRollEventArgs args)
         {
             // TODO Display popup screen for user to click individual sectors or sum sector
 
@@ -95,13 +107,13 @@
             //    }
             //}
         }
+    }
 
-        /// <summary>
-        /// Resets the player's gold to their cinom
-        /// </summary>
-        public void ResetGold()
+    public class ComputerPlayer(int id) : Player(id)
+    {
+        public override void ChooseDiceRoll(object sender, DiceRollEventArgs args)
         {
-            Gold = Income;
+            // TODO
         }
     }
 }

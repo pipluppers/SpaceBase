@@ -30,9 +30,15 @@
             RoundOverEvent += MaxNumRoundsHandler;
 
             _players = new List<Player>(numPlayers);
-            for (int i = 0; i < numPlayers; ++i)
+
+            var humanPlayer = new HumanPlayer(1);
+            humanPlayer.PlayerReachedVictoryThresholdEvent += BeginGameOverRoutine;
+            DiceRollEvent += humanPlayer.ChooseDiceRoll;
+            _players.Add(humanPlayer);
+
+            for (int i = 1; i < numPlayers; ++i)
             {
-                var player = new Player(i + 1);
+                var player = new ComputerPlayer(i + 1);
                 player.PlayerReachedVictoryThresholdEvent += BeginGameOverRoutine;
                 DiceRollEvent += player.ChooseDiceRoll;
 
