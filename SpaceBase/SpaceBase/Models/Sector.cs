@@ -13,7 +13,7 @@
             _deployedCards = [];
         }
 
-        public int ID => _id;
+        public int ID { get => _id; }
         public Card ActiveCard { get => _activeCard; private set => _activeCard = value; }
         public List<Card> DeployedCards => _deployedCards;
 

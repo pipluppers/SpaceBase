@@ -6,103 +6,91 @@
         xmlns:local="clr-namespace:SpaceBase"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
-        Title="MainWindow" Height="500" Width="800">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        x:Name="MainGameWindow"
+        Title="MainWindow" Height="1000" MinHeight="1000" Width="1024" MinWidth="1024" MaxWidth="1024">
+    <Canvas x:Name="MainCanvas"
+            AllowDrop="True">
+        <Canvas.Resources>
+            <Style TargetType="Rectangle">
+                <Setter Property="Stroke" Value="Black"/>
+                <Setter Property="Height" Value="{x:Static local:Constants.CardHeight}"/>
+                <Setter Property="Width" Value="{x:Static local:Constants.CardWidth}"/>
+                <Setter Property="Panel.ZIndex" Value="1"/>
+                <Setter Property="Fill" Value="Blue"/>
+                <Setter Property="AllowDrop" Value="True"/>
+                <EventSetter Event="MouseLeftButtonDown" Handler="Rectangle_MouseLeftButtonDown"/>
+                <EventSetter Event="MouseMove" Handler="Rectangle_MouseMove"/>
+            </Style>
+        </Canvas.Resources>
 
-        <TextBlock Grid.Row="0" Text="Hello"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft1}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft2}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft3}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft4}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft5}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft6}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
 
-        <Grid Grid.Row="1" HorizontalAlignment="Center" Height="154" Margin="30,10,30,0" VerticalAlignment="Top">
-            <Grid.Resources>
-                <Style TargetType="ColumnDefinition">
-                    <Setter Property="Width" Value="60"/>
-                </Style>
-                <Style TargetType="{x:Type Rectangle}">
-                    <Setter Property="Stroke" Value="Black"/>
-                    <Setter Property="Margin" Value="0,0,20,0"/>
-                </Style>
-                <Style TargetType="{x:Type Ellipse}">
-                    <Setter Property="Stroke" Value="Black"/>
-                    <Setter Property="Height" Value="20"/>
-                    <Setter Property="Width" Value="20"/>
-                    <Setter Property="Margin" Value="-20,5,0,0"/>
-                </Style>
-            </Grid.Resources>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft1}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft2}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft3}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft4}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft5}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft6}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}"/>
 
-            <Rectangle Grid.Column="0">
-                
-            </Rectangle>
-            <Rectangle Grid.Row="0" Grid.Column="1"/>
-            <Rectangle Grid.Row="0" Grid.Column="2"/>
-            <Rectangle Grid.Row="0" Grid.Column="3"/>
-            <Rectangle Grid.Row="0" Grid.Column="4"/>
-            <Rectangle Grid.Row="0" Grid.Column="5"/>
-            <Rectangle Grid.Row="0" Grid.Column="6"/>
-            <Rectangle Grid.Row="0" Grid.Column="7"/>
-            <Rectangle Grid.Row="0" Grid.Column="8"/>
-            <Rectangle Grid.Row="0" Grid.Column="9"/>
-            <Rectangle Grid.Row="0" Grid.Column="10"/>
-            <Rectangle Grid.Row="0" Grid.Column="11"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft1}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft2}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft3}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft4}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft5}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft6}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>
+        
+        <Grid Canvas.Left="0" Canvas.Top="680" Width="{Binding Width, ElementName=MainGameWindow}" Height="300" Background="Transparent" IsHitTestVisible="True">
+            <ItemsControl Grid.Row="0" ItemsSource="{Binding Player.Board.Sectors}" Margin="10,0,10,20">
+                <ItemsControl.Template>
+                    <ControlTemplate>
+                        <Border BorderBrush="Black" BorderThickness="0">
+                            <ItemsPresenter />
+                        </Border>
+                    </ControlTemplate>
+                </ItemsControl.Template>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Black" BorderThickness="1" Width="82" Padding="10,10,10,10" AllowDrop="False">
+                            <Grid AllowDrop="False">
+                                <Grid.Resources>
+                                    <Style TargetType="Rectangle">
+                                        <Setter Property="Stroke" Value="Black"/>
+                                        <Setter Property="Height" Value="{x:Static local:Constants.CardHeight}"/>
+                                        <Setter Property="Width" Value="{x:Static local:Constants.CardWidth}"/>
+                                        <Setter Property="Fill" Value="Transparent"/>
+                                        <Setter Property="AllowDrop" Value="True"/>
+                                        <EventSetter Event="DragOver" Handler="SectorRectangle_DragOver"/>
+                                        <EventSetter Event="Drop" Handler="SectorRectangle_Drop"/>
+                                    </Style>
+                                </Grid.Resources>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
 
-            <Ellipse Grid.Row="1" Grid.Column="0"/>
-            <Ellipse Grid.Row="1" Grid.Column="1"/>
+                                <Rectangle Grid.Row="0"/>
+
+                                <Border Grid.Row="1" Background="OrangeRed" BorderThickness="1" BorderBrush="Black" Width="30" Height="30" CornerRadius="50" HorizontalAlignment="Center" Margin="0,10,0,0" AllowDrop="False">
+                                    <Label Content="{Binding ID}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </Grid>
-
-        <ItemsControl Grid.Row="2" ItemsSource="{Binding Player.Board.Sectors}">
-            <ItemsControl.Template>
-                <ControlTemplate>
-                    <Border BorderBrush="Black" BorderThickness="1">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-
-                            <TextBlock Text="2"/>
-                        </Grid>
-                    </Border>
-                </ControlTemplate>
-            </ItemsControl.Template>
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
-
-        <Rectangle HorizontalAlignment="Center" Height="254" Margin="0,170,0,0" Grid.RowSpan="2" Stroke="Black" VerticalAlignment="Top" Width="800"/>
-        <!--<Rectangle HorizontalAlignment="Center" Height="140" Width="50" Margin="-730,24,0,0" Grid.Row="1" Stroke="Black" VerticalAlignment="Top"/>-->
-        <!--<Rectangle HorizontalAlignment="Center" Height="140" Width="50" Margin="90,24,0,0" Grid.Row="1" Stroke="Black" VerticalAlignment="Top"/>
-        <Rectangle HorizontalAlignment="Center" Height="140" Width="50" Margin="150,24,0,0" Grid.Row="1" Stroke="Black" VerticalAlignment="Top"/>
-        <Rectangle HorizontalAlignment="Center" Height="140" Width="50" Margin="210,24,0,0" Grid.Row="1" Stroke="Black" VerticalAlignment="Top"/>
-        <Rectangle HorizontalAlignment="Center" Height="140" Width="50" Margin="270,24,0,0" Grid.Row="1" Stroke="Black" VerticalAlignment="Top"/>
-        <Rectangle HorizontalAlignment="Center" Height="140" Width="50" Margin="330,24,0,0" Grid.Row="1" Stroke="Black" VerticalAlignment="Top"/>
-        <Rectangle HorizontalAlignment="Center" Height="140" Width="50" Margin="390,24,0,0" Grid.Row="1" Stroke="Black" VerticalAlignment="Top"/>
-        <Rectangle HorizontalAlignment="Center" Height="140" Width="50" Margin="450,24,0,0" Grid.Row="1" Stroke="Black" VerticalAlignment="Top"/>
-        <Rectangle HorizontalAlignment="Center" Height="140" Width="50" Margin="510,24,0,0" Grid.Row="1" Stroke="Black" VerticalAlignment="Top"/>
-        <Rectangle HorizontalAlignment="Center" Height="140" Width="50" Margin="570,24,0,0" Grid.Row="1" Stroke="Black" VerticalAlignment="Top"/>
-        <Rectangle HorizontalAlignment="Center" Height="140" Width="50" Margin="630,24,0,0" Grid.Row="1" Stroke="Black" VerticalAlignment="Top"/>
-        <Rectangle HorizontalAlignment="Center" Height="140" Width="50" Margin="700,24,0,0" Grid.Row="1" Stroke="Black" VerticalAlignment="Top"/>-->
-    </Grid>
+    </Canvas>
 </Window>
