@@ -18,6 +18,22 @@ namespace SpaceBaseTests
         }
 
         [Test]
+        public void AddingCardWithDifferentSectorIDShouldFail()
+        {
+            int sectorID = 5;
+            int cardSectorID = 1;
+
+            var card = new Card(cardSectorID, 5);
+            var sector = new Sector(sectorID, null);
+
+            Assert.Multiple(() =>
+            {
+                Assert.Throws<ArgumentException>(() => new Sector(sectorID, card));
+                Assert.Throws<ArgumentException>(() => sector.AddCard(card));
+            });
+        }
+
+        [Test]
         public void CanCreateSectorWithCard()
         {
             int cost = 4;

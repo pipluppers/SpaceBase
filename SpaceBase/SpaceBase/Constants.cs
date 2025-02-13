@@ -6,6 +6,8 @@
         internal const int MaxNumPlayers = 5;
         internal const int MaxNumRounds = 50;
         internal const int VictoryThreshold = 40;
+        internal const int MinSectorID = 1;
+        internal const int MaxSectorID = 12;
 
         #region Database constants
 

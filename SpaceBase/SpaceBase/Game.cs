@@ -133,8 +133,8 @@
         /// <param name="reader">The reader object over the data.</param>
         private void PopulatePlayerStartingCards(SqlDataReader reader)
         {
-            int sectorID, cost, effect, deployedEffect;
-            int? effectAmount, secondaryEffectAmount, deployedEffectAmount, secondaryDeployedEffectAmount;
+            int sectorID, cost, effect, effectAmount, deployedEffect, deployedEffectAmount;
+            int? secondaryEffectAmount, secondaryDeployedEffectAmount;
             for (int i = 0; i < 12; ++i)
             {
                 reader.Read();
@@ -142,15 +142,17 @@
                 sectorID = reader.GetInt32(0);
                 cost = reader.GetInt32(1);
                 effect = reader.GetInt32(2);
-                effectAmount = !reader.IsDBNull(3) ? reader.GetInt32(3) : null;
+                effectAmount = reader.GetInt32(3);
                 secondaryEffectAmount = !reader.IsDBNull(4) ? reader.GetInt32(4) : null;
                 deployedEffect = reader.GetInt32(5);
-                deployedEffectAmount = !reader.IsDBNull(6) ? reader.GetInt32(6) : null;
+                deployedEffectAmount = reader.GetInt32(6);
                 secondaryDeployedEffectAmount = !reader.IsDBNull(7) ? reader.GetInt32(7) : null;
 
                 foreach (var player in _players)
                 {
-                    player.Board.Sectors[i].AddCard(new Card(sectorID, cost));
+                    player.Board.Sectors[i].AddCard(new Card(sectorID, cost,
+                        CardActions.GetAction((ActionType)effect), effectAmount, secondaryEffectAmount,
+                        CardActions.GetAction((ActionType)deployedEffect), deployedEffectAmount, secondaryDeployedEffectAmount));
                 }
             }
         }

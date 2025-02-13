@@ -62,6 +62,53 @@
                 PlayerReachedVictoryThresholdEvent?.Invoke(this, new PlayerReachedVictoryThresholdEventArgs(ID));
         }
 
+        /// <summary>
+        /// Gets the sector with the given ID.
+        /// </summary>
+        /// <param name="sectorID">The ID of the sector to get.</param>
+        /// <returns>The sector with the given ID.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">The ID of the card is invalid.</exception>
+        public Sector GetSector(int sectorID)
+        {
+            if (sectorID < Constants.MinSectorID || sectorID > Constants.MaxSectorID)
+                throw new ArgumentOutOfRangeException(nameof(sectorID), $"The input sector ID must be between {Constants.MinSectorID} and {Constants.MaxSectorID}");
+
+            return Board.Sectors[sectorID - 1];
+        }
+
+        /// <summary>
+        /// Adds the card at the sectorID referenced by the card.
+        /// </summary>
+        /// <param name="card">The card to add.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The ID of the card is invalid.</exception>
+        public void AddCard(Card card)
+        {
+            if (card.SectorID < Constants.MinSectorID || card.SectorID > Constants.MaxSectorID)
+                throw new ArgumentOutOfRangeException(nameof(card), $"The input sector ID of the card must be between {Constants.MinSectorID} and {Constants.MaxSectorID}");
+
+            GetSector(card.SectorID).AddCard(card);
+        }
+
+        /// <summary>
+        /// Activates the effect of the active card at the given sector.
+        /// </summary>
+        /// <param name="sectorID">The ID of the sector whose card to activate.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The ID is invalid.</exception>
+        public void ActivateCardEffect(int sectorID)
+        {
+            GetSector(sectorID).ActiveCard?.ActivateActiveEffect(this);
+        }
+
+        /// <summary>
+        /// Activates the effects of all deployed cards at the given sector.
+        /// </summary>
+        /// <param name="sectorID">The ID of the sector whose cards to activate.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The ID is invalid.</exception>
+        public void ActivateDeployedCardsEffect(int sectorID)
+        {
+            GetSector(sectorID).DeployedCards.ForEach((card) => card.ActivateDeployedEffect(this));
+        }
+
         public void UpdateCurrentPlayer(bool isCurrentPlayer)
         {
             _isCurrentPlayer = isCurrentPlayer;

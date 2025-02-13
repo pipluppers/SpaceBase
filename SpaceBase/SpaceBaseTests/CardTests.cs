@@ -20,8 +20,8 @@ namespace SpaceBaseTests
         [Test]
         public void CardWithInvalidSectorShouldThrow()
         {
-            Assert.Throws<NotSupportedException>(() => new Card(0, 3));
-            Assert.Throws<NotSupportedException>(() => new Card(13, 3));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new Card(0, 3));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new Card(13, 3));
         }
 
         [Test]

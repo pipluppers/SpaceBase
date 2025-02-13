@@ -8,6 +8,9 @@
 
         public Sector(int id, Card? card)
         {
+            if (card != null && id != card.SectorID)
+                throw new ArgumentException("The card has sector ID {card.SectorID} which cannot be added to sector {ID}.");
+
             _id = id;
             _activeCard = card;
             _deployedCards = [];
@@ -21,8 +24,12 @@
         /// Deploys the current card and sets the current card to the provided one.
         /// </summary>
         /// <param name="card">The new active card.</param>
+        /// <exception cref="ArgumentException">The ID of the sector and card do not match.</exception>
         public void AddCard(Card card)
         {
+            if (ID != card.SectorID)
+                throw new ArgumentException($"The card has sector ID {card.SectorID} which cannot be added to sector {ID}.");
+
             if (ActiveCard != null)
                 DeployedCards.Add(ActiveCard);
 
