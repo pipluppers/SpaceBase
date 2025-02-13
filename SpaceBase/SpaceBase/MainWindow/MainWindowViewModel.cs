@@ -14,6 +14,9 @@ namespace SpaceBase
         {
             Game = new Game();
             _player = (HumanPlayer)Game.Players.First(p => p is HumanPlayer);
+
+            Game.StartGame();
+
             Sector1 = new SectorViewModel(_player.Board.Sectors[0]);
             Sector2 = new SectorViewModel(_player.Board.Sectors[1]);
             Sector3 = new SectorViewModel(_player.Board.Sectors[2]);

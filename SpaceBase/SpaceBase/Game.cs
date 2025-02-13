@@ -87,7 +87,72 @@
         /// </summary>
         private void CacheCards()
         {
-            Trace.WriteLine("Not implemented");
+            try
+            {
+                using var connection = GetSqlConnection();
+                connection.Open();
+
+                string? table = Environment.GetEnvironmentVariable(Constants.CardsTableEnvironmentVariable, EnvironmentVariableTarget.User);
+                string queryString = $"SELECT * FROM {table}";
+
+                using var command = new SqlCommand(queryString, connection);
+                using SqlDataReader reader = command.ExecuteReader();
+
+                PopulatePlayerStartingCards(reader);
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"Error loading the cards from the database: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Reads environment variables and returns the SqlConnection object.
+        /// </summary>
+        /// <returns>The connection object.</returns>
+        /// <exception cref="InvalidOperationException">There was an error reading the environment variables or getting the connection.</exception>
+        private static SqlConnection GetSqlConnection()
+        {
+            string? server = Environment.GetEnvironmentVariable(Constants.ServerEnvironmentVariable, EnvironmentVariableTarget.User);
+            string? database = Environment.GetEnvironmentVariable(Constants.DatabaseEnvironmentVariable, EnvironmentVariableTarget.User);
+
+            if (string.IsNullOrEmpty(server) || string.IsNullOrEmpty(database))
+                throw new InvalidOperationException($"Error loading the server {server} or database {database}.");
+
+            string connectionString = $"{Constants.ServerKey}={server};{Constants.DatabaseKey}={database};";
+
+            // TODO  Get Certificate Authority signed certificate and remove the assignment below
+            connectionString += "Encrypt=False;Trusted_Connection=True";
+
+            return new SqlConnection(connectionString);
+        }
+
+        /// <summary>
+        /// Populate the starting cards on each player's boards.
+        /// </summary>
+        /// <param name="reader">The reader object over the data.</param>
+        private void PopulatePlayerStartingCards(SqlDataReader reader)
+        {
+            int sectorID, cost, effect, deployedEffect;
+            int? effectAmount, secondaryEffectAmount, deployedEffectAmount, secondaryDeployedEffectAmount;
+            for (int i = 0; i < 12; ++i)
+            {
+                reader.Read();
+
+                sectorID = reader.GetInt32(0);
+                cost = reader.GetInt32(1);
+                effect = reader.GetInt32(2);
+                effectAmount = !reader.IsDBNull(3) ? reader.GetInt32(3) : null;
+                secondaryEffectAmount = !reader.IsDBNull(4) ? reader.GetInt32(4) : null;
+                deployedEffect = reader.GetInt32(5);
+                deployedEffectAmount = !reader.IsDBNull(6) ? reader.GetInt32(6) : null;
+                secondaryDeployedEffectAmount = !reader.IsDBNull(7) ? reader.GetInt32(7) : null;
+
+                foreach (var player in _players)
+                {
+                    player.Board.Sectors[i].AddCard(new Card(sectorID, cost));
+                }
+            }
         }
 
         private void PlayGame()

@@ -7,6 +7,16 @@
         internal const int MaxNumRounds = 50;
         internal const int VictoryThreshold = 40;
 
+        #region Database constants
+
+        internal const string ServerKey = "SERVER";
+        internal const string DatabaseKey = "DATABASE";
+        internal const string ServerEnvironmentVariable = "SpaceBaseServer";
+        internal const string DatabaseEnvironmentVariable = "SpaceBaseDatabase";
+        internal const string CardsTableEnvironmentVariable = "SpaceBaseCardsTable";
+
+        #endregion Database constants
+
         #region UI constants
 
         public const string MainCanvasName = "MainCanvas";

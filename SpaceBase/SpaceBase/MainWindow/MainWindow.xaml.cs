@@ -55,7 +55,7 @@ namespace SpaceBase
 
         private void Rectangle_MouseMove(object sender, MouseEventArgs e)
         {
-            if (/*_isDragging && */sender is Rectangle rectangle && e.LeftButton == MouseButtonState.Pressed)
+            if (_isDragging && sender is Rectangle rectangle && e.LeftButton == MouseButtonState.Pressed)
             {
                 Canvas? canvas = FindAncestor<Canvas>(rectangle);
                 if (canvas == null)
