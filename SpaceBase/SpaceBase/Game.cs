@@ -1,9 +1,12 @@
-﻿namespace SpaceBase.Models
+﻿using System.Windows.Media.Effects;
+using System.Windows.Media.Media3D;
+
+namespace SpaceBase.Models
 {
     public class Game
     {
         private readonly List<Player> _players;
-        private List<Card> _sector1Cards = [];
+        private readonly ObservableCollection<Card> _sector1Cards;
         private List<Card> _sector2Cards = [];
         private List<Card> _sector3Cards = [];
         private List<Card> _sectorFinalCards = [];
@@ -29,6 +32,8 @@
             _maxNumRounds = maxNumRounds;
             RoundOverEvent += MaxNumRoundsHandler;
 
+            _sector1Cards = [];
+
             _players = new List<Player>(numPlayers);
 
             var humanPlayer = new HumanPlayer(1);
@@ -53,6 +58,8 @@
         public int TurnNumber { get => _turnNumber; }
 
         public int RoundNumber { get => _roundNumber; }
+
+        public ObservableCollection<Card> Sector1Cards { get => _sector1Cards; }
 
         #endregion Properties
 
@@ -99,6 +106,26 @@
                 using SqlDataReader reader = command.ExecuteReader();
 
                 PopulatePlayerStartingCards(reader);
+
+                int sectorID, cost, effect, effectAmount, deployedEffect, deployedEffectAmount;
+                int? secondaryEffectAmount, secondaryDeployedEffectAmount;
+                for (int i = 0; i < 6; ++i)
+                {
+                    reader.Read();
+
+                    sectorID = reader.GetInt32(0);
+                    cost = reader.GetInt32(1);
+                    effect = reader.GetInt32(2);
+                    effectAmount = reader.GetInt32(3);
+                    secondaryEffectAmount = !reader.IsDBNull(4) ? reader.GetInt32(4) : null;
+                    deployedEffect = reader.GetInt32(5);
+                    deployedEffectAmount = reader.GetInt32(6);
+                    secondaryDeployedEffectAmount = !reader.IsDBNull(7) ? reader.GetInt32(7) : null;
+
+                    _sector1Cards.Add(new Card(sectorID, cost,
+                        (ActionType)effect, effectAmount, secondaryEffectAmount,
+                        (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount));
+                }
             }
             catch (Exception ex)
             {
@@ -151,8 +178,8 @@
                 foreach (var player in _players)
                 {
                     player.Board.Sectors[i].AddCard(new Card(sectorID, cost,
-                        CardActions.GetAction((ActionType)effect), effectAmount, secondaryEffectAmount,
-                        CardActions.GetAction((ActionType)deployedEffect), deployedEffectAmount, secondaryDeployedEffectAmount));
+                        (ActionType)effect, effectAmount, secondaryEffectAmount,
+                        (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount));
                 }
             }
         }

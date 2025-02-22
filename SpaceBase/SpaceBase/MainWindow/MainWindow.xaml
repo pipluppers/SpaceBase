@@ -8,9 +8,18 @@
         d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
         x:Name="MainGameWindow"
         Title="MainWindow" Height="1000" MinHeight="1000" Width="1024" MinWidth="1024" MaxWidth="1024">
+    <Window.Resources>
+        <local:NullVisibilityConverter x:Key="NullVisibilityConverter"/>
+    </Window.Resources>
     <Canvas x:Name="MainCanvas"
             AllowDrop="True">
         <Canvas.Resources>
+            <Style x:Key="DraggableCard" TargetType="local:CardControl">
+                <Setter Property="AllowDrop" Value="True"/>
+                <Setter Property="Panel.ZIndex" Value="1"/>
+                <EventSetter Event="MouseLeftButtonDown" Handler="CardControl_MouseLeftButtonDown"/>
+                <EventSetter Event="MouseMove" Handler="CardControl_MouseMove"/>
+            </Style>
             <Style TargetType="Rectangle">
                 <Setter Property="Stroke" Value="Black"/>
                 <Setter Property="Height" Value="{x:Static local:Constants.CardHeight}"/>
@@ -18,18 +27,22 @@
                 <Setter Property="Panel.ZIndex" Value="1"/>
                 <Setter Property="Fill" Value="Blue"/>
                 <Setter Property="AllowDrop" Value="True"/>
-                <EventSetter Event="MouseLeftButtonDown" Handler="Rectangle_MouseLeftButtonDown"/>
-                <EventSetter Event="MouseMove" Handler="Rectangle_MouseMove"/>
             </Style>
         </Canvas.Resources>
 
         <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
-        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft1}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
-        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft2}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
+        <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft1}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}" DataContext="{Binding Game.Sector1Cards[0]}" Style="{StaticResource DraggableCard}"/>
+        <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft2}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}" DataContext="{Binding Game.Sector1Cards[1]}" Style="{StaticResource DraggableCard}"/>
+        <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft3}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}" DataContext="{Binding Game.Sector1Cards[2]}" Style="{StaticResource DraggableCard}"/>
+        <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft4}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}" DataContext="{Binding Game.Sector1Cards[3]}" Style="{StaticResource DraggableCard}"/>
+        <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft5}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}" DataContext="{Binding Game.Sector1Cards[4]}" Style="{StaticResource DraggableCard}"/>
+        <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft6}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}" DataContext="{Binding Game.Sector1Cards[5]}" Style="{StaticResource DraggableCard}"/>
+        <!--<Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft1}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>-->
+        <!--<Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft2}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
         <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft3}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
         <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft4}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
         <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft5}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
-        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft6}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
+        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft6}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>-->
 
         <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}"/>
         <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft1}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}"/>
@@ -51,37 +64,26 @@
             <ItemsControl Grid.Row="0" ItemsSource="{Binding Player.Board.Sectors}" Margin="10,0,10,20">
                 <ItemsControl.Template>
                     <ControlTemplate>
-                        <Border BorderBrush="Black" BorderThickness="0">
+                        <Border BorderBrush="Black" BorderThickness="1">
                             <ItemsPresenter />
                         </Border>
                     </ControlTemplate>
                 </ItemsControl.Template>
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel/>
+                        <WrapPanel Background="LightGreen"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border BorderBrush="Black" BorderThickness="1" Width="82" Padding="10,10,10,10" AllowDrop="False">
+                        <Border BorderBrush="Black" BorderThickness="1" Width="82" Padding="10,10,10,10" AllowDrop="True" Drop="Border_Drop">
                             <Grid AllowDrop="False">
-                                <Grid.Resources>
-                                    <Style TargetType="Rectangle">
-                                        <Setter Property="Stroke" Value="Black"/>
-                                        <Setter Property="Height" Value="{x:Static local:Constants.CardHeight}"/>
-                                        <Setter Property="Width" Value="{x:Static local:Constants.CardWidth}"/>
-                                        <Setter Property="Fill" Value="Transparent"/>
-                                        <Setter Property="AllowDrop" Value="True"/>
-                                        <EventSetter Event="DragOver" Handler="SectorRectangle_DragOver"/>
-                                        <EventSetter Event="Drop" Handler="SectorRectangle_Drop"/>
-                                    </Style>
-                                </Grid.Resources>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <Rectangle Grid.Row="0"/>
+                                <local:CardControl Grid.Row="0" Visibility="{Binding ActiveCard, Converter={StaticResource NullVisibilityConverter}, Mode=OneWay}" DataContext="{Binding ActiveCard}"/>
 
                                 <Border Grid.Row="1" Background="OrangeRed" BorderThickness="1" BorderBrush="Black" Width="30" Height="30" CornerRadius="50" HorizontalAlignment="Center" Margin="0,10,0,0" AllowDrop="False">
                                     <Label Content="{Binding ID}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>

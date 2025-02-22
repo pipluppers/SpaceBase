@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -42,105 +43,63 @@ namespace SpaceBase
 
         private bool _isDragging = false;
         private Point _dragStartPoint;
-        private void Rectangle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+
+        private void CardControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender is not Rectangle rectangle)
+            if (sender is not CardControl cardControl)
                 return;
 
             _isDragging = true;
-            _dragStartPoint = e.GetPosition(rectangle);
+            _dragStartPoint = e.GetPosition(cardControl);
             //rectangle.CaptureMouse();
             e.Handled = true;
         }
 
-        private void Rectangle_MouseMove(object sender, MouseEventArgs e)
+        private void CardControl_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_isDragging && sender is Rectangle rectangle && e.LeftButton == MouseButtonState.Pressed)
-            {
-                Canvas? canvas = FindAncestor<Canvas>(rectangle);
-                if (canvas == null)
-                    return;
-
-                Point currentPosition = e.GetPosition(canvas); // Relative to the Canvas
-
-                double left = currentPosition.X - _dragStartPoint.X;
-                double top = currentPosition.Y - _dragStartPoint.Y;
-
-                // Keep rectangle within the bounds of the parent Canvas.
-                left = Math.Max(0, Math.Min(canvas.ActualWidth - rectangle.ActualWidth, left));
-                top = Math.Max(0, Math.Min(canvas.ActualHeight - rectangle.ActualHeight, top));
-
-                Canvas.SetLeft(rectangle, left);
-                Canvas.SetTop(rectangle, top);
-
-                e.Handled = true;
-                DragDrop.DoDragDrop(rectangle, SerializeCard(rectangle), DragDropEffects.Move);
-            }
-        }
-
-        private void SectorRectangle_DragOver(object sender, DragEventArgs e)
-        {
-            if (sender is not Rectangle sectorRectangle)
+            if (!_isDragging || sender is not CardControl cardControl || e.LeftButton != MouseButtonState.Pressed)
                 return;
 
-            if (e.Source is not Rectangle cardRectangle)
-                return;
-        }
-
-        private void SectorRectangle_Drop(object sender, DragEventArgs e)
-        {
-            if (sender is not Rectangle sectorRectangle || sectorRectangle.DataContext is not Sector sector || e.Source is not Rectangle cardRectangle)
+            Canvas? canvas = Utilities.FindAncestor<Canvas>(cardControl);
+            if (canvas == null)
                 return;
 
-            Canvas? canvas = FindAncestor<Canvas>(sectorRectangle);
-            if (canvas == null || !string.Equals(canvas.Name, Constants.MainCanvasName))
-                return;
+            Point currentPosition = e.GetPosition(canvas); // Relative to the Canvas
 
-            Debug.WriteLine("Dropped");
+            double left = currentPosition.X - _dragStartPoint.X;
+            double top = currentPosition.Y - _dragStartPoint.Y;
 
-            string? data = e.Data.GetData(DataFormats.Text)?.ToString();
-            Debug.Assert(data != null);
+            // Keep rectangle within the bounds of the parent Canvas.
+            left = Math.Max(0, Math.Min(canvas.ActualWidth - cardControl.ActualWidth, left));
+            top = Math.Max(0, Math.Min(canvas.ActualHeight - cardControl.ActualHeight, top));
 
-            Rectangle rectangle = DeserializeCard(data);
-
-            int sectorID = sector.ID;
-            double leftValue = 20 + ((sectorID - 1) * 80) + (2 * (sectorID-1));
-
-            rectangle.SetValue(Canvas.LeftProperty, leftValue);
-            rectangle.SetValue(Canvas.TopProperty, 690.0);
-
-            canvas.Children.Add(rectangle);
-
-            Debug.WriteLine($"Data: {data}");
+            Canvas.SetLeft(cardControl, left);
+            Canvas.SetTop(cardControl, top);
 
             e.Handled = true;
+            DragDrop.DoDragDrop(cardControl, Utilities.Serialize((Card)cardControl.DataContext), DragDropEffects.Move);
         }
 
-        #region Serialization
-
-        private string SerializeCard(Rectangle rectangle)
+        private void Border_Drop(object sender, DragEventArgs e)
         {
-            // Should be a card
-            var dataContext = rectangle.DataContext;
+            if (sender is not Border border || border.DataContext is not Sector sector || e.Source is not CardControl)
+                return;
 
-            return "TODO CARD";
-        }
+            string serializedString = (string)e.Data.GetData(DataFormats.Text);
 
-        private Rectangle DeserializeCard(string cardJson)
-        {
-            Rectangle rectangle = new Rectangle()
+            Card? card = JsonSerializer.Deserialize<Card>(serializedString);
+
+            if (card == null)
+                return;
+
+            try
             {
-                Stroke = Brushes.Black,
-                Fill = Brushes.Blue,
-                Height = 200,
-                Width = 60,
-            };
-
-            rectangle.SetValue(Panel.ZIndexProperty, 2);
-
-            return rectangle;
+                sector.AddCard(card);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"STRAUGHT TO JAIL. {ex.Message}");
+            }
         }
-
-        #endregion Serialization
     }
 }

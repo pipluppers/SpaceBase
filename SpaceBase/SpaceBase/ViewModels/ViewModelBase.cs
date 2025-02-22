@@ -2,7 +2,11 @@
 
 namespace SpaceBase
 {
-    public abstract class ViewModelBase : INotifyPropertyChanged
+    public abstract class ViewModelBase : PropertyChangedBase
+    {
+    }
+
+    public abstract class PropertyChangedBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 

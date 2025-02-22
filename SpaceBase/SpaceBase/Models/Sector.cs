@@ -1,6 +1,6 @@
 ﻿namespace SpaceBase.Models
 {
-    public class Sector
+    public class Sector : PropertyChangedBase
     {
         private readonly int _id;
         private Card? _activeCard;
@@ -17,7 +17,7 @@
         }
 
         public int ID { get => _id; }
-        public Card? ActiveCard { get => _activeCard; private set => _activeCard = value; }
+        public Card? ActiveCard { get => _activeCard; private set => SetProperty(ref _activeCard, value); }
         public List<Card> DeployedCards => _deployedCards;
 
         /// <summary>

@@ -1,13 +1,29 @@
-﻿namespace SpaceBase.Models
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace SpaceBase.Models
 {
-    public class Card
+    public class Card : ISerializable
     {
         private readonly int _sectorID;
         private readonly int _cost;
+
+        private readonly Action<Player, int, int> _effect;
         private readonly int _amount;
         private readonly int _secondaryAmount;
+        private readonly Action<Player, int, int> _deployedEffect;
         private readonly int _deployedAmount;
         private readonly int _deployedSecondaryAmount;
+
+        public Card(int sectorID, int cost, ActionType effectType, ActionType deployedEffectType, int amount, int deployedAmount)
+        {
+            _sectorID = sectorID;
+            _cost = cost;
+            EffectType = (ActionType)effectType;
+            DeployedEffectType = (ActionType)deployedEffectType;
+            _amount = amount;
+            _deployedAmount = deployedAmount;
+        }
 
         /// <summary>
         /// Shouldn't be used. Just to facilitate testing. Maybe remove later.
@@ -19,35 +35,63 @@
 
             _sectorID = sectorID;
             _cost = cost;
-            Effect = CardActions.GetAction(ActionType.AddGold);
+            _effect = CardActions.GetAction(ActionType.AddGold);
             _amount = 1;
             _secondaryAmount = 1;
-            DeployedEffect = CardActions.GetAction(ActionType.AddGold);
+            _deployedEffect = CardActions.GetAction(ActionType.AddGold);
             _deployedAmount = 1;
             _deployedSecondaryAmount = 1;
         }
 
-        public Card(int sectorID, int cost, Action<Player, int, int> effect, int amount, int? secondaryAmount,
-            Action<Player, int, int> deployedEffect, int deployedAmount, int? secondaryDeployedAmount)
+        [JsonConstructor]
+        public Card(int sectorID, int cost, ActionType effectType, int amount, int? secondaryAmount,
+            ActionType deployedEffectType, int deployedAmount, int? deployedSecondaryAmount)
         {
             if (sectorID < Constants.MinSectorID || sectorID > Constants.MaxSectorID)
                 throw new NotSupportedException($"The sector must be between {Constants.MinSectorID} and {Constants.MaxSectorID} inclusive.");
 
             _sectorID = sectorID;
             _cost = cost;
-            Effect = effect;
+            EffectType = effectType;
+            _effect = CardActions.GetAction(effectType);
             _amount = amount;
-            _secondaryAmount = secondaryAmount ?? -1;
+            _secondaryAmount = secondaryAmount ?? 0;
+            DeployedEffectType = deployedEffectType;
+            _deployedEffect = CardActions.GetAction(deployedEffectType);
             _deployedAmount = deployedAmount;
-            _secondaryAmount = secondaryDeployedAmount ?? -1;
-            DeployedEffect = deployedEffect;
+            _secondaryAmount = deployedSecondaryAmount ?? 0;
         }
 
+        [JsonPropertyOrder(1)]
         public int SectorID { get => _sectorID; }
+
+        [JsonPropertyOrder(2)]
         public int Cost { get => _cost; }
 
-        public Action<Player, int, int> Effect;
-        public Action<Player, int, int> DeployedEffect;
+        // For serialization
+        [JsonPropertyOrder(3), JsonConverter(typeof(JsonStringEnumConverter))]
+        public ActionType EffectType { get; }
+
+        [JsonPropertyOrder(4)]
+        public int Amount { get => _amount; }
+
+        [JsonPropertyOrder(5)]
+        public int? SecondaryAmount { get => _secondaryAmount; }
+
+        [JsonPropertyOrder(6), JsonConverter(typeof(JsonStringEnumConverter))]
+        public ActionType DeployedEffectType { get; }
+
+        [JsonPropertyOrder(7)]
+        public int DeployedAmount { get => _deployedAmount; }
+
+        [JsonPropertyOrder(8)]
+        public int? DeployedSecondaryAmount { get => _deployedSecondaryAmount; }
+
+        [JsonIgnore]
+        public Action<Player, int, int> Effect { get => _effect; }
+
+        [JsonIgnore]
+        public Action<Player, int, int> DeployedEffect { get => _deployedEffect; }
 
         /// <summary>
         /// Activates the active effect and updates the given player's resources.
@@ -55,7 +99,7 @@
         /// <param name="player">The player whose resource to update.</param>
         public void ActivateActiveEffect(Player player)
         {
-            Effect.Invoke(player, _amount, _secondaryAmount);
+            Effect.Invoke(player, Amount, _secondaryAmount);
         }
 
         /// <summary>
@@ -64,7 +108,23 @@
         /// <param name="player">The player whose resource to update.</param>
         public void ActivateDeployedEffect(Player player)
         {
-            DeployedEffect.Invoke(player, _deployedAmount, _deployedSecondaryAmount);
+            DeployedEffect.Invoke(player, DeployedAmount, _deployedSecondaryAmount);
+        }
+
+        public object? Deserialize(string str)
+        {
+            return JsonSerializer.Deserialize<Card>(str);
+        }
+
+        public static Card? DeserializeCard(string s)
+        {
+            return JsonSerializer.Deserialize<Card>(s);
+        }
+
+        public string Serialize()
+        {
+            string s = JsonSerializer.Serialize(this);
+            return s;
         }
     }
 }

@@ -25,6 +25,7 @@
 
         public const double CardHeight = 200;
         public const double CardWidth = 60;
+        public const double CostSectorBubbleWidthHeight = 20;
 
         public const double Left1 = 21;
         public const double Left2 = 103;
