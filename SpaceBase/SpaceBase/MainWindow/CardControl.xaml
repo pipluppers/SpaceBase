@@ -15,7 +15,7 @@
             <local:ActionTypeBackgroundConverter x:Key="ActionTypeBackgroundConverter"/>
         </Grid.Resources>
 
-        <Border Panel.ZIndex="2" AllowDrop="True" IsHitTestVisible="True" Drop="Border_Drop">
+        <Border Panel.ZIndex="2" AllowDrop="True" IsHitTestVisible="True">
             <Grid Background="RosyBrown">
                 <Grid.Resources>
                     <Style x:Key="DecorationBorder" TargetType="Border">
@@ -59,7 +59,6 @@
                 </Border>
             </Grid>
         </Border>
-        <Rectangle Panel.ZIndex="1" Height="{x:Static local:Constants.CardHeight}" Width="{x:Static local:Constants.CardWidth}" Stroke="Black" StrokeThickness="1" Fill="Transparent"
-                           AllowDrop="True" DragOver="SectorRectangle_DragOver" Drop="SectorRectangle_Drop"/>
+        <Rectangle Panel.ZIndex="1" Height="{x:Static local:Constants.CardHeight}" Width="{x:Static local:Constants.CardWidth}" Stroke="Black" StrokeThickness="1" Fill="Transparent"/>
     </Grid>
 </UserControl>

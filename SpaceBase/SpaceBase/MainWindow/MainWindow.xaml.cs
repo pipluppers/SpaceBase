@@ -28,19 +28,6 @@ namespace SpaceBase
             DataContext = new MainWindowViewModel();
         }
 
-        public static T? FindAncestor<T>(DependencyObject current) where T : class
-        {
-            while (current != null)
-            {
-                if (current is T ancestor)
-                {
-                    return ancestor;
-                }
-                current = VisualTreeHelper.GetParent(current);
-            }
-            return null;
-        }
-
         private bool _isDragging = false;
         private Point _dragStartPoint;
 
@@ -60,26 +47,31 @@ namespace SpaceBase
             if (!_isDragging || sender is not CardControl cardControl || e.LeftButton != MouseButtonState.Pressed)
                 return;
 
-            Canvas? canvas = Utilities.FindAncestor<Canvas>(cardControl);
-            if (canvas == null)
-                return;
+            //Canvas? canvas = Utilities.FindAncestor<Canvas>(cardControl);
+            //if (canvas == null)
+            //    return;
 
-            Point currentPosition = e.GetPosition(canvas); // Relative to the Canvas
+            //Point currentPosition = e.GetPosition(canvas); // Relative to the Canvas
 
-            double left = currentPosition.X - _dragStartPoint.X;
-            double top = currentPosition.Y - _dragStartPoint.Y;
+            //double left = currentPosition.X - _dragStartPoint.X;
+            //double top = currentPosition.Y - _dragStartPoint.Y;
 
-            // Keep rectangle within the bounds of the parent Canvas.
-            left = Math.Max(0, Math.Min(canvas.ActualWidth - cardControl.ActualWidth, left));
-            top = Math.Max(0, Math.Min(canvas.ActualHeight - cardControl.ActualHeight, top));
+            //// Keep rectangle within the bounds of the parent Canvas.
+            //left = Math.Max(0, Math.Min(canvas.ActualWidth - cardControl.ActualWidth, left));
+            //top = Math.Max(0, Math.Min(canvas.ActualHeight - cardControl.ActualHeight, top));
 
-            Canvas.SetLeft(cardControl, left);
-            Canvas.SetTop(cardControl, top);
+            //Canvas.SetLeft(cardControl, left);
+            //Canvas.SetTop(cardControl, top);
 
-            e.Handled = true;
+            //e.Handled = true;
             DragDrop.DoDragDrop(cardControl, Utilities.Serialize((Card)cardControl.DataContext), DragDropEffects.Move);
         }
 
+        /// <summary>
+        /// Adds the dragged card to the sector at the dropped location.
+        /// </summary>
+        /// <param name="sender">The dropped location.</param>
+        /// <param name="e">The arguments with the dragged card.</param>
         private void Border_Drop(object sender, DragEventArgs e)
         {
             if (sender is not Border border || border.DataContext is not Sector sector || e.Source is not CardControl)

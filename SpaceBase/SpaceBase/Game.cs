@@ -107,7 +107,7 @@ namespace SpaceBase.Models
 
                 PopulatePlayerStartingCards(reader);
 
-                int sectorID, cost, effect, effectAmount, deployedEffect, deployedEffectAmount;
+                int sectorID, cost, effect, effectAmount, deployedEffect, deployedEffectAmount, chargeEffect, chargeCubeLimit, requiredChargeCubes, chargeCardType;
                 int? secondaryEffectAmount, secondaryDeployedEffectAmount;
                 for (int i = 0; i < 6; ++i)
                 {
@@ -122,9 +122,24 @@ namespace SpaceBase.Models
                     deployedEffectAmount = reader.GetInt32(6);
                     secondaryDeployedEffectAmount = !reader.IsDBNull(7) ? reader.GetInt32(7) : null;
 
-                    _sector1Cards.Add(new Card(sectorID, cost,
-                        (ActionType)effect, effectAmount, secondaryEffectAmount,
-                        (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount));
+                    if (reader.IsDBNull(8))
+                    {
+                        _sector1Cards.Add(new Card(sectorID, cost,
+                            (ActionType)effect, effectAmount, secondaryEffectAmount,
+                            (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount));
+                    }
+                    else
+                    {
+                        chargeEffect = reader.GetInt32(8);
+                        requiredChargeCubes = reader.GetInt32(9);
+                        chargeCubeLimit = reader.GetInt32(10);
+                        chargeCardType = reader.GetInt32(11);
+
+                        _sector1Cards.Add(new ChargeCard(sectorID, cost,
+                            (ActionType)effect, effectAmount, secondaryEffectAmount,
+                            (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount,
+                            (ActionType)chargeEffect, requiredChargeCubes, chargeCubeLimit, (ChargeCardType)chargeCardType));
+                    }
                 }
             }
             catch (Exception ex)

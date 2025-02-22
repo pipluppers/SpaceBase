@@ -26,7 +26,6 @@
                 <Setter Property="Width" Value="{x:Static local:Constants.CardWidth}"/>
                 <Setter Property="Panel.ZIndex" Value="1"/>
                 <Setter Property="Fill" Value="Blue"/>
-                <Setter Property="AllowDrop" Value="True"/>
             </Style>
         </Canvas.Resources>
 
