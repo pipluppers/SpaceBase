@@ -15,16 +15,6 @@ namespace SpaceBase.Models
         private readonly int _deployedAmount;
         private readonly int _deployedSecondaryAmount;
 
-        public Card(int sectorID, int cost, ActionType effectType, ActionType deployedEffectType, int amount, int deployedAmount)
-        {
-            _sectorID = sectorID;
-            _cost = cost;
-            EffectType = (ActionType)effectType;
-            DeployedEffectType = (ActionType)deployedEffectType;
-            _amount = amount;
-            _deployedAmount = deployedAmount;
-        }
-
         /// <summary>
         /// Shouldn't be used. Just to facilitate testing. Maybe remove later.
         /// </summary>

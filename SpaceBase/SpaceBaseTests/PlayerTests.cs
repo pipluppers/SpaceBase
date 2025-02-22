@@ -74,16 +74,13 @@ namespace SpaceBaseTests
         public void PlayerCanGetAllDeployedCardEffects()
         {
             int sectorID = 2;
-            Action<Player, int, int> addGold = CardActions.GetAction(ActionType.AddGold);
-            Action<Player, int, int> addIncome = CardActions.GetAction(ActionType.AddIncome);
-            Action<Player, int, int> addVictory = CardActions.GetAction(ActionType.AddVictoryPoints);
             int deployedNumGoldToAdd = 11;
             int deployedNumIncomeToAdd = 5;
             int deployedNumVictoryPointsToAdd = 3;
 
-            var addGoldCard = new Card(sectorID, 2, addGold, 1, null, addGold, deployedNumGoldToAdd, null);
-            var addIncomeCard = new Card(sectorID, 2, addIncome, 1, null, addIncome, deployedNumIncomeToAdd, null);
-            var addVictoryPointsCard = new Card(sectorID, 2, addVictory, 1, null, addVictory, deployedNumVictoryPointsToAdd, null);
+            var addGoldCard = new Card(sectorID, 2, ActionType.AddGold, 1, null, ActionType.AddGold, deployedNumGoldToAdd, null);
+            var addIncomeCard = new Card(sectorID, 2, ActionType.AddIncome, 1, null, ActionType.AddIncome, deployedNumIncomeToAdd, null);
+            var addVictoryPointsCard = new Card(sectorID, 2, ActionType.AddVictoryPoints, 1, null, ActionType.AddVictoryPoints, deployedNumVictoryPointsToAdd, null);
 
             var player = new HumanPlayer(1);
             player.AddCard(addGoldCard);
@@ -108,12 +105,11 @@ namespace SpaceBaseTests
         public void PlayerCanAddGoldFromCardEffect()
         {
             int sectorID = 2;
-            Action<Player, int, int> addGold = CardActions.GetAction(ActionType.AddGold);
             int numGoldToAdd = 6;
             int deployedNumGoldToAdd = 4;
 
             var player = new HumanPlayer(1);
-            var card = new Card(sectorID, 0, addGold, numGoldToAdd, null, addGold, deployedNumGoldToAdd, null);
+            var card = new Card(sectorID, 0, ActionType.AddGold, numGoldToAdd, null, ActionType.AddGold, deployedNumGoldToAdd, null);
 
             Assert.That(player.Gold, Is.EqualTo(5), "Pre-test: Player should start with 5 gold.");
 
@@ -137,12 +133,11 @@ namespace SpaceBaseTests
         public void PlayerCanAddIncomeFromCardEffect()
         {
             int sectorID = 2;
-            Action<Player, int, int> addIncome = CardActions.GetAction(ActionType.AddIncome);
             int numIncomeToAdd = 6;
             int deployedNumIncomeToAdd = 4;
 
             var player = new HumanPlayer(1);
-            var card = new Card(sectorID, 0, addIncome, numIncomeToAdd, null, addIncome, deployedNumIncomeToAdd, null);
+            var card = new Card(sectorID, 0, ActionType.AddIncome, numIncomeToAdd, null, ActionType.AddIncome, deployedNumIncomeToAdd, null);
 
             Assert.That(player.Income, Is.EqualTo(0), "Pre-test: Player should start with 0 income.");
 
@@ -166,12 +161,11 @@ namespace SpaceBaseTests
         public void PlayerCanAddVictoryPointsFromCardEffect()
         {
             int sectorID = 2;
-            Action<Player, int, int> addIncome = CardActions.GetAction(ActionType.AddVictoryPoints);
             int numVictoryPointsToAdd = 6;
             int deployedNumVictoryPointsToAdd = 4;
 
             var player = new HumanPlayer(1);
-            var card = new Card(sectorID, 0, addIncome, numVictoryPointsToAdd, null, addIncome, deployedNumVictoryPointsToAdd, null);
+            var card = new Card(sectorID, 0, ActionType.AddVictoryPoints, numVictoryPointsToAdd, null, ActionType.AddVictoryPoints, deployedNumVictoryPointsToAdd, null);
 
             Assert.That(player.Income, Is.EqualTo(0), "Pre-test: Player should start with 0 victory points.");
 
