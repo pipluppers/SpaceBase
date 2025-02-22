@@ -83,7 +83,7 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <local:CardControl Grid.Row="0" Visibility="{Binding ActiveCard, Converter={StaticResource NullVisibilityConverter}, Mode=OneWay}" DataContext="{Binding ActiveCard}"/>
+                                <local:CardControl Grid.Row="0" Visibility="{Binding StationedCard, Converter={StaticResource NullVisibilityConverter}, Mode=OneWay}" DataContext="{Binding StationedCard}"/>
 
                                 <Border Grid.Row="1" Background="OrangeRed" BorderThickness="1" BorderBrush="Black" Width="30" Height="30" CornerRadius="50" HorizontalAlignment="Center" Margin="0,10,0,0" AllowDrop="False">
                                     <Label Content="{Binding ID}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>

@@ -31,7 +31,7 @@ namespace SpaceBaseTests
                 Assert.Multiple(() =>
                 {
                     Assert.That(sectors[i].ID, Is.EqualTo(i + 1));
-                    Assert.That(sectors[i].ActiveCard, Is.Null);
+                    Assert.That(sectors[i].StationedCard, Is.Null);
                     Assert.That(sectors[i].DeployedCards.Count, Is.EqualTo(0));
                 });
             }

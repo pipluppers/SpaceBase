@@ -2,10 +2,10 @@
 {
     public enum ActionType
     {
-        AddGold = 1,
+        AddCredits = 1,
         AddIncome = 2,
         AddVictoryPoints = 3,
-        AddGoldIncome = 4
+        AddCreditsIncome = 4
     }
 
     public static class CardActions
@@ -14,22 +14,22 @@
         {
             return actionType switch
             {
-                ActionType.AddGold => CardActions.AddGold,
+                ActionType.AddCredits => CardActions.AddCredits,
                 ActionType.AddIncome => CardActions.AddIncome,
                 ActionType.AddVictoryPoints => CardActions.AddVictoryPoints,
-                ActionType.AddGoldIncome => CardActions.AddGoldIncome,
+                ActionType.AddCreditsIncome => CardActions.AddCreditsIncome,
                 _ => throw new ArgumentOutOfRangeException(nameof(actionType), $"ActionType {actionType} is not valid"),
             };
         }
 
         /// <summary>
-        /// Adds the specified amount of gold to the player.
+        /// Adds the specified amount of credits to the player.
         /// </summary>
-        /// <param name="player">The player to get the gold.</param>
-        /// <param name="amount">The amount of gold to add.</param>
-        internal static void AddGold(Player player, int amount, int _)
+        /// <param name="player">The player to get the credits.</param>
+        /// <param name="amount">The amount of credits to add.</param>
+        internal static void AddCredits(Player player, int amount, int _)
         {
-            player.AddGold(amount);
+            player.AddCredits(amount);
         }
 
         /// <summary>
@@ -53,14 +53,14 @@
         }
 
         /// <summary>
-        /// Adds the specified amount of gold and income to the player.
+        /// Adds the specified amount of credits and income to the player.
         /// </summary>
-        /// <param name="player">The player to get the gold and income.</param>
-        /// <param name="amount">The amount of gold to add.</param>
+        /// <param name="player">The player to get the credits and income.</param>
+        /// <param name="amount">The amount of credits to add.</param>
         /// <param name="secondaryAmount">The amount of income to add.</param>
-        internal static void AddGoldIncome(Player player, int amount, int secondaryAmount)
+        internal static void AddCreditsIncome(Player player, int amount, int secondaryAmount)
         {
-            player.AddGold(amount);
+            player.AddCredits(amount);
             player.AddIncome(secondaryAmount);
         }
     }

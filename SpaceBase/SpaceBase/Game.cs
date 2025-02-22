@@ -196,7 +196,7 @@ namespace SpaceBase.Models
                 //   Current player can choose to buy and/or use charge cubes
                 //   Other players can choose to use charge cubes
 
-                // Reset current player's gold to income if applicable
+                // Reset current player's credits to income if applicable
 
                 UpdateNextPlayer();
 

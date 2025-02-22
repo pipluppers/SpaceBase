@@ -73,7 +73,7 @@ namespace SpaceBase
             if (value is not Action<Player, int, int> action)
                 return Brushes.Red;
 
-            if (action == CardActions.AddGold)
+            if (action == CardActions.AddCredits)
                 return Brushes.Yellow;
 
             if (action == CardActions.AddIncome)

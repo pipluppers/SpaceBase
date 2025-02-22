@@ -25,10 +25,10 @@ namespace SpaceBase.Models
 
             _sectorID = sectorID;
             _cost = cost;
-            _effect = CardActions.GetAction(ActionType.AddGold);
+            _effect = CardActions.GetAction(ActionType.AddCredits);
             _amount = 1;
             _secondaryAmount = 1;
-            _deployedEffect = CardActions.GetAction(ActionType.AddGold);
+            _deployedEffect = CardActions.GetAction(ActionType.AddCredits);
             _deployedAmount = 1;
             _deployedSecondaryAmount = 1;
         }
@@ -84,10 +84,10 @@ namespace SpaceBase.Models
         public Action<Player, int, int> DeployedEffect { get => _deployedEffect; }
 
         /// <summary>
-        /// Activates the active effect and updates the given player's resources.
+        /// Activates the stationed effect and updates the given player's resources.
         /// </summary>
         /// <param name="player">The player whose resource to update.</param>
-        public void ActivateActiveEffect(Player player)
+        public void ActivateStationedEffect(Player player)
         {
             Effect.Invoke(player, Amount, _secondaryAmount);
         }

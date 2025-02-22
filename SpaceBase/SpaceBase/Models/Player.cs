@@ -3,7 +3,7 @@
     public abstract class Player(int id)
     {
         private readonly Board _board = new();
-        private int _gold = 5;
+        private int _credits = 5;
         private int _income = 0;
         private int _victoryPoints = 0;
         private int _chargeCubes = 0;
@@ -13,28 +13,26 @@
 
         public Board Board { get => _board; }
         public int ID { get; } = id;
-        public int Gold { get => _gold; private set => _gold = value; }
+        public int Credits { get => _credits; private set => _credits = value; }
         public int Income { get => _income; private set => _income = value; }
         public int VictoryPoints { get => _victoryPoints; private set => _victoryPoints = value; }
         public int ChargeCubes { get => _chargeCubes; set => _chargeCubes = value; }
 
         /// <summary>
-        /// Adds the specified amount of gold to the player's gold pool.
+        /// Adds the specified amount of credits to the player's credits pool.
         /// </summary>
-        /// 
-        /// <param name="gold">The amount of gold to add.</param>
-        /// <exception cref="NotSupportedException"><paramref name="gold"/> cannot be negative.</exception>
-        public void AddGold(int gold)
+        /// <param name="credits">The amount of credits to add.</param>
+        /// <exception cref="NotSupportedException"><paramref name="credits"/> cannot be negative.</exception>
+        public void AddCredits(int credits)
         {
-            if (gold < 0) throw new NotSupportedException("This API cannot be used to subtract or reset gold.");
+            if (credits < 0) throw new NotSupportedException("This API cannot be used to subtract or reset credits.");
 
-            Gold += gold;
+            Credits += credits;
         }
 
         /// <summary>
         /// Adds the specified amount of income to the player's income pool.
         /// </summary>
-        /// 
         /// <param name="income">The amount of income to add.</param>
         /// <exception cref="NotSupportedException"><paramref name="income"/> cannot be negative.</exception>
         public void AddIncome(int income)
@@ -47,11 +45,8 @@
         /// <summary>
         /// Adds the specified amount of victory points to the player's income pool.
         /// </summary>
-        /// 
         /// <param name="victoryPoints">The amount of victory points to add.</param>
-        /// <remarks>
-        /// Fires the <see cref="SpaceBase.GameOverEventHandler{GameOverEventArgs}"/> event after reaching the victory threshold.
-        /// </remarks>
+        /// <remarks>Fires the <see cref="SpaceBase.GameOverEventHandler{GameOverEventArgs}"/> event after reaching the victory threshold.</remarks>
         public void AddVictoryPoints(int victoryPoints)
         {
             // Note: There is a card that removes victory points.
@@ -90,13 +85,13 @@
         }
 
         /// <summary>
-        /// Activates the effect of the active card at the given sector.
+        /// Activates the effect of the stationed card at the given sector.
         /// </summary>
         /// <param name="sectorID">The ID of the sector whose card to activate.</param>
         /// <exception cref="ArgumentOutOfRangeException">The ID is invalid.</exception>
         public void ActivateCardEffect(int sectorID)
         {
-            GetSector(sectorID).ActiveCard?.ActivateActiveEffect(this);
+            GetSector(sectorID).StationedCard?.ActivateStationedEffect(this);
         }
 
         /// <summary>
@@ -115,11 +110,11 @@
         }
 
         /// <summary>
-        /// Resets the player's gold to their cinom
+        /// Resets the player's credits to their income.
         /// </summary>
-        public void ResetGold()
+        public void ResetCredits()
         {
-            Gold = Income;
+            Credits = Income;
         }
 
         #region Overridable methods
