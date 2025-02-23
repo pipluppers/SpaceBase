@@ -71,7 +71,7 @@
         <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft5}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>
         <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft6}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>-->
         
-        <Grid Canvas.Left="0" Canvas.Top="680" Width="{Binding Width, ElementName=MainGameWindow}" Height="300" Background="Transparent" IsHitTestVisible="True" DataContext="{Binding Player}">
+        <Grid Canvas.Left="0" Canvas.Top="600" Width="{Binding Width, ElementName=MainGameWindow}" Height="244" Background="Transparent" IsHitTestVisible="True" DataContext="{Binding Player}">
             <ItemsControl Grid.Row="0" ItemsSource="{Binding Board.Sectors}" Margin="10,0,10,20">
                 <ItemsControl.Template>
                     <ControlTemplate>
@@ -104,6 +104,42 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+        </Grid>
+
+        <Grid Canvas.Left="0" Canvas.Top="840" Width="300" Height="90" Background="LightGray" Margin="10,0,10,0">
+            <Grid.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="Height" Value="{x:Static local:Constants.CostSectorBubbleWidthHeight}"/>
+                    <Setter Property="Width" Value="{x:Static local:Constants.CostSectorBubbleWidthHeight}"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="CornerRadius" Value="45"/>
+                    <Setter Property="BorderBrush" Value="Black"/>
+                </Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="FontSize" Value="15"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                </Style>
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Row="0" Grid.Column="0" Background="Yellow"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Player.Credits, Mode=OneWay}"/>
+
+            <Border Grid.Row="1" Grid.Column="0" Background="LightGreen"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Player.Income, Mode=OneWay}"/>
+
+            <Border Grid.Row="2" Grid.Column="0" Background="DodgerBlue"/>
+            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Player.VictoryPoints, Mode=OneWay}"/>
         </Grid>
     </Canvas>
 </Window>

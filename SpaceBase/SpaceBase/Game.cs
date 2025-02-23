@@ -195,46 +195,6 @@
         }
 
         /// <summary>
-        /// Creates a card based on the current row in the table.
-        /// </summary>
-        /// <param name="reader">The iterator over the current row in the table.</param>
-        /// <returns>A card based on the table row.</returns>
-        private static Card CreateCard(SqlDataReader reader)
-        {
-            int level, sectorID, cost, effect, effectAmount, deployedEffect, deployedEffectAmount, chargeEffect, chargeCubeLimit, requiredChargeCubes, chargeCardType;
-            int? secondaryEffectAmount, secondaryDeployedEffectAmount;
-
-            level = reader.GetInt32(0);
-            sectorID = reader.GetInt32(1);
-            cost = reader.GetInt32(2);
-            effect = reader.GetInt32(3);
-            effectAmount = reader.GetInt32(4);
-            secondaryEffectAmount = !reader.IsDBNull(5) ? reader.GetInt32(5) : null;
-            deployedEffect = reader.GetInt32(6);
-            deployedEffectAmount = reader.GetInt32(7);
-            secondaryDeployedEffectAmount = !reader.IsDBNull(8) ? reader.GetInt32(7) : null;
-
-            if (reader.IsDBNull(9))
-            {
-                return new Card(level, sectorID, cost,
-                    (ActionType)effect, effectAmount, secondaryEffectAmount,
-                    (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount);
-            }
-            else
-            {
-                chargeEffect = reader.GetInt32(9);
-                requiredChargeCubes = reader.GetInt32(10);
-                chargeCubeLimit = reader.GetInt32(11);
-                chargeCardType = reader.GetInt32(12);
-
-                return new ChargeCard(level, sectorID, cost,
-                    (ActionType)effect, effectAmount, secondaryEffectAmount,
-                    (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount,
-                    (ActionType)chargeEffect, requiredChargeCubes, chargeCubeLimit, (ChargeCardType)chargeCardType);
-            }
-        }
-
-        /// <summary>
         /// Reads environment variables and returns the SqlConnection object.
         /// </summary>
         /// <returns>The connection object.</returns>
@@ -253,6 +213,43 @@
             connectionString += "Encrypt=False;Trusted_Connection=True";
 
             return new SqlConnection(connectionString);
+        }
+
+        /// <summary>
+        /// Creates a card based on the current row in the table.
+        /// </summary>
+        /// <param name="reader">The iterator over the current row in the table.</param>
+        /// <returns>A card based on the table row.</returns>
+        private static Card CreateCard(SqlDataReader reader)
+        {
+            int level = reader.GetInt32(0);
+            int sectorID = reader.GetInt32(1);
+            int cost = reader.GetInt32(2);
+            int effect = reader.GetInt32(3);
+            int effectAmount = reader.GetInt32(4);
+            int? secondaryEffectAmount = !reader.IsDBNull(5) ? reader.GetInt32(5) : null;
+            int deployedEffect = reader.GetInt32(6);
+            int deployedEffectAmount = reader.GetInt32(7);
+            int? secondaryDeployedEffectAmount = !reader.IsDBNull(8) ? reader.GetInt32(7) : null;
+
+            if (reader.IsDBNull(9))
+            {
+                return new Card(level, sectorID, cost,
+                    (ActionType)effect, effectAmount, secondaryEffectAmount,
+                    (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount);
+            }
+            else
+            {
+                int chargeEffect = reader.GetInt32(9);
+                int requiredChargeCubes = reader.GetInt32(10);
+                int chargeCubeLimit = reader.GetInt32(11);
+                int chargeCardType = reader.GetInt32(12);
+
+                return new ChargeCard(level, sectorID, cost,
+                    (ActionType)effect, effectAmount, secondaryEffectAmount,
+                    (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount,
+                    (ActionType)chargeEffect, requiredChargeCubes, chargeCubeLimit, (ChargeCardType)chargeCardType);
+            }
         }
 
         /// <summary>
