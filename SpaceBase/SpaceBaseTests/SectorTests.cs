@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using SpaceBase;
 using SpaceBase.Models;
 
 namespace SpaceBaseTests
@@ -23,7 +24,7 @@ namespace SpaceBaseTests
             int sectorID = 5;
             int cardSectorID = 1;
 
-            var card = new Card(cardSectorID, 5);
+            var card = new Card(0, cardSectorID, 5, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null);
             var sector = new Sector(sectorID, null);
 
             Assert.Multiple(() =>
@@ -40,7 +41,7 @@ namespace SpaceBaseTests
 
             for (int i = 1; i < 13; ++i)
             {
-                var card = new Card(i, cost);
+                var card = new Card(1, i, cost, ActionType.AddCredits, cost, null, ActionType.AddCredits, cost, null);
                 var sector = new Sector(i, card);
 
                 Assert.Multiple(() =>
@@ -60,8 +61,8 @@ namespace SpaceBaseTests
             int cost1 = 0;
             int cost2 = 8;
 
-            var card1 = new Card(sectorID, cost1);
-            var card2 = new Card(sectorID, cost2);
+            var card1 = new Card(0, sectorID, cost1, ActionType.AddCredits, cost1, null, ActionType.AddCredits, cost1, null);
+            var card2 = new Card(2, sectorID, cost2, ActionType.AddCredits, cost2, null, ActionType.AddCredits, cost2, null);
 
             var sector = new Sector(sectorID, card1);
             sector.AddCard(card2);

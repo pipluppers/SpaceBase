@@ -6,7 +6,8 @@
         AddIncome = 2,
         AddVictoryPoints = 3,
         AddCreditsIncome = 4,
-        AddCreditsVictoryPoints = 5
+        AddCreditsVictoryPoints = 5,
+        ClaimCardsAtLevel = 6
     }
 
     public static class CardActions
@@ -20,6 +21,7 @@
                 ActionType.AddVictoryPoints => CardActions.AddVictoryPoints,
                 ActionType.AddCreditsIncome => CardActions.AddCreditsIncome,
                 ActionType.AddCreditsVictoryPoints => CardActions.AddCreditsVictoryPoints,
+                ActionType.ClaimCardsAtLevel => CardActions.ClaimCardsAtLevel,
                 _ => throw new ArgumentOutOfRangeException(nameof(actionType), $"ActionType {actionType} is not valid"),
             };
         }
@@ -76,6 +78,29 @@
         {
             player.AddCredits(amount);
             player.AddVictoryPoints(secondaryAmount);
+        }
+
+        /// <summary>
+        /// Claims the specified amount of cards at the specified level.
+        /// </summary>
+        /// <param name="player">The player to claim the cards.</param>
+        /// <param name="numCardsToClaim">The number of cards to claim.</param>
+        /// <param name="level">The level at which to claim the cards.</param>
+        internal static void ClaimCardsAtLevel(Player player, int numCardsToClaim, int level)
+        {
+            // TODO
+            // Wait for user input
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="player">The player whose dice roll is affected.</param>
+        /// <param name="amount">The amount to add to the sum of the dice roll.</param>
+        internal static void AddToSum(Player player, int amount)
+        {
+            // TODO
+            // Wait for user input
         }
 
     }

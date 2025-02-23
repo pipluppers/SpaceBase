@@ -1,16 +1,12 @@
-﻿using System.Windows.Media.Effects;
-using System.Windows.Media.Media3D;
-
-namespace SpaceBase.Models
+﻿namespace SpaceBase.Models
 {
     public class Game
     {
         private readonly List<Player> _players;
-        private readonly ObservableCollection<Card> _level1Cards;
-        private List<Card> _sector2Cards = [];
-        private List<Card> _sector3Cards = [];
-        private List<Card> _sectorFinalCards = [];
-        private int _maxNumRounds;
+        private readonly ObservableCollection<Card?> _level1Cards;
+        private readonly ObservableCollection<Card?> _level2Cards;
+        private readonly ObservableCollection<Card?> _level3Cards;
+        private readonly int _maxNumRounds;
         private int _roundNumber;
         private int _turnNumber;
         private int _currentPlayer = 0;
@@ -36,6 +32,8 @@ namespace SpaceBase.Models
             Level2Deck = [];
             Level3Deck = [];
             _level1Cards = [];
+            _level2Cards = [];
+            _level3Cards = [];
 
             _players = new List<Player>(numPlayers);
 
@@ -64,7 +62,9 @@ namespace SpaceBase.Models
 
         public int RoundNumber { get => _roundNumber; }
 
-        public ObservableCollection<Card> Level1Cards { get => _level1Cards; }
+        public ObservableCollection<Card?> Level1Cards { get => _level1Cards; }
+        public ObservableCollection<Card?> Level2Cards { get => _level2Cards; }
+        public ObservableCollection<Card?> Level3Cards { get => _level3Cards; }
 
         public Stack<Card> Level1Deck { get; }
         public Stack<Card> Level2Deck { get; }
@@ -109,10 +109,7 @@ namespace SpaceBase.Models
                 return;
 
             // Find the card
-            int cardLevel;
-            if (args.AddedCard.Cost < 6) cardLevel = 1;
-            else if (args.AddedCard.Cost > 12) cardLevel = 2;
-            else cardLevel = 3;
+            int cardLevel = args.AddedCard.Level;
 
             if (cardLevel == 1)
             {
@@ -124,6 +121,28 @@ namespace SpaceBase.Models
                     Level1Cards[index] = card;
                 else
                     Level1Cards[index] = null;
+            }
+            else if (cardLevel == 2)
+            {
+                int index = Level2Cards.IndexOf(args.AddedCard);
+                if (index == -1)
+                    return;
+
+                if (Level2Deck.TryPop(out Card? card) && card != null)
+                    Level2Cards[index] = card;
+                else
+                    Level2Cards[index] = null;
+            }
+            else
+            {
+                int index = Level3Cards.IndexOf(args.AddedCard);
+                if (index == -1)
+                    return;
+
+                if (Level3Deck.TryPop(out Card? card) && card != null)
+                    Level3Cards[index] = card;
+                else
+                    Level3Cards[index] = null;
             }
         }
 
@@ -145,78 +164,73 @@ namespace SpaceBase.Models
 
                 PopulatePlayerStartingCards(reader);
 
-                int sectorID, cost, effect, effectAmount, deployedEffect, deployedEffectAmount, chargeEffect, chargeCubeLimit, requiredChargeCubes, chargeCardType;
-                int? secondaryEffectAmount, secondaryDeployedEffectAmount;
-                for (int i = 0; i < 6; ++i)
-                {
-                    reader.Read();
-
-                    sectorID = reader.GetInt32(0);
-                    cost = reader.GetInt32(1);
-                    effect = reader.GetInt32(2);
-                    effectAmount = reader.GetInt32(3);
-                    secondaryEffectAmount = !reader.IsDBNull(4) ? reader.GetInt32(4) : null;
-                    deployedEffect = reader.GetInt32(5);
-                    deployedEffectAmount = reader.GetInt32(6);
-                    secondaryDeployedEffectAmount = !reader.IsDBNull(7) ? reader.GetInt32(7) : null;
-
-                    if (reader.IsDBNull(8))
-                    {
-                        Level1Cards.Add(new Card(sectorID, cost,
-                            (ActionType)effect, effectAmount, secondaryEffectAmount,
-                            (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount));
-                    }
-                    else
-                    {
-                        chargeEffect = reader.GetInt32(8);
-                        requiredChargeCubes = reader.GetInt32(9);
-                        chargeCubeLimit = reader.GetInt32(10);
-                        chargeCardType = reader.GetInt32(11);
-
-                        Level1Cards.Add(new ChargeCard(sectorID, cost,
-                            (ActionType)effect, effectAmount, secondaryEffectAmount,
-                            (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount,
-                            (ActionType)chargeEffect, requiredChargeCubes, chargeCubeLimit, (ChargeCardType)chargeCardType));
-                    }
-                }
-
                 while (true)
                 {
                     if (!reader.Read())
                         break;
 
-                    sectorID = reader.GetInt32(0);
-                    cost = reader.GetInt32(1);
-                    effect = reader.GetInt32(2);
-                    effectAmount = reader.GetInt32(3);
-                    secondaryEffectAmount = !reader.IsDBNull(4) ? reader.GetInt32(4) : null;
-                    deployedEffect = reader.GetInt32(5);
-                    deployedEffectAmount = reader.GetInt32(6);
-                    secondaryDeployedEffectAmount = !reader.IsDBNull(7) ? reader.GetInt32(7) : null;
+                    var card = CreateCard(reader);
 
-                    if (reader.IsDBNull(8))
+                    if (card.Level == 1)
                     {
-                        Level1Deck.Push(new Card(sectorID, cost,
-                            (ActionType)effect, effectAmount, secondaryEffectAmount,
-                            (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount));
+                        if (Level1Cards.Count >= 6) Level1Deck.Push(card);
+                        else Level1Cards.Add(card);
                     }
-                    else
+                    else if (card.Level == 2)
                     {
-                        chargeEffect = reader.GetInt32(8);
-                        requiredChargeCubes = reader.GetInt32(9);
-                        chargeCubeLimit = reader.GetInt32(10);
-                        chargeCardType = reader.GetInt32(11);
-
-                        Level1Deck.Push(new ChargeCard(sectorID, cost,
-                            (ActionType)effect, effectAmount, secondaryEffectAmount,
-                            (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount,
-                            (ActionType)chargeEffect, requiredChargeCubes, chargeCubeLimit, (ChargeCardType)chargeCardType));
+                        if (Level2Cards.Count >= 6) Level2Deck.Push(card);
+                        else Level2Cards.Add(card);
+                    }
+                    else if (card.Level == 3)
+                    {
+                        if (Level3Cards.Count >= 6) Level3Deck.Push(card);
+                        else Level3Cards.Add(card);
                     }
                 }
             }
             catch (Exception ex)
             {
                 Trace.WriteLine($"Error loading the cards from the database: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Creates a card based on the current row in the table.
+        /// </summary>
+        /// <param name="reader">The iterator over the current row in the table.</param>
+        /// <returns>A card based on the table row.</returns>
+        private static Card CreateCard(SqlDataReader reader)
+        {
+            int level, sectorID, cost, effect, effectAmount, deployedEffect, deployedEffectAmount, chargeEffect, chargeCubeLimit, requiredChargeCubes, chargeCardType;
+            int? secondaryEffectAmount, secondaryDeployedEffectAmount;
+
+            level = reader.GetInt32(0);
+            sectorID = reader.GetInt32(1);
+            cost = reader.GetInt32(2);
+            effect = reader.GetInt32(3);
+            effectAmount = reader.GetInt32(4);
+            secondaryEffectAmount = !reader.IsDBNull(5) ? reader.GetInt32(5) : null;
+            deployedEffect = reader.GetInt32(6);
+            deployedEffectAmount = reader.GetInt32(7);
+            secondaryDeployedEffectAmount = !reader.IsDBNull(8) ? reader.GetInt32(7) : null;
+
+            if (reader.IsDBNull(9))
+            {
+                return new Card(level, sectorID, cost,
+                    (ActionType)effect, effectAmount, secondaryEffectAmount,
+                    (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount);
+            }
+            else
+            {
+                chargeEffect = reader.GetInt32(9);
+                requiredChargeCubes = reader.GetInt32(10);
+                chargeCubeLimit = reader.GetInt32(11);
+                chargeCardType = reader.GetInt32(12);
+
+                return new ChargeCard(level, sectorID, cost,
+                    (ActionType)effect, effectAmount, secondaryEffectAmount,
+                    (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount,
+                    (ActionType)chargeEffect, requiredChargeCubes, chargeCubeLimit, (ChargeCardType)chargeCardType);
             }
         }
 
@@ -247,27 +261,13 @@ namespace SpaceBase.Models
         /// <param name="reader">The reader object over the data.</param>
         private void PopulatePlayerStartingCards(SqlDataReader reader)
         {
-            int sectorID, cost, effect, effectAmount, deployedEffect, deployedEffectAmount;
-            int? secondaryEffectAmount, secondaryDeployedEffectAmount;
             for (int i = 0; i < 12; ++i)
             {
                 reader.Read();
 
-                sectorID = reader.GetInt32(0);
-                cost = reader.GetInt32(1);
-                effect = reader.GetInt32(2);
-                effectAmount = reader.GetInt32(3);
-                secondaryEffectAmount = !reader.IsDBNull(4) ? reader.GetInt32(4) : null;
-                deployedEffect = reader.GetInt32(5);
-                deployedEffectAmount = reader.GetInt32(6);
-                secondaryDeployedEffectAmount = !reader.IsDBNull(7) ? reader.GetInt32(7) : null;
+                var card = CreateCard(reader);
 
-                foreach (var player in _players)
-                {
-                    player.Board.Sectors[i].AddCard(new Card(sectorID, cost,
-                        (ActionType)effect, effectAmount, secondaryEffectAmount,
-                        (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount));
-                }
+                _players.ForEach((player) => player.AddCard(card));
             }
         }
 

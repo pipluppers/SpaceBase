@@ -8,6 +8,8 @@
         internal const int VictoryThreshold = 40;
         internal const int MinSectorID = 1;
         internal const int MaxSectorID = 12;
+        internal const int MinCardLevel = 0;
+        internal const int MaxCardLevel = 3;
 
         #region Database constants
 

@@ -12,13 +12,17 @@ namespace SpaceBase.Models
 
     public abstract class CardBase : ISerializable
     {
+        private protected int _level;
         private protected int _sectorID;
         private protected int _cost;
 
-        [JsonPropertyOrder(1)]
-        public int SectorID { get => _sectorID; }
+        [JsonPropertyOrder(0)]
+        public int Level { get => _level; }
 
         [JsonPropertyOrder(2)]
+        public int SectorID { get => _sectorID; }
+
+        [JsonPropertyOrder(3)]
         public int Cost { get => _cost; }
 
         [JsonIgnore]
@@ -56,12 +60,23 @@ namespace SpaceBase.Models
         private readonly int _deployedSecondaryAmount;
 
         [JsonConstructor]
-        public Card(int sectorID, int cost, ActionType effectType, int amount, int? secondaryAmount,
+        public Card(int level, int sectorID, int cost, ActionType effectType, int amount, int? secondaryAmount,
             ActionType deployedEffectType, int deployedAmount, int? deployedSecondaryAmount)
         {
-            if (sectorID < Constants.MinSectorID || sectorID > Constants.MaxSectorID)
-                throw new NotSupportedException($"The sector must be between {Constants.MinSectorID} and {Constants.MaxSectorID} inclusive.");
+            if (level < Constants.MinCardLevel || level > Constants.MaxCardLevel)
+                throw new ArgumentOutOfRangeException($"The card level must be between {Constants.MinCardLevel} and {Constants.MaxCardLevel} inclusive.");
 
+            if (level == 1 && (cost < 2 || cost > 5))
+                throw new ArgumentOutOfRangeException(nameof(cost), "If the level is 1, then the cost must be between 2 and 5.");
+            else if (level == 2 && (cost < 7 || cost > 9))
+                throw new ArgumentOutOfRangeException(nameof(cost), "If the level is 2, then the cost must be between 7 and 9.");
+            else if (level == 3 && (cost < 12 || cost > 14))
+                throw new ArgumentOutOfRangeException(nameof(cost), "If the level is 3, then the cost must be between 12 and 14.");
+
+            if (sectorID < Constants.MinSectorID || sectorID > Constants.MaxSectorID)
+                throw new ArgumentOutOfRangeException($"The sector must be between {Constants.MinSectorID} and {Constants.MaxSectorID} inclusive.");
+
+            _level = level;
             _sectorID = sectorID;
             _cost = cost;
             EffectType = effectType;
@@ -74,23 +89,22 @@ namespace SpaceBase.Models
             _deployedSecondaryAmount = deployedSecondaryAmount ?? 0;
         }
 
-        // For serialization
-        [JsonPropertyOrder(3), JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonPropertyOrder(4), JsonConverter(typeof(JsonStringEnumConverter))]
         public ActionType EffectType { get; }
 
-        [JsonPropertyOrder(4)]
+        [JsonPropertyOrder(5)]
         public int Amount { get => _amount; }
 
-        [JsonPropertyOrder(5)]
+        [JsonPropertyOrder(6)]
         public int? SecondaryAmount { get => _secondaryAmount; }
 
-        [JsonPropertyOrder(6), JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonPropertyOrder(7), JsonConverter(typeof(JsonStringEnumConverter))]
         public ActionType DeployedEffectType { get; }
 
-        [JsonPropertyOrder(7)]
+        [JsonPropertyOrder(8)]
         public int DeployedAmount { get => _deployedAmount; }
 
-        [JsonPropertyOrder(8)]
+        [JsonPropertyOrder(9)]
         public int? DeployedSecondaryAmount { get => _deployedSecondaryAmount; }
 
         [JsonIgnore]
@@ -127,7 +141,8 @@ namespace SpaceBase.Models
             if (obj is not Card otherCard)
                 return false;
 
-            return SectorID == otherCard.SectorID &&
+            return Level == otherCard.Level &&
+                SectorID == otherCard.SectorID &&
                 Cost == otherCard.Cost &&
                 EffectType == otherCard.EffectType &&
                 Amount == otherCard.Amount &&
@@ -139,26 +154,7 @@ namespace SpaceBase.Models
 
         public override int GetHashCode()
         {
-            return SectorID * 17 + Cost * 17 + (int)EffectType * 17 + (int)DeployedEffectType * 17;
-        }
-
-
-        /// <summary>
-        /// Shouldn't be used. Just to facilitate testing. Maybe remove later.
-        /// </summary>
-        public Card(int sectorID, int cost)
-        {
-            if (sectorID < 1 || sectorID > 12)
-                throw new ArgumentOutOfRangeException(nameof(sectorID), "The sector must be between 1 and 12 inclusive.");
-
-            _sectorID = sectorID;
-            _cost = cost;
-            _effect = CardActions.GetAction(ActionType.AddCredits);
-            _amount = 1;
-            _secondaryAmount = 1;
-            _deployedEffect = CardActions.GetAction(ActionType.AddCredits);
-            _deployedAmount = 1;
-            _deployedSecondaryAmount = 1;
+            return Level * 17 + SectorID * 17 + Cost * 17 + (int)EffectType * 17 + (int)DeployedEffectType * 17;
         }
 
     }
@@ -175,10 +171,10 @@ namespace SpaceBase.Models
         private int _numChargeCubes;
 
         [JsonConstructor]
-        public ChargeCard(int sectorID, int cost, ActionType effectType, int amount, int? secondaryAmount,
+        public ChargeCard(int level, int sectorID, int cost, ActionType effectType, int amount, int? secondaryAmount,
             ActionType deployedEffectType, int deployedAmount, int? deployedSecondaryAmount,
             ActionType chargeEffectType, int requiredChargeCubes, int chargeCubeLimit, ChargeCardType chargeCardType)
-            : base(sectorID, cost, effectType, amount, secondaryAmount, deployedEffectType, deployedAmount, deployedSecondaryAmount)
+            : base(level, sectorID, cost, effectType, amount, secondaryAmount, deployedEffectType, deployedAmount, deployedSecondaryAmount)
         {
             _numChargeCubes = 0;
             ChargeEffectType = chargeEffectType;
@@ -188,16 +184,16 @@ namespace SpaceBase.Models
             ChargeCardType = chargeCardType;
         }
 
-        [JsonPropertyOrder(9), JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonPropertyOrder(10), JsonConverter(typeof(JsonStringEnumConverter))]
         public ActionType ChargeEffectType { get; }
 
-        [JsonPropertyOrder(10)]
+        [JsonPropertyOrder(11)]
         public int RequiredChargeCubes { get; }
 
-        [JsonPropertyOrder(11)]
+        [JsonPropertyOrder(12)]
         public int ChargeCubeLimit { get; }
 
-        [JsonPropertyOrder(12), JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonPropertyOrder(13), JsonConverter(typeof(JsonStringEnumConverter))]
         public ChargeCardType ChargeCardType { get; }
 
         [JsonIgnore]
@@ -232,15 +228,10 @@ namespace SpaceBase.Models
             if (obj is not ChargeCard otherCard)
                 return false;
 
-            return SectorID == otherCard.SectorID &&
-                Cost == otherCard.Cost &&
-                EffectType == otherCard.EffectType &&
-                Amount == otherCard.Amount &&
-                SecondaryAmount == otherCard.SecondaryAmount &&
-                DeployedEffectType == otherCard.DeployedEffectType &&
-                DeployedAmount == otherCard.DeployedAmount &&
-                DeployedSecondaryAmount == otherCard.DeployedSecondaryAmount &&
-                ChargeEffectType == otherCard.ChargeEffectType &&
+            if (!base.Equals(obj))
+                return false;
+
+            return ChargeEffectType == otherCard.ChargeEffectType &&
                 RequiredChargeCubes == otherCard.RequiredChargeCubes &&
                 ChargeCubeLimit == otherCard.ChargeCubeLimit &&
                 ChargeCardType == otherCard.ChargeCardType;
@@ -248,7 +239,7 @@ namespace SpaceBase.Models
 
         public override int GetHashCode()
         {
-            return SectorID * 17 + Cost * 17 + (int)EffectType * 17 + (int)DeployedEffectType * 17 + (int)ChargeEffectType * 17;
+            return base.GetHashCode() + (int)EffectType * 17 + (int)DeployedEffectType * 17 + (int)ChargeEffectType * 17;
         }
     }
 
@@ -282,13 +273,14 @@ namespace SpaceBase.Models
             if (obj is not Card otherCard)
                 return false;
 
-            return SectorID == otherCard.SectorID &&
+            return Level == otherCard.Level &&
+                SectorID == otherCard.SectorID &&
                 Cost == otherCard.Cost;
         }
 
         public override int GetHashCode()
         {
-            return SectorID * 17 + Cost * 17;
+            return Level * 17 + SectorID * 17 + Cost * 17;
         }
     }
 }

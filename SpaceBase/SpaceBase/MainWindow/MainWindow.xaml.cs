@@ -74,7 +74,7 @@ namespace SpaceBase
         /// <param name="e">The arguments with the dragged card.</param>
         private void Border_Drop(object sender, DragEventArgs e)
         {
-            if (sender is not Border border || border.DataContext is not Sector sector || e.Source is not CardControl)
+            if (sender is not Border border || e.Source is not CardControl)
                 return;
 
             string serializedString = (string)e.Data.GetData(DataFormats.Text);
