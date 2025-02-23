@@ -25,7 +25,7 @@
 
         public const string MainCanvasName = "MainCanvas";
 
-        public const double CardHeight = 200;
+        public const double CardHeight = 180;
         public const double CardWidth = 60;
         public const double CostSectorBubbleWidthHeight = 20;
 
