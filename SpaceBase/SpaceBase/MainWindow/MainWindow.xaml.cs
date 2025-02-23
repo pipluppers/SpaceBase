@@ -44,7 +44,7 @@ namespace SpaceBase
 
         private void CardControl_MouseMove(object sender, MouseEventArgs e)
         {
-            if (!_isDragging || sender is not CardControl cardControl || e.LeftButton != MouseButtonState.Pressed)
+            if (!_isDragging || sender is not CardControl cardControl || cardControl.DataContext is not Card card || e.LeftButton != MouseButtonState.Pressed)
                 return;
 
             //Canvas? canvas = Utilities.FindAncestor<Canvas>(cardControl);
@@ -64,7 +64,7 @@ namespace SpaceBase
             //Canvas.SetTop(cardControl, top);
 
             //e.Handled = true;
-            DragDrop.DoDragDrop(cardControl, Utilities.Serialize((Card)cardControl.DataContext), DragDropEffects.Move);
+            DragDrop.DoDragDrop(cardControl, Utilities.Serialize(card), DragDropEffects.Move);
         }
 
         /// <summary>
@@ -84,9 +84,16 @@ namespace SpaceBase
             if (card == null)
                 return;
 
+            Grid? grid = Utilities.FindAncestor<Grid>(border);
+            if (grid == null)
+                return;
+
+            if (grid.DataContext is not Player player)
+                return;
+
             try
             {
-                sector.AddCard(card);
+                player.AddCard(card);
             }
             catch (Exception ex)
             {

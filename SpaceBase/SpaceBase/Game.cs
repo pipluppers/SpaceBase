@@ -6,7 +6,7 @@ namespace SpaceBase.Models
     public class Game
     {
         private readonly List<Player> _players;
-        private readonly ObservableCollection<Card> _sector1Cards;
+        private readonly ObservableCollection<Card> _level1Cards;
         private List<Card> _sector2Cards = [];
         private List<Card> _sector3Cards = [];
         private List<Card> _sectorFinalCards = [];
@@ -32,12 +32,16 @@ namespace SpaceBase.Models
             _maxNumRounds = maxNumRounds;
             RoundOverEvent += MaxNumRoundsHandler;
 
-            _sector1Cards = [];
+            Level1Deck = [];
+            Level2Deck = [];
+            Level3Deck = [];
+            _level1Cards = [];
 
             _players = new List<Player>(numPlayers);
 
             var humanPlayer = new HumanPlayer(1);
             humanPlayer.PlayerReachedVictoryThresholdEvent += BeginGameOverRoutine;
+            humanPlayer.AddCardToSectorEvent += AddCardToSectorHandler;
             DiceRollEvent += humanPlayer.ChooseDiceRoll;
             _players.Add(humanPlayer);
 
@@ -45,6 +49,7 @@ namespace SpaceBase.Models
             {
                 var player = new ComputerPlayer(i + 1);
                 player.PlayerReachedVictoryThresholdEvent += BeginGameOverRoutine;
+                player.AddCardToSectorEvent += AddCardToSectorHandler;
                 DiceRollEvent += player.ChooseDiceRoll;
 
                 _players.Add(player);
@@ -59,7 +64,11 @@ namespace SpaceBase.Models
 
         public int RoundNumber { get => _roundNumber; }
 
-        public ObservableCollection<Card> Sector1Cards { get => _sector1Cards; }
+        public ObservableCollection<Card> Level1Cards { get => _level1Cards; }
+
+        public Stack<Card> Level1Deck { get; }
+        public Stack<Card> Level2Deck { get; }
+        public Stack<Card> Level3Deck { get; }
 
         #endregion Properties
 
@@ -87,6 +96,35 @@ namespace SpaceBase.Models
         {
             if (args.EndingRoundNumber == _maxNumRounds)
                 _isGameOver = true;
+        }
+
+        /// <summary>
+        /// Draws a new card from the appropriate deck and replaces the added card.
+        /// </summary>
+        /// <param name="sender">The player.</param>
+        /// <param name="args">The arguments describing the added card.</param>
+        private void AddCardToSectorHandler(object sender, AddCardToSectorEventArgs args)
+        {
+            if (sender == null || args == null)
+                return;
+
+            // Find the card
+            int cardLevel;
+            if (args.AddedCard.Cost < 6) cardLevel = 1;
+            else if (args.AddedCard.Cost > 12) cardLevel = 2;
+            else cardLevel = 3;
+
+            if (cardLevel == 1)
+            {
+                int index = Level1Cards.IndexOf(args.AddedCard);
+                if (index == -1)
+                    return;
+
+                if (Level1Deck.TryPop(out Card? card) && card != null)
+                    Level1Cards[index] = card;
+                else
+                    Level1Cards[index] = null;
+            }
         }
 
         /// <summary>
@@ -124,7 +162,7 @@ namespace SpaceBase.Models
 
                     if (reader.IsDBNull(8))
                     {
-                        _sector1Cards.Add(new Card(sectorID, cost,
+                        Level1Cards.Add(new Card(sectorID, cost,
                             (ActionType)effect, effectAmount, secondaryEffectAmount,
                             (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount));
                     }
@@ -135,7 +173,41 @@ namespace SpaceBase.Models
                         chargeCubeLimit = reader.GetInt32(10);
                         chargeCardType = reader.GetInt32(11);
 
-                        _sector1Cards.Add(new ChargeCard(sectorID, cost,
+                        Level1Cards.Add(new ChargeCard(sectorID, cost,
+                            (ActionType)effect, effectAmount, secondaryEffectAmount,
+                            (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount,
+                            (ActionType)chargeEffect, requiredChargeCubes, chargeCubeLimit, (ChargeCardType)chargeCardType));
+                    }
+                }
+
+                while (true)
+                {
+                    if (!reader.Read())
+                        break;
+
+                    sectorID = reader.GetInt32(0);
+                    cost = reader.GetInt32(1);
+                    effect = reader.GetInt32(2);
+                    effectAmount = reader.GetInt32(3);
+                    secondaryEffectAmount = !reader.IsDBNull(4) ? reader.GetInt32(4) : null;
+                    deployedEffect = reader.GetInt32(5);
+                    deployedEffectAmount = reader.GetInt32(6);
+                    secondaryDeployedEffectAmount = !reader.IsDBNull(7) ? reader.GetInt32(7) : null;
+
+                    if (reader.IsDBNull(8))
+                    {
+                        Level1Deck.Push(new Card(sectorID, cost,
+                            (ActionType)effect, effectAmount, secondaryEffectAmount,
+                            (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount));
+                    }
+                    else
+                    {
+                        chargeEffect = reader.GetInt32(8);
+                        requiredChargeCubes = reader.GetInt32(9);
+                        chargeCubeLimit = reader.GetInt32(10);
+                        chargeCardType = reader.GetInt32(11);
+
+                        Level1Deck.Push(new ChargeCard(sectorID, cost,
                             (ActionType)effect, effectAmount, secondaryEffectAmount,
                             (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount,
                             (ActionType)chargeEffect, requiredChargeCubes, chargeCubeLimit, (ChargeCardType)chargeCardType));

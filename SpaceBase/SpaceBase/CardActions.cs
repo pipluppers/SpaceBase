@@ -5,7 +5,8 @@
         AddCredits = 1,
         AddIncome = 2,
         AddVictoryPoints = 3,
-        AddCreditsIncome = 4
+        AddCreditsIncome = 4,
+        AddCreditsVictoryPoints = 5
     }
 
     public static class CardActions
@@ -18,6 +19,7 @@
                 ActionType.AddIncome => CardActions.AddIncome,
                 ActionType.AddVictoryPoints => CardActions.AddVictoryPoints,
                 ActionType.AddCreditsIncome => CardActions.AddCreditsIncome,
+                ActionType.AddCreditsVictoryPoints => CardActions.AddCreditsVictoryPoints,
                 _ => throw new ArgumentOutOfRangeException(nameof(actionType), $"ActionType {actionType} is not valid"),
             };
         }
@@ -63,5 +65,18 @@
             player.AddCredits(amount);
             player.AddIncome(secondaryAmount);
         }
+
+        /// <summary>
+        /// Adds the specified amount of credits and victory points to the player.
+        /// </summary>
+        /// <param name="player">The player to get the credits and victory points.</param>
+        /// <param name="amount">The amount of credits to add.</param>
+        /// <param name="secondaryAmount">The amount of victory points to add.</param>
+        internal static void AddCreditsVictoryPoints(Player player, int amount, int secondaryAmount)
+        {
+            player.AddCredits(amount);
+            player.AddVictoryPoints(secondaryAmount);
+        }
+
     }
 }

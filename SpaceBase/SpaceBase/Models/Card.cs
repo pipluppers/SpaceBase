@@ -3,6 +3,13 @@ using System.Text.Json.Serialization;
 
 namespace SpaceBase.Models
 {
+    public enum CardType
+    {
+        Standard = 0,
+        Charge = 1,
+        Colony = 2
+    }
+
     public abstract class CardBase : ISerializable
     {
         private protected int _sectorID;
@@ -13,6 +20,9 @@ namespace SpaceBase.Models
 
         [JsonPropertyOrder(2)]
         public int Cost { get => _cost; }
+
+        [JsonIgnore]
+        public abstract CardType CardType { get; }
 
         #region ISerializable methods
 
@@ -30,6 +40,10 @@ namespace SpaceBase.Models
         public abstract object? Deserialize(string str);
 
         #endregion ISerializable methods
+
+        public abstract override bool Equals(object? obj);
+
+        public abstract override int GetHashCode();
     }
 
     public class Card : CardBase
@@ -57,7 +71,7 @@ namespace SpaceBase.Models
             DeployedEffectType = deployedEffectType;
             _deployedEffect = CardActions.GetAction(deployedEffectType);
             _deployedAmount = deployedAmount;
-            _secondaryAmount = deployedSecondaryAmount ?? 0;
+            _deployedSecondaryAmount = deployedSecondaryAmount ?? 0;
         }
 
         // For serialization
@@ -85,6 +99,9 @@ namespace SpaceBase.Models
         [JsonIgnore]
         public Action<Player, int, int> DeployedEffect { get => _deployedEffect; }
 
+        [JsonIgnore]
+        public override CardType CardType { get => CardType.Standard; }
+
         /// <summary>
         /// Activates the stationed effect and updates the given player's resources.
         /// </summary>
@@ -105,7 +122,25 @@ namespace SpaceBase.Models
 
         #endregion ISerializable methods
 
+        public override bool Equals(object? obj)
+        {
+            if (obj is not Card otherCard)
+                return false;
 
+            return SectorID == otherCard.SectorID &&
+                Cost == otherCard.Cost &&
+                EffectType == otherCard.EffectType &&
+                Amount == otherCard.Amount &&
+                SecondaryAmount == otherCard.SecondaryAmount &&
+                DeployedEffectType == otherCard.DeployedEffectType &&
+                DeployedAmount == otherCard.DeployedAmount &&
+                DeployedSecondaryAmount == otherCard.DeployedSecondaryAmount;
+        }
+
+        public override int GetHashCode()
+        {
+            return SectorID * 17 + Cost * 17 + (int)EffectType * 17 + (int)DeployedEffectType * 17;
+        }
 
 
         /// <summary>
@@ -166,6 +201,9 @@ namespace SpaceBase.Models
         public ChargeCardType ChargeCardType { get; }
 
         [JsonIgnore]
+        public override CardType CardType { get => CardType.Charge; }
+
+        [JsonIgnore]
         public Action<Player, int, int> ChargeEffect { get; }
 
         /// <summary>
@@ -188,6 +226,30 @@ namespace SpaceBase.Models
         public override object? Deserialize(string str) => JsonSerializer.Deserialize<ChargeCard>(str);
 
         #endregion ISerializable methods
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is not ChargeCard otherCard)
+                return false;
+
+            return SectorID == otherCard.SectorID &&
+                Cost == otherCard.Cost &&
+                EffectType == otherCard.EffectType &&
+                Amount == otherCard.Amount &&
+                SecondaryAmount == otherCard.SecondaryAmount &&
+                DeployedEffectType == otherCard.DeployedEffectType &&
+                DeployedAmount == otherCard.DeployedAmount &&
+                DeployedSecondaryAmount == otherCard.DeployedSecondaryAmount &&
+                ChargeEffectType == otherCard.ChargeEffectType &&
+                RequiredChargeCubes == otherCard.RequiredChargeCubes &&
+                ChargeCubeLimit == otherCard.ChargeCubeLimit &&
+                ChargeCardType == otherCard.ChargeCardType;
+        }
+
+        public override int GetHashCode()
+        {
+            return SectorID * 17 + Cost * 17 + (int)EffectType * 17 + (int)DeployedEffectType * 17 + (int)ChargeEffectType * 17;
+        }
     }
 
     /// <summary>
@@ -204,6 +266,9 @@ namespace SpaceBase.Models
             _cost = cost;
         }
 
+        [JsonIgnore]
+        public override CardType CardType { get => CardType.Colony; }
+
         #region ISerializable methods
 
         public override string Serialize() => JsonSerializer.Serialize(this);
@@ -211,5 +276,19 @@ namespace SpaceBase.Models
         public override object? Deserialize(string str) => JsonSerializer.Deserialize<ColonyCard>(str);
 
         #endregion ISerializable methods
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is not Card otherCard)
+                return false;
+
+            return SectorID == otherCard.SectorID &&
+                Cost == otherCard.Cost;
+        }
+
+        public override int GetHashCode()
+        {
+            return SectorID * 17 + Cost * 17;
+        }
     }
 }

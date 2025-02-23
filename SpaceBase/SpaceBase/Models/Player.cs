@@ -10,6 +10,7 @@
         private bool _isCurrentPlayer = false;
 
         public event PlayerReachedVictoryThresholdEvent<PlayerReachedVictoryThresholdEventArgs>? PlayerReachedVictoryThresholdEvent;
+        public event AddCardToSectorEvent<AddCardToSectorEventArgs>? AddCardToSectorEvent;
 
         public Board Board { get => _board; }
         public int ID { get; } = id;
@@ -82,6 +83,8 @@
                 throw new ArgumentOutOfRangeException(nameof(card), $"The input sector ID of the card must be between {Constants.MinSectorID} and {Constants.MaxSectorID}");
 
             GetSector(card.SectorID).AddCard(card);
+
+            AddCardToSectorEvent?.Invoke(this, new AddCardToSectorEventArgs(card));
         }
 
         /// <summary>

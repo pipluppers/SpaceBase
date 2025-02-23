@@ -7,6 +7,12 @@
     }
     public delegate void DiceRollEventHandler<DiceRollEventArgs>(object sender, DiceRollEventArgs e);
 
+    public class AddCardToSectorEventArgs(Card addedCard)
+    {
+        public Card AddedCard { get; } = addedCard;
+    }
+    public delegate void AddCardToSectorEvent<AddCardToSectorEventArgs>(object sender, AddCardToSectorEventArgs e);
+
     public class PlayerReachedVictoryThresholdEventArgs(int playerID)
     {
         public int PlayerID { get; } = playerID;
