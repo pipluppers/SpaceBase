@@ -72,7 +72,7 @@
         <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft6}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>-->
         
         <Grid Canvas.Left="0" Canvas.Top="600" Width="{Binding Width, ElementName=MainGameWindow}" Height="244" Background="Transparent" IsHitTestVisible="True" DataContext="{Binding Player}">
-            <ItemsControl Grid.Row="0" ItemsSource="{Binding Board.Sectors}" Margin="10,0,10,20">
+            <ItemsControl x:Name="SectorItemsControl" Grid.Row="0" ItemsSource="{Binding Board.Sectors}" Margin="10,0,10,20" Loaded="SectorItemsControl_Loaded">
                 <ItemsControl.Template>
                     <ControlTemplate>
                         <Border BorderBrush="Black" BorderThickness="1">
@@ -87,7 +87,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border BorderBrush="Black" BorderThickness="1" Width="82" Padding="10,10,10,10" AllowDrop="True" Drop="Border_Drop">
+                        <Border BorderBrush="Black" BorderThickness="1" Width="82" Padding="10,10,10,10" AllowDrop="True" Drop="Border_Drop" IsHitTestVisible="True">
                             <Grid AllowDrop="False">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>

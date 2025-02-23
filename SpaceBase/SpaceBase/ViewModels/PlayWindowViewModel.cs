@@ -20,7 +20,6 @@ namespace SpaceBase
         /// </summary>
         private void PlayGame(PlayWindow playWindow)
         {
-            //PlayWindow playWindow = parameter as PlayWindow;
             Debug.Assert(playWindow != null);
 
             var mainWindow = new MainWindow();

@@ -12,6 +12,12 @@ namespace SpaceBase
 
     internal static class Utilities
     {
+        /// <summary>
+        /// Gets the first ancestor of the given type.
+        /// </summary>
+        /// <typeparam name="T">The type for the ancestor.</typeparam>
+        /// <param name="current">The child of the ancestor element to find.</param>
+        /// <returns>The first ancestor of the given type.</returns>
         public static T? FindAncestor<T>(DependencyObject current) where T : class
         {
             while (current != null)
@@ -20,11 +26,45 @@ namespace SpaceBase
                 {
                     return ancestor;
                 }
+
                 current = VisualTreeHelper.GetParent(current);
             }
             return null;
         }
 
+        /// <summary>
+        /// Gets the first visual child of the given type.
+        /// </summary>
+        /// <typeparam name="T">The type for the child.</typeparam>
+        /// <param name="parent">The parent of the child element to find.</param>
+        /// <returns>The first visual child of the given type.</returns>
+        public static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            if (parent == null) return null;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T typedChild)
+                {
+                    return typedChild;
+                }
+
+                T? descendant = FindVisualChild<T>(child);
+                if (descendant != null)
+                {
+                    return descendant;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets the string representation of the serializable object.
+        /// </summary>
+        /// <param name="serializableObject">The object to get the string representation of.</param>
+        /// <returns>The string representation of the given object.</returns>
         public static string Serialize(ISerializable serializableObject)
         {
             return serializableObject.Serialize();
@@ -47,6 +87,9 @@ namespace SpaceBase
         }
     }
 
+    /// <summary>
+    /// If the value is equal to the integer parameter, collapse. Otherwise, set visible.
+    /// </summary>
     public class CollapsedIfEqualIntegerConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -82,13 +125,15 @@ namespace SpaceBase
         }
     }
 
+    /// <summary>
+    /// Gets the appropriate background color for the card effect.
+    /// </summary>
     public class ActionTypeBackgroundConverter : IValueConverter
     {
         private static readonly SolidColorBrush CreditsBrush = Brushes.Yellow;
         private static readonly SolidColorBrush IncomeBrush = Brushes.LightGreen;
         private static readonly SolidColorBrush VictoryPointsBrush = Brushes.DodgerBlue;
         private static readonly SolidColorBrush InvalidBrush = Brushes.Red;
-
 
         /// <summary>
         /// Returns the appropriate color given the action defined by <paramref name="value"/> and the <paramref name="parameter"/> describing whether it is a primary or secondary effect.
