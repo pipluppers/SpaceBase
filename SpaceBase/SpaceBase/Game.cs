@@ -11,8 +11,10 @@
         private int _turnNumber;
         private int _currentPlayer = 0;
         private bool _isGameOver = false;
+        private Random _random;
 
         public event DiceRollEventHandler<DiceRollEventArgs>? DiceRollEvent;
+        public event EventHandler<EventArgs>? WaitForPlayerInputEventHandler;
         public event RoundOverEventHandler<RoundOverEventArgs>? RoundOverEvent;
         public event GameOverEventHandler<GameOverEventArgs>? GameOverEvent;
 
@@ -24,6 +26,8 @@
         {
             if (numPlayers < Constants.MinNumPlayers || numPlayers > Constants.MaxNumPlayers)
                 throw new ArgumentException($"The number of players must be between {Constants.MinNumPlayers} and {Constants.MaxNumPlayers}.");
+
+            _random = new Random(1);
 
             _maxNumRounds = maxNumRounds;
             RoundOverEvent += MaxNumRoundsHandler;
@@ -39,7 +43,6 @@
 
             var humanPlayer = new HumanPlayer(1);
             humanPlayer.PlayerReachedVictoryThresholdEvent += BeginGameOverRoutine;
-            humanPlayer.AddCardToSectorEvent += AddCardToSectorHandler;
             DiceRollEvent += humanPlayer.ChooseDiceRoll;
             _players.Add(humanPlayer);
 
@@ -47,7 +50,6 @@
             {
                 var player = new ComputerPlayer(i + 1);
                 player.PlayerReachedVictoryThresholdEvent += BeginGameOverRoutine;
-                player.AddCardToSectorEvent += AddCardToSectorHandler;
                 DiceRollEvent += player.ChooseDiceRoll;
 
                 _players.Add(player);
@@ -72,7 +74,7 @@
 
         #endregion Properties
 
-        public void StartGame()
+        public async Task StartGame()
         {
             if (_players.Count < 2) return;
 
@@ -84,7 +86,7 @@
             _turnNumber = 1;
             _currentPlayer = 0;
 
-            PlayGame();
+            await PlayGame();
         }
 
         private void BeginGameOverRoutine(object sender, PlayerReachedVictoryThresholdEventArgs args)
@@ -253,7 +255,7 @@
         }
 
         /// <summary>
-        /// Populate the starting cards on each player's boards.
+        /// Populate the starting cards on each player's boards and subscribe to adding card events.
         /// </summary>
         /// <param name="reader">The reader object over the data.</param>
         private void PopulatePlayerStartingCards(SqlDataReader reader)
@@ -266,15 +268,21 @@
 
                 _players.ForEach((player) => player.AddCard(card));
             }
+
+            _players.ForEach((player) => player.AddCardToSectorEvent += AddCardToSectorHandler);
         }
 
-        private void PlayGame()
+        private async Task PlayGame()
         {
             while (!_isGameOver)
             {
                 // Broadcast PreDiceRollEvent
 
+                await Task.Run(() => WaitForPlayerInputEventHandler?.Invoke(this, new EventArgs()));
+
                 RollDice();
+
+                //WaitForPlayerInputEventHandler?.Invoke(this, new EventArgs());
 
                 // Broadcast PlayerMoveEvent
                 //   Current player can choose to buy and/or use charge cubes
@@ -313,9 +321,8 @@
 
         private void RollDice()
         {
-            Random random = new();
-            int dice1 = (random.Next() % 6) + 1;
-            int dice2 = (random.Next() % 6) + 1;
+            int dice1 = (_random.Next() % 6) + 1;
+            int dice2 = (_random.Next() % 6) + 1;
 
             DiceRollEvent?.Invoke(this, new DiceRollEventArgs(dice1, dice2));
         }

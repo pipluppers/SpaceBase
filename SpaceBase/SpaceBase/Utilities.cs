@@ -72,13 +72,29 @@ namespace SpaceBase
     }
 
     /// <summary>
-    /// If the value is null, collapse. Otherwise, set visible.
+    /// If the value is not null, set visible. Otherwise, collapse.
     /// </summary>
     public class NullVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value != null ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    /// <summary>
+    /// If the value is true, set visible. Otherwise, collapse.
+    /// </summary>
+    public class BoolVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (bool)value ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -168,6 +184,22 @@ namespace SpaceBase
                 return parameterString == "1" ? CreditsBrush : VictoryPointsBrush;
 
             return InvalidBrush;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class SectorTextConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is string stringValue)
+                return $"Sector {stringValue}";
+
+            return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

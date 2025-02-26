@@ -1,20 +1,4 @@
-﻿using SpaceBase.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-
-namespace SpaceBase
+﻿namespace SpaceBase
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -22,26 +6,25 @@ namespace SpaceBase
     public partial class MainWindow : Window
     {
         public const int Left1 = 21;
-        private List<Border> _borders;
+        private readonly List<Border> _borders;
 
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainWindowViewModel();
 
-            _borders = new List<Border>();
+            _borders = [];
         }
 
         private bool _isDragging = false;
-        private Point _dragStartPoint;
+        //private Point _dragStartPoint;
 
         private void CardControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender is not CardControl cardControl)
+            if (sender is not CardControl)
                 return;
 
             _isDragging = true;
-            _dragStartPoint = e.GetPosition(cardControl);
+            //_dragStartPoint = e.GetPosition(cardControl);
             //rectangle.CaptureMouse();
             e.Handled = true;
         }
@@ -157,6 +140,14 @@ namespace SpaceBase
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Close the application.
+        /// </summary>
+        private void MainGameWindow_Closed(object sender, EventArgs e)
+        {
+            Application.Current.Shutdown();
         }
     }
 }

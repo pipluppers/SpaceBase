@@ -4,10 +4,13 @@ namespace SpaceBase
 {
     public class PlayWindowViewModel : ViewModelBase
     {
+        private readonly MainWindowViewModel _mainWindowViewModel;
+
         public PlayWindowViewModel()
         {
             _playGameCommand = new(PlayGame);
             _quitGameCommand = new(QuitGame);
+            _mainWindowViewModel = new MainWindowViewModel();
         }
 
         #region Commands
@@ -18,14 +21,13 @@ namespace SpaceBase
         /// <summary>
         /// Launches the Game UI and closes the PlayWindow.
         /// </summary>
-        private void PlayGame(PlayWindow playWindow)
+        private async void PlayGame(PlayWindow playWindow)
         {
             Debug.Assert(playWindow != null);
 
-            var mainWindow = new MainWindow();
-            mainWindow.Show();
-
             playWindow.Close();
+            _mainWindowViewModel.Show();
+            await _mainWindowViewModel.StartGame();
         }
 
         private readonly RelayCommand _quitGameCommand;

@@ -45,7 +45,7 @@ namespace SpaceBaseTests
         }
 
         [Test]
-        public void GameRaisesRoundOverEvent()
+        public async Task GameRaisesRoundOverEvent()
         {
             var game = new Game();
 
@@ -63,13 +63,13 @@ namespace SpaceBaseTests
                     Assert.Pass();
             };
 
-            game.StartGame();
+            await game.StartGame();
 
             Assert.Fail("The round over event did not get raised with round 1 ending.");
         }
 
         [Test]
-        public void DiceRollsAreValidEachTime()
+        public async Task DiceRollsAreValidEachTime()
         {
             // Just let the game play to 30 rounds
 
@@ -90,13 +90,13 @@ namespace SpaceBaseTests
                     Assert.Pass();
             };
 
-            game.StartGame();
+            await game.StartGame();
 
             Assert.Fail("The round over event did not get raised with round 30 ending.");
         }
 
         [Test]
-        public void GameEndsAt50Rounds()
+        public async Task GameEndsAt50Rounds()
         {
             var game = new Game();
 
@@ -117,9 +117,10 @@ namespace SpaceBaseTests
                 Assert.Pass();
             };
 
-            game.StartGame();
+            await game.StartGame();
 
             Assert.Fail("The game over event did not get raised with round 50 ending.");
         }
+
     }
 }
