@@ -8,7 +8,11 @@ namespace SpaceBase
 
         public RelayCommand(Action execute) : this(execute, () => true) { }
 
-        public event EventHandler? CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged
+        {
+            add { if (value != null) CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
 
         public bool CanExecute(object? parameter)
         {
@@ -18,11 +22,6 @@ namespace SpaceBase
         public void Execute(object? parameter)
         {
             _execute();
-        }
-
-        public void RaiseCanExecuteChanged()
-        {
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 

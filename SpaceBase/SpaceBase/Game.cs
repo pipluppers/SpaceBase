@@ -15,6 +15,8 @@
 
         public event DiceRollEventHandler<DiceRollEventArgs>? DiceRollEventHandler;
         public event EventHandler<EventArgs>? WaitForPlayerInputEventHandler;
+        public event EventHandler<EventArgs>? PreDiceRollEventHandler;
+        public event EventHandler<EventArgs>? BuyEventHandler;
         public event TurnOverEvent<TurnOverEventArgs>? TurnOverEventHandler;
         public event RoundOverEventHandler<RoundOverEventArgs>? RoundOverEvent;
         public event GameOverEventHandler<GameOverEventArgs>? GameOverEvent;
@@ -55,6 +57,8 @@
 
                 _players.Add(player);
             }
+
+            CacheCards();
         }
 
         #region Properties
@@ -80,11 +84,12 @@
 
         #endregion Properties
 
+        /// <summary>
+        /// Prepare to play the game by loading cards into memory and initializing members.
+        /// </summary>
         public async Task StartGame()
         {
             if (_players.Count < 2) return;
-
-            CacheCards();
 
             // TODO Each player draws a card. Player order is determined by highest cost
 
@@ -93,6 +98,60 @@
             _currentPlayer = 0;
 
             await PlayGame();
+        }
+
+        /// <summary>
+        /// Start the game loop.
+        /// </summary>
+        private async Task PlayGame()
+        {
+            while (!_isGameOver)
+            {
+                // Broadcast PreDiceRollEvent
+
+                if (PreDiceRollEventHandler != null) await Task.Run(() => PreDiceRollEventHandler.Invoke(this, new EventArgs()));
+
+                await RollDice();
+
+                if (BuyEventHandler != null) await Task.Run(() => BuyEventHandler.Invoke(this, new EventArgs()));
+
+                // Broadcast PlayerMoveEvent
+                //   Current player can choose to buy and/or use charge cubes
+                //   Other players can choose to use charge cubes
+
+                // Reset current player's credits to income if applicable
+
+                UpdateNextPlayer();
+
+                if (_turnNumber < _players.Count)
+                {
+                    ++_turnNumber;
+                }
+                else
+                {
+                    _turnNumber = 1;
+                    RoundOverEvent?.Invoke(this, new RoundOverEventArgs(_roundNumber++));
+                }
+
+                TurnOverEventHandler?.Invoke(this, new TurnOverEventArgs());
+            }
+
+            int curr = 0;
+            var victoryPlayerIDs = new List<int>();
+            foreach (var player in _players)
+            {
+                if (player.VictoryPoints > curr)
+                {
+                    victoryPlayerIDs.Clear();
+                    victoryPlayerIDs.Add(player.ID);
+                }
+                else if (player.VictoryPoints == curr)
+                {
+                    victoryPlayerIDs.Add(player.ID);
+                }
+            }
+
+            GameOverEvent?.Invoke(this, new GameOverEventArgs(victoryPlayerIDs));
         }
 
         private void BeginGameOverRoutine(object sender, PlayerReachedVictoryThresholdEventArgs args)
@@ -278,66 +337,16 @@
             _players.ForEach((player) => player.AddCardToSectorEvent += AddCardToSectorHandler);
         }
 
-        private async Task PlayGame()
-        {
-            while (!_isGameOver)
-            {
-                // Broadcast PreDiceRollEvent
-
-                await Task.Run(() => WaitForPlayerInputEventHandler?.Invoke(this, new EventArgs()));
-
-                RollDice();
-
-                await Task.Run(() => WaitForPlayerInputEventHandler?.Invoke(this, new EventArgs()));
-
-                // Broadcast PlayerMoveEvent
-                //   Current player can choose to buy and/or use charge cubes
-                //   Other players can choose to use charge cubes
-
-                // Reset current player's credits to income if applicable
-
-                UpdateNextPlayer();
-
-                if (_turnNumber < _players.Count)
-                {
-                    ++_turnNumber;
-                }
-                else
-                {
-                    _turnNumber = 1;
-                    RoundOverEvent?.Invoke(this, new RoundOverEventArgs(_roundNumber++));
-                }
-
-                TurnOverEventHandler?.Invoke(this, new TurnOverEventArgs());
-            }
-
-            int curr = 0;
-            var victoryPlayerIDs = new List<int>();
-            foreach (var player in _players)
-            {
-                if (player.VictoryPoints > curr)
-                {
-                    victoryPlayerIDs.Clear();
-                    victoryPlayerIDs.Add(player.ID);
-                }
-                else if (player.VictoryPoints == curr)
-                {
-                    victoryPlayerIDs.Add(player.ID);
-                }
-            }
-
-            GameOverEvent?.Invoke(this, new GameOverEventArgs(victoryPlayerIDs));
-        }
-
         /// <summary>
         /// Selects two random numbers for the two die and invokes the DiceRollEventHandler.
         /// </summary>
-        private void RollDice()
+        private async Task RollDice()
         {
             int dice1 = (_random.Next() % 6) + 1;
             int dice2 = (_random.Next() % 6) + 1;
 
-            DiceRollEventHandler?.Invoke(this, new DiceRollEventArgs(dice1, dice2));
+            if (DiceRollEventHandler != null)
+                await Task.Run(() => DiceRollEventHandler.Invoke(this, new DiceRollEventArgs(dice1, dice2)));
         }
 
         /// <summary>

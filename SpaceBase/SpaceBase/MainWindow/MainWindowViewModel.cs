@@ -7,20 +7,24 @@
         private bool _showDiceRollControl;
         private int _dice1;
         private int _dice2;
+        private bool _canDragCards;
 
         private readonly RelayCommand _rollDiceCommand;
         private readonly RelayCommand _showMainWindowCommand;
         private readonly RelayCommand _returnToDiceControl;
+        private readonly RelayCommand _dontBuyCommand;
 
         public MainWindowViewModel()
         {
             Game = new Game();
             _humanPlayer = (HumanPlayer)Game.Players.First(p => p is HumanPlayer);
             _showDiceRollControl = false;
+            _canDragCards = false;
 
-            _rollDiceCommand = new RelayCommand(RollDice, () => true);
+            _rollDiceCommand = new RelayCommand(RollDice, () => CanRollDice);
             _showMainWindowCommand = new RelayCommand(ShowMainWindow, () => true);
             _returnToDiceControl = new RelayCommand(ReturnToDiceControl, () => true);
+            _dontBuyCommand = new RelayCommand(DontBuy, () => CanDragCards);
 
             _mainWindow = new MainWindow() { DataContext = this };
 
@@ -41,12 +45,11 @@
             set => SetProperty(ref _showDiceRollControl, value);
         }
 
-        private bool _isMainWindowActive = true;
-        public bool IsMainWindowActive
-        {
-            get => _isMainWindowActive;
-            set => SetProperty(ref _isMainWindowActive, value);
-        }
+        private bool _peekAtGameWindow = false;
+        public bool PeekAtGameWindow { get => _peekAtGameWindow; set => SetProperty(ref _peekAtGameWindow, value); }
+
+        private bool _canRollDice = true;
+        public bool CanRollDice { get => _canRollDice; set => SetProperty(ref _canRollDice, value); }
 
         private bool _isIndividualDieChosen;
         public bool IsIndividualDieChosen
@@ -72,6 +75,11 @@
 
         public bool WaitForPlayerInput { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool CanDragCards { get => _canDragCards; set => SetProperty(ref _canDragCards, value); }
+
         #endregion Properties
 
         /// <summary>
@@ -95,9 +103,59 @@
         /// </summary>
         private void SubscribeToEvents()
         {
-            Game.WaitForPlayerInputEventHandler += Game_WaitForPlayerInputEventHandler;
+            HumanPlayer.AddCardToSectorEvent += HumanPlayer_AddCardToSectorEvent;
+
+            Game.PreDiceRollEventHandler += Game_PreDiceRollEventHandler;
             Game.DiceRollEventHandler += Game_DiceRollEventHandler;
+            Game.BuyEventHandler += Game_BuyEventHandler;
+
+            Game.WaitForPlayerInputEventHandler += Game_WaitForPlayerInputEventHandler;
             Game.TurnOverEventHandler += Game_TurnOverEventHandler;
+        }
+
+        private void HumanPlayer_AddCardToSectorEvent(object sender, AddCardToSectorEventArgs e)
+        {
+            WaitForPlayerInput = false;
+        }
+
+        /// <summary>
+        /// Enables the button to roll dice and wait until player has clicked the button.
+        /// </summary>
+        /// <param name="sender">The game.</param>
+        /// <param name="e">Unused event arguments.</param>
+        private void Game_PreDiceRollEventHandler(object? sender, EventArgs e)
+        {
+            CanRollDice = true;
+
+            while (WaitForPlayerInput) { }
+
+            CanRollDice = false;
+        }
+
+        /// <summary>
+        /// Show the dice control with the dice rolls.
+        /// </summary>
+        /// <param name="sender">The game.</param>
+        /// <param name="e">The arguments describing the dice roll event.</param>
+        private void Game_DiceRollEventHandler(object sender, DiceRollEventArgs e)
+        {
+            WaitForPlayerInput = true;
+
+            Dice1 = e.Dice1;
+            Dice2 = e.Dice2;
+            ShowDiceRollControl = true;
+
+            while (WaitForPlayerInput) { }
+        }
+
+        private void Game_BuyEventHandler(object? sender, EventArgs e)
+        {
+            WaitForPlayerInput = true;
+            CanDragCards = true;
+
+            while (WaitForPlayerInput) { }
+
+            CanDragCards = false;
         }
 
         /// <summary>
@@ -109,19 +167,6 @@
         private void Game_WaitForPlayerInputEventHandler(object? sender, EventArgs e)
         {
             while (WaitForPlayerInput) { }
-        }
-
-        /// <summary>
-        /// Show the dice control with the dice rolls.
-        /// </summary>
-        /// <param name="sender">The game.</param>
-        /// <param name="e">The arguments describing the dice roll event.</param>
-        private void Game_DiceRollEventHandler(object sender, DiceRollEventArgs e)
-        {
-            Dice1 = e.Dice1;
-            Dice2 = e.Dice2;
-            ShowDiceRollControl = true;
-            WaitForPlayerInput = true;
         }
 
         /// <summary>
@@ -158,7 +203,7 @@
         private void ShowMainWindow()
         {
             ShowDiceRollControl = false;
-            IsMainWindowActive = false;
+            PeekAtGameWindow = true;
         }
 
         /// <summary>
@@ -168,6 +213,13 @@
         private void ReturnToDiceControl()
         {
             ShowDiceRollControl = true;
+            PeekAtGameWindow = false;
+        }
+
+        public ICommand DontBuyCommand { get => _dontBuyCommand; }
+        private void DontBuy()
+        {
+            WaitForPlayerInput = false;
         }
 
         #endregion Commands

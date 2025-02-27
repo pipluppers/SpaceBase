@@ -15,42 +15,21 @@
             _borders = [];
         }
 
-        private bool _isDragging = false;
-        //private Point _dragStartPoint;
-
         private void CardControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (sender is not CardControl)
                 return;
 
-            _isDragging = true;
-            //_dragStartPoint = e.GetPosition(cardControl);
-            //rectangle.CaptureMouse();
             e.Handled = true;
         }
 
         private void CardControl_MouseMove(object sender, MouseEventArgs e)
         {
-            if (!_isDragging || sender is not CardControl cardControl || cardControl.DataContext is not Card card || e.LeftButton != MouseButtonState.Pressed)
+            if (sender is not CardControl cardControl || cardControl.DataContext is not Card card || e.LeftButton != MouseButtonState.Pressed)
                 return;
 
-            //Canvas? canvas = Utilities.FindAncestor<Canvas>(cardControl);
-            //if (canvas == null)
-            //    return;
-
-            //Point currentPosition = e.GetPosition(canvas); // Relative to the Canvas
-
-            //double left = currentPosition.X - _dragStartPoint.X;
-            //double top = currentPosition.Y - _dragStartPoint.Y;
-
-            //// Keep rectangle within the bounds of the parent Canvas.
-            //left = Math.Max(0, Math.Min(canvas.ActualWidth - cardControl.ActualWidth, left));
-            //top = Math.Max(0, Math.Min(canvas.ActualHeight - cardControl.ActualHeight, top));
-
-            //Canvas.SetLeft(cardControl, left);
-            //Canvas.SetTop(cardControl, top);
-
-            //e.Handled = true;
+            if (DataContext is not MainWindowViewModel viewModel || !viewModel.CanDragCards || card.Cost > viewModel.HumanPlayer.Credits)
+                return;
 
             Border? border = _borders[card.SectorID - 1];
             Debug.Assert(border != null);
@@ -108,6 +87,7 @@
             try
             {
                 player.AddCard(card);
+                player.ResetCredits();
             }
             catch (Exception ex)
             {
