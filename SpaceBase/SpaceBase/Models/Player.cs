@@ -1,6 +1,6 @@
 ﻿namespace SpaceBase.Models
 {
-    public abstract class Player(int id)
+    public abstract class Player(int id) : PropertyChangedBase
     {
         private readonly Board _board = new();
         private int _credits = 5;
@@ -14,9 +14,9 @@
 
         public Board Board { get => _board; }
         public int ID { get; } = id;
-        public int Credits { get => _credits; private set => _credits = value; }
-        public int Income { get => _income; private set => _income = value; }
-        public int VictoryPoints { get => _victoryPoints; private set => _victoryPoints = value; }
+        public int Credits { get => _credits; private set => SetProperty(ref _credits, value); }
+        public int Income { get => _income; private set => SetProperty(ref _income, value); }
+        public int VictoryPoints { get => _victoryPoints; private set => SetProperty(ref _victoryPoints, value); }
         public int ChargeCubes { get => _chargeCubes; set => _chargeCubes = value; }
 
         /// <summary>

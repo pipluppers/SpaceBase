@@ -11,10 +11,11 @@
         private int _turnNumber;
         private int _currentPlayer = 0;
         private bool _isGameOver = false;
-        private Random _random;
+        private readonly Random _random;
 
-        public event DiceRollEventHandler<DiceRollEventArgs>? DiceRollEvent;
+        public event DiceRollEventHandler<DiceRollEventArgs>? DiceRollEventHandler;
         public event EventHandler<EventArgs>? WaitForPlayerInputEventHandler;
+        public event TurnOverEvent<TurnOverEventArgs>? TurnOverEventHandler;
         public event RoundOverEventHandler<RoundOverEventArgs>? RoundOverEvent;
         public event GameOverEventHandler<GameOverEventArgs>? GameOverEvent;
 
@@ -43,20 +44,25 @@
 
             var humanPlayer = new HumanPlayer(1);
             humanPlayer.PlayerReachedVictoryThresholdEvent += BeginGameOverRoutine;
-            DiceRollEvent += humanPlayer.ChooseDiceRoll;
+            DiceRollEventHandler += humanPlayer.ChooseDiceRoll;
             _players.Add(humanPlayer);
 
             for (int i = 1; i < numPlayers; ++i)
             {
                 var player = new ComputerPlayer(i + 1);
                 player.PlayerReachedVictoryThresholdEvent += BeginGameOverRoutine;
-                DiceRollEvent += player.ChooseDiceRoll;
+                DiceRollEventHandler += player.ChooseDiceRoll;
 
                 _players.Add(player);
             }
         }
 
         #region Properties
+
+        /// <summary>
+        /// The random number generator for the dice rolls.
+        /// </summary>
+        public Random Random { get => _random; init => _random = value; }
 
         public List<Player> Players { get => _players; }
 
@@ -282,7 +288,7 @@
 
                 RollDice();
 
-                //WaitForPlayerInputEventHandler?.Invoke(this, new EventArgs());
+                await Task.Run(() => WaitForPlayerInputEventHandler?.Invoke(this, new EventArgs()));
 
                 // Broadcast PlayerMoveEvent
                 //   Current player can choose to buy and/or use charge cubes
@@ -293,12 +299,16 @@
                 UpdateNextPlayer();
 
                 if (_turnNumber < _players.Count)
+                {
                     ++_turnNumber;
+                }
                 else
                 {
                     _turnNumber = 1;
                     RoundOverEvent?.Invoke(this, new RoundOverEventArgs(_roundNumber++));
                 }
+
+                TurnOverEventHandler?.Invoke(this, new TurnOverEventArgs());
             }
 
             int curr = 0;
@@ -319,12 +329,15 @@
             GameOverEvent?.Invoke(this, new GameOverEventArgs(victoryPlayerIDs));
         }
 
+        /// <summary>
+        /// Selects two random numbers for the two die and invokes the DiceRollEventHandler.
+        /// </summary>
         private void RollDice()
         {
             int dice1 = (_random.Next() % 6) + 1;
             int dice2 = (_random.Next() % 6) + 1;
 
-            DiceRollEvent?.Invoke(this, new DiceRollEventArgs(dice1, dice2));
+            DiceRollEventHandler?.Invoke(this, new DiceRollEventArgs(dice1, dice2));
         }
 
         /// <summary>

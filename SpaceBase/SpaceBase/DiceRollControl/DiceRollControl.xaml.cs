@@ -10,16 +10,6 @@
             InitializeComponent();
         }
 
-        public static readonly DependencyProperty Dice1Property =
-            DependencyProperty.Register("Dice1", typeof(int), typeof(DiceRollControl), new PropertyMetadata());
-
-        public int Dice1 { get => (int)GetValue(Dice1Property); set => SetValue(Dice1Property, value); }
-
-        public static readonly DependencyProperty Dice2Property =
-            DependencyProperty.Register("Dice2", typeof(int), typeof(DiceRollControl), new PropertyMetadata());
-
-        public int Dice2 { get => (int)GetValue(Dice2Property); set => SetValue(Dice2Property, value); }
-
         /// <summary>
         /// Switches back to the screen with the cards and boards.
         /// </summary>
@@ -31,6 +21,8 @@
                 return;
 
             viewModel.ShowDiceRollControl = false;
+            viewModel.WaitForPlayerInput = false;
+            viewModel.IsIndividualDieChosen = string.Equals(grid.Name, "IndividualGrid", StringComparison.OrdinalIgnoreCase);
             e.Handled = true;
         }
     }

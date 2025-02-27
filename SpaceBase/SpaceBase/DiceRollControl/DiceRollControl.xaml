@@ -34,7 +34,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="1" Grid.Column="0" Style="{StaticResource ClickableGrid}">
+        <Grid x:Name="IndividualGrid" Grid.Row="1" Grid.Column="0" Style="{StaticResource ClickableGrid}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -52,14 +52,22 @@
         <!-- Separator -->
         <Border Grid.Column="2" Grid.RowSpan="2" BorderThickness="1,0,0,0" BorderBrush="Gray"/>
 
-        <Grid Grid.Column="1" Style="{StaticResource ClickableGrid}">
+        <Grid x:Name="SumGrid" Grid.Column="1" Style="{StaticResource ClickableGrid}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="3" Text="Sum" Style="{StaticResource ChoiceStyle}"/>
-            <local:DiceSectorControl Grid.Row="1" Grid.Column="3" Dice1Value="{Binding Dice1}" Dice2Value="{Binding Dice2}"/>
+            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Sum" Style="{StaticResource ChoiceStyle}"/>
+            <local:DiceSectorControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Dice1Value="{Binding Dice1}" Dice2Value="{Binding Dice2}"/>
+
+            <Button Grid.Row="0" Grid.Column="1" Content="Hello" Margin="0,10,10,0" Command="{Binding ShowMainWindowCommand}">
+                
+            </Button>
         </Grid>
     </Grid>
 </UserControl>

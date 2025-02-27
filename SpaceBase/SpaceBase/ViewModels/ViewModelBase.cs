@@ -15,13 +15,15 @@ namespace SpaceBase
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        protected void SetProperty<T>(ref T o, T value, [CallerMemberName] string propertyName = "")
+        protected bool SetProperty<T>(ref T o, T value, [CallerMemberName] string propertyName = "")
         {
             if (Equals(o, value))
-                return;
+                return false;
 
             o = value;
             OnPropertyChanged(propertyName);
+
+            return true;
         }
     }
 }

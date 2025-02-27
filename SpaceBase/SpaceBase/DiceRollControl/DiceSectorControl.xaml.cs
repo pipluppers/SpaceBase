@@ -8,7 +8,6 @@
         public DiceSectorControl()
         {
             InitializeComponent();
-
             Dice2Value = -1;
         }
 

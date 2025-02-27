@@ -88,12 +88,15 @@ namespace SpaceBase
     }
 
     /// <summary>
-    /// If the value is true, set visible. Otherwise, collapse.
+    /// If the value is true, set visible. Otherwise, collapse. If "Invert" is passed as a parameter, reverse the visbility result.
     /// </summary>
     public class BoolVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (parameter is string parameterString && string.Equals(parameterString, "Invert", StringComparison.OrdinalIgnoreCase))
+                return (bool)value ? Visibility.Collapsed : Visibility.Visible;
+
             return (bool)value ? Visibility.Visible : Visibility.Collapsed;
         }
 

@@ -19,6 +19,9 @@
     }
     public delegate void PlayerReachedVictoryThresholdEvent<PlayerReachedVictoryThresholdEventArgs>(object sender, PlayerReachedVictoryThresholdEventArgs e);
 
+    public class TurnOverEventArgs() { }
+    public delegate void TurnOverEvent<TurnOverEventArgs>(object sender, TurnOverEventArgs e);
+
     public class RoundOverEventArgs(int endingRoundNumber) : EventArgs
     {
         public int EndingRoundNumber { get; } = endingRoundNumber;
