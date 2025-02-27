@@ -13,10 +13,14 @@
         <local:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
     </Window.Resources>
     <Grid>
-        <Canvas x:Name="MainCanvas"
-            AllowDrop="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="150"/>
+        </Grid.RowDefinitions>
+
+        <Canvas x:Name="MainCanvas" Grid.Row="0" Grid.RowSpan="2" AllowDrop="True" Height="1000">
             <Canvas.Resources>
-                <Style x:Key="DraggableCard" TargetType="local:CardControl">
+                <Style x:Key="DraggableCardStyle" TargetType="local:CardControl">
                     <Setter Property="AllowDrop" Value="True"/>
                     <Setter Property="Panel.ZIndex" Value="1"/>
                     <EventSetter Event="MouseLeftButtonDown" Handler="CardControl_MouseLeftButtonDown"/>
@@ -34,48 +38,51 @@
             <Button Canvas.Top="10" Canvas.Right="10" Visibility="{Binding IsMainWindowActive, Converter={StaticResource BoolVisibilityConverter}, ConverterParameter=Invert}" Content="Herro" Command="{Binding ReturnToDiceControlCommand}"/>
 
             <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
-            <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft1}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}" DataContext="{Binding Game.Level1Cards[0]}" Visibility="{Binding Game.Level1Cards[0], Converter={StaticResource NullVisibilityConverter}}" Style="{StaticResource DraggableCard}"/>
-            <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft2}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}" DataContext="{Binding Game.Level1Cards[1]}" Visibility="{Binding Game.Level1Cards[1], Converter={StaticResource NullVisibilityConverter}}" Style="{StaticResource DraggableCard}"/>
-            <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft3}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}" DataContext="{Binding Game.Level1Cards[2]}" Visibility="{Binding Game.Level1Cards[2], Converter={StaticResource NullVisibilityConverter}}" Style="{StaticResource DraggableCard}"/>
-            <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft4}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}" DataContext="{Binding Game.Level1Cards[3]}" Visibility="{Binding Game.Level1Cards[3], Converter={StaticResource NullVisibilityConverter}}" Style="{StaticResource DraggableCard}"/>
-            <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft5}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}" DataContext="{Binding Game.Level1Cards[4]}" Visibility="{Binding Game.Level1Cards[4], Converter={StaticResource NullVisibilityConverter}}" Style="{StaticResource DraggableCard}"/>
-            <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft6}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}" DataContext="{Binding Game.Level1Cards[5]}" Visibility="{Binding Game.Level1Cards[5], Converter={StaticResource NullVisibilityConverter}}" Style="{StaticResource DraggableCard}"/>
-            <!--<Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft1}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>-->
-            <!--<Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft2}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
-        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft3}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
-        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft4}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
-        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft5}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
-        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft6}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>-->
+
+            <ItemsControl Canvas.Left="{x:Static local:Constants.CardPoolLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}" ItemsSource="{Binding Game.Level1Cards}" Height="{x:Static local:Constants.CardHeight}" Width="600">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Background="Transparent"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <local:CardControl Style="{StaticResource DraggableCardStyle}" Margin="30,0,0,0"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
             <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}"/>
-            <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft1}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}" DataContext="{Binding Game.Level2Cards[0]}" Visibility="{Binding Game.Level2Cards[0], Converter={StaticResource NullVisibilityConverter}}" Style="{StaticResource DraggableCard}"/>
-            <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft2}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}" DataContext="{Binding Game.Level2Cards[1]}" Visibility="{Binding Game.Level2Cards[1], Converter={StaticResource NullVisibilityConverter}}" Style="{StaticResource DraggableCard}"/>
-            <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft3}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}" DataContext="{Binding Game.Level2Cards[2]}" Visibility="{Binding Game.Level2Cards[2], Converter={StaticResource NullVisibilityConverter}}" Style="{StaticResource DraggableCard}"/>
-            <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft4}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}" DataContext="{Binding Game.Level2Cards[3]}" Visibility="{Binding Game.Level2Cards[3], Converter={StaticResource NullVisibilityConverter}}" Style="{StaticResource DraggableCard}"/>
-            <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft5}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}" DataContext="{Binding Game.Level2Cards[4]}" Visibility="{Binding Game.Level2Cards[4], Converter={StaticResource NullVisibilityConverter}}" Style="{StaticResource DraggableCard}"/>
-            <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft6}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}" DataContext="{Binding Game.Level2Cards[5]}" Visibility="{Binding Game.Level2Cards[5], Converter={StaticResource NullVisibilityConverter}}" Style="{StaticResource DraggableCard}"/>
-            <!--<Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft1}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}"/>
-        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft2}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}"/>
-        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft3}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}"/>
-        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft4}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}"/>
-        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft5}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}"/>
-        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft6}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}"/>-->
+
+            <ItemsControl Canvas.Left="{x:Static local:Constants.CardPoolLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}" ItemsSource="{Binding Game.Level2Cards}" Height="{x:Static local:Constants.CardHeight}" Width="600">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Background="Transparent"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <local:CardControl Style="{StaticResource DraggableCardStyle}" Margin="30,0,0,0"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
             <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>
-            <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft1}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}" DataContext="{Binding Game.Level3Cards[0]}" Visibility="{Binding Game.Level3Cards[0], Converter={StaticResource NullVisibilityConverter}}" Style="{StaticResource DraggableCard}"/>
-            <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft2}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}" DataContext="{Binding Game.Level3Cards[1]}" Visibility="{Binding Game.Level3Cards[1], Converter={StaticResource NullVisibilityConverter}}" Style="{StaticResource DraggableCard}"/>
-            <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft3}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}" DataContext="{Binding Game.Level3Cards[2]}" Visibility="{Binding Game.Level3Cards[2], Converter={StaticResource NullVisibilityConverter}}" Style="{StaticResource DraggableCard}"/>
-            <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft4}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}" DataContext="{Binding Game.Level3Cards[3]}" Visibility="{Binding Game.Level3Cards[3], Converter={StaticResource NullVisibilityConverter}}" Style="{StaticResource DraggableCard}"/>
-            <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft5}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}" DataContext="{Binding Game.Level3Cards[4]}" Visibility="{Binding Game.Level3Cards[4], Converter={StaticResource NullVisibilityConverter}}" Style="{StaticResource DraggableCard}"/>
-            <local:CardControl Canvas.Left="{x:Static local:Constants.CardPoolLeft6}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}" DataContext="{Binding Game.Level3Cards[5]}" Visibility="{Binding Game.Level3Cards[5], Converter={StaticResource NullVisibilityConverter}}" Style="{StaticResource DraggableCard}"/>
-            <!--<Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft1}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>
-        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft2}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>
-        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft3}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>
-        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft4}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>
-        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft5}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>
-        <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolLeft6}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>-->
+            
+            <ItemsControl Canvas.Left="{x:Static local:Constants.CardPoolLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}" ItemsSource="{Binding Game.Level3Cards}" Height="{x:Static local:Constants.CardHeight}" Width="600">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Background="Transparent"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <local:CardControl Style="{StaticResource DraggableCardStyle}" Margin="30,0,0,0"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
-            <Grid Canvas.Left="0" Canvas.Top="600" Width="{Binding Width, ElementName=MainGameWindow}" Height="244" Background="Transparent" IsHitTestVisible="True" DataContext="{Binding Player}">
+            <Grid Canvas.Left="0" Canvas.Top="600" Width="{Binding Width, ElementName=MainGameWindow}" Height="244" Background="Transparent" IsHitTestVisible="True" DataContext="{Binding HumanPlayer}">
                 <ItemsControl x:Name="SectorItemsControl" Grid.Row="0" ItemsSource="{Binding Board.Sectors}" Margin="10,0,10,20" Loaded="SectorItemsControl_Loaded">
                     <ItemsControl.Template>
                         <ControlTemplate>
@@ -98,7 +105,7 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
 
-                                    <local:CardControl Grid.Row="0" Visibility="{Binding StationedCard, Converter={StaticResource NullVisibilityConverter}, Mode=OneWay}" DataContext="{Binding StationedCard}"/>
+                                    <local:CardControl Grid.Row="0" DataContext="{Binding StationedCard}"/>
 
                                     <Border Grid.Row="1" Background="OrangeRed" BorderThickness="1" BorderBrush="Black" Width="30" Height="30" CornerRadius="50" HorizontalAlignment="Center" Margin="0,10,0,0" AllowDrop="False">
                                         <Label Content="{Binding ID}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
@@ -137,18 +144,66 @@
                 </Grid.ColumnDefinitions>
 
                 <Border Grid.Row="0" Grid.Column="0" Background="Yellow"/>
-                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Player.Credits, Mode=OneWay}"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding HumanPlayer.Credits, Mode=OneWay}"/>
 
                 <Border Grid.Row="1" Grid.Column="0" Background="LightGreen"/>
-                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Player.Income, Mode=OneWay}"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding HumanPlayer.Income, Mode=OneWay}"/>
 
                 <Border Grid.Row="2" Grid.Column="0" Background="DodgerBlue"/>
-                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Player.VictoryPoints, Mode=OneWay}"/>
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding HumanPlayer.VictoryPoints, Mode=OneWay}"/>
             </Grid>
-
-            <Button Canvas.Left="750" Canvas.Top="885" Content="Start Round" Height="50" Width="100" Command="{Binding StartRoundCommand}"/>
         </Canvas>
 
-        <local:DiceRollControl Panel.ZIndex="1" Visibility="{Binding ShowDiceRollControl, Converter={StaticResource BoolVisibilityConverter}}"/>
+        <local:DiceRollControl Grid.Row="0" Grid.RowSpan="2" Panel.ZIndex="1" Visibility="{Binding ShowDiceRollControl, Converter={StaticResource BoolVisibilityConverter}}"/>
+
+        <Grid Grid.Row="1" Panel.ZIndex="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0" Background="LightGray" Margin="10,20,10,20">
+                <Grid.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="Height" Value="{x:Static local:Constants.CostSectorBubbleWidthHeight}"/>
+                        <Setter Property="Width" Value="{x:Static local:Constants.CostSectorBubbleWidthHeight}"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="CornerRadius" Value="45"/>
+                        <Setter Property="BorderBrush" Value="Black"/>
+                    </Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="FontSize" Value="15"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                    </Style>
+                </Grid.Resources>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Row="0" Grid.Column="0" Background="Yellow"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding HumanPlayer.Credits, Mode=OneWay}"/>
+
+                <Border Grid.Row="1" Grid.Column="0" Background="LightGreen"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding HumanPlayer.Income, Mode=OneWay}"/>
+
+                <Border Grid.Row="2" Grid.Column="0" Background="DodgerBlue"/>
+                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding HumanPlayer.VictoryPoints, Mode=OneWay}"/>
+            </Grid>
+
+            <Grid Grid.Column="1">
+                <Button Content="Roll dice" Command="{Binding RollDiceCommand}"
+                        Height="50" Width="100" HorizontalAlignment="Center"
+                        Visibility="{Binding ShowDiceRollControl, Converter={StaticResource BoolVisibilityConverter}, ConverterParameter=Invert}"
+                        IsEnabled="{Binding IsMainWindowActive}"/>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>

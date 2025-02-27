@@ -3,11 +3,12 @@
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly MainWindow _mainWindow;
+        public HumanPlayer _humanPlayer;
         private bool _showDiceRollControl;
         private int _dice1;
         private int _dice2;
 
-        private readonly RelayCommand _startRoundCommand;
+        private readonly RelayCommand _rollDiceCommand;
         private readonly RelayCommand _showMainWindowCommand;
         private readonly RelayCommand _returnToDiceControl;
 
@@ -17,7 +18,7 @@
             _humanPlayer = (HumanPlayer)Game.Players.First(p => p is HumanPlayer);
             _showDiceRollControl = false;
 
-            _startRoundCommand = new RelayCommand(StartRound, () => true);
+            _rollDiceCommand = new RelayCommand(RollDice, () => true);
             _showMainWindowCommand = new RelayCommand(ShowMainWindow, () => true);
             _returnToDiceControl = new RelayCommand(ReturnToDiceControl, () => true);
 
@@ -32,7 +33,6 @@
 
         public Game Game { get; }
 
-        public HumanPlayer _humanPlayer;
         public HumanPlayer HumanPlayer { get => _humanPlayer; set => SetProperty(ref _humanPlayer, value); }
 
         public bool ShowDiceRollControl
@@ -141,8 +141,8 @@
         /// <summary>
         /// Starts the round with the dice roll.
         /// </summary>
-        public ICommand StartRoundCommand { get => _startRoundCommand; }
-        private void StartRound()
+        public ICommand RollDiceCommand { get => _rollDiceCommand; }
+        private void RollDice()
         {
             WaitForPlayerInput = false;
         }

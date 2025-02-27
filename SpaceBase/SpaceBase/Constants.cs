@@ -46,6 +46,7 @@
         public const double CardPoolTop2 = 220;
         public const double CardPoolTop3 = 420;
         public const double CardPoolDeckLeft = 71;
+        public const double CardPoolLeft = 301;
         public const double CardPoolLeft1 = 331;
         public const double CardPoolLeft2 = 421;
         public const double CardPoolLeft3 = 511;

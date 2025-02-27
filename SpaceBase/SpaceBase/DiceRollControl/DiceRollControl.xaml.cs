@@ -22,6 +22,7 @@
 
             viewModel.ShowDiceRollControl = false;
             viewModel.WaitForPlayerInput = false;
+            viewModel.IsMainWindowActive = true;
             viewModel.IsIndividualDieChosen = string.Equals(grid.Name, "IndividualGrid", StringComparison.OrdinalIgnoreCase);
             e.Handled = true;
         }
