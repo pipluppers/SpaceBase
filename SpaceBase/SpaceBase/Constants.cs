@@ -23,7 +23,9 @@
 
         #region UI constants
 
-        public const string MainCanvasName = "MainCanvas";
+        public const string GameTitle = "Space Base";
+        public const string BackgroundSplashScreenPath = @"C:\Users\nguye\Pictures\Space_Base.png";
+        public const string IconPath = @"C:\Users\nguye\Pictures\Star.png";
 
         public const double CardHeight = 160;
         public const double CardWidth = 60;

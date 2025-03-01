@@ -20,11 +20,26 @@ namespace SpaceBase
         /// <returns>The first ancestor of the given type.</returns>
         public static T? FindAncestor<T>(DependencyObject current) where T : class
         {
+            return FindAncestor<T>(current, 1);
+        }
+
+        /// <summary>
+        /// Gets the n-th ancestor of the given type.
+        /// </summary>
+        /// <typeparam name="T">The type for the ancestor.</typeparam>
+        /// <param name="current">The child of the ancestor element to find.</param>
+        /// <param name="ancestorNumber">The nth ancestor to find.</param>
+        /// <returns>The first ancestor of the given type.</returns>
+        public static T? FindAncestor<T>(DependencyObject current, int ancestorNumber) where T : class
+        {
             while (current != null)
             {
                 if (current is T ancestor)
                 {
-                    return ancestor;
+                    if (ancestorNumber == 1)
+                        return ancestor;
+                    else
+                        --ancestorNumber;
                 }
 
                 current = VisualTreeHelper.GetParent(current);
@@ -51,6 +66,52 @@ namespace SpaceBase
                 }
 
                 T? descendant = FindVisualChild<T>(child);
+                if (descendant != null)
+                {
+                    return descendant;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets the n-th visual child at the first level of the given type.
+        /// </summary>
+        /// <typeparam name="T">The type for the child.</typeparam>
+        /// <param name="parent">The parent of the child element to find.</param>
+        /// <param name="childNumber">The nth ancestor to find.</param>
+        /// <returns>The first visual child of the given type.</returns>
+        public static T? FindVisualChild<T>(DependencyObject parent, int childNumber) where T : DependencyObject
+        {
+            if (parent == null) return null;
+
+            int count = VisualTreeHelper.GetChildrenCount(parent);
+            int childCounter = childNumber;
+
+            for (int i = 0; i < count; i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T typedChild)
+                {
+                    if (childCounter == 1)
+                        return typedChild;
+                    else
+                        --childCounter;
+                }
+
+                for (int j = i + 1; j < count; ++j)
+                {
+                    if (child is T typedChild2)
+                    {
+                        if (childCounter == 1)
+                            return typedChild2;
+                        else
+                            --childCounter;
+                    }
+                }
+
+                T? descendant = FindVisualChild<T>(child, childNumber);
                 if (descendant != null)
                 {
                     return descendant;

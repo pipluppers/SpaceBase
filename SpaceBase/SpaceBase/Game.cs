@@ -14,7 +14,6 @@
         private readonly Random _random;
 
         public event DiceRollEventHandler<DiceRollEventArgs>? DiceRollEventHandler;
-        public event EventHandler<EventArgs>? WaitForPlayerInputEventHandler;
         public event EventHandler<EventArgs>? PreDiceRollEventHandler;
         public event EventHandler<EventArgs>? BuyEventHandler;
         public event TurnOverEvent<TurnOverEventArgs>? TurnOverEventHandler;

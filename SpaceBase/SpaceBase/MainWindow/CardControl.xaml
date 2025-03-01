@@ -8,28 +8,24 @@
              d:DataContext="{d:DesignInstance Type=models:Card}"
              mc:Ignorable="d"
              x:Name="CardUserControl"
-             d:DesignHeight="250" d:DesignWidth="{x:Static local:Constants.CardWidth}">
+             d:DesignHeight="250" MaxHeight="250"
+             d:DesignWidth="{x:Static local:Constants.CardWidth}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="..\SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid AllowDrop="False">
-        <Grid.Resources>
-            <local:NullVisibilityConverter x:Key="NullVisibilityConverter"/>
-            <local:CollapsedIfEqualIntegerConverter x:Key="CollapsedIfEqualIntegerConverter"/>
-            <local:CostVisibilityConverter x:Key="CostVisibilityConverter"/>
-            <local:ActionTypeBackgroundConverter x:Key="ActionTypeBackgroundConverter"/>
-        </Grid.Resources>
-
         <Border Panel.ZIndex="2" AllowDrop="True" IsHitTestVisible="True">
-            <Grid Background="RosyBrown">
+            <Grid Style="{StaticResource CardGridBackgroundStyle}">
                 <Grid.Resources>
                     <Style x:Key="DecorationBorder" TargetType="Border">
                         <Setter Property="Height" Value="{x:Static local:Constants.CostSectorBubbleWidthHeight}"/>
                         <Setter Property="Width" Value="{x:Static local:Constants.CostSectorBubbleWidthHeight}"/>
                         <Setter Property="VerticalAlignment" Value="Center"/>
                         <Setter Property="BorderThickness" Value="1"/>
-                    </Style>
-                    <Style x:Key="BubbleBorder" TargetType="Border" BasedOn="{StaticResource DecorationBorder}">
-                        <Setter Property="HorizontalAlignment" Value="Center"/>
-                        <Setter Property="CornerRadius" Value="45"/>
-                        <Setter Property="BorderBrush" Value="Black"/>
                     </Style>
                     <Style TargetType="TextBlock">
                         <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -51,10 +47,10 @@
 
                 <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1" Margin="5,10,5,5" Background="DeepSkyBlue">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Border Style="{StaticResource BubbleBorder}" Background="{Binding Effect, Converter={StaticResource ActionTypeBackgroundConverter}, ConverterParameter=1, Mode=OneWay}">
+                        <Border Style="{StaticResource BubbleBorderStyle}" Background="{Binding Effect, Converter={StaticResource ActionTypeBackgroundConverter}, ConverterParameter=1, Mode=OneWay}">
                             <TextBlock Text="{Binding Amount}"/>
                         </Border>
-                        <Border Style="{StaticResource BubbleBorder}" Visibility="{Binding SecondaryAmount, Converter={StaticResource CollapsedIfEqualIntegerConverter}, ConverterParameter=0, Mode=OneWay}" Background="{Binding Effect, Converter={StaticResource ActionTypeBackgroundConverter}, ConverterParameter=2, Mode=OneWay}" Margin="3,0,0,0">
+                        <Border Style="{StaticResource BubbleBorderStyle}" Visibility="{Binding SecondaryAmount, Converter={StaticResource CollapsedIfEqualIntegerConverter}, ConverterParameter=0, Mode=OneWay}" Background="{Binding Effect, Converter={StaticResource ActionTypeBackgroundConverter}, ConverterParameter=2, Mode=OneWay}" Margin="3,0,0,0">
                             <TextBlock Text="{Binding SecondaryAmount}"/>
                         </Border>
                     </StackPanel>
@@ -62,10 +58,10 @@
 
                 <Border Grid.Row="2" BorderBrush="Black" BorderThickness="1" Margin="5,5,5,10" Background="Red">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Border Style="{StaticResource BubbleBorder}" Background="{Binding DeployedEffect, Converter={StaticResource ActionTypeBackgroundConverter}, ConverterParameter=1, Mode=OneWay}">
+                        <Border Style="{StaticResource BubbleBorderStyle}" Background="{Binding DeployedEffect, Converter={StaticResource ActionTypeBackgroundConverter}, ConverterParameter=1, Mode=OneWay}">
                             <TextBlock Text="{Binding DeployedAmount}"/>
                         </Border>
-                        <Border Style="{StaticResource BubbleBorder}" Visibility="{Binding DeployedSecondaryAmount, Converter={StaticResource CollapsedIfEqualIntegerConverter}, ConverterParameter=0, Mode=OneWay}" Background="{Binding DeployedEffect, Converter={StaticResource ActionTypeBackgroundConverter}, ConverterParameter=2, Mode=OneWay}" Margin="3,0,0,0">
+                        <Border Style="{StaticResource BubbleBorderStyle}" Visibility="{Binding DeployedSecondaryAmount, Converter={StaticResource CollapsedIfEqualIntegerConverter}, ConverterParameter=0, Mode=OneWay}" Background="{Binding DeployedEffect, Converter={StaticResource ActionTypeBackgroundConverter}, ConverterParameter=2, Mode=OneWay}" Margin="3,0,0,0">
                             <TextBlock Text="{Binding DeployedSecondaryAmount}"/>
                         </Border>
                     </StackPanel>

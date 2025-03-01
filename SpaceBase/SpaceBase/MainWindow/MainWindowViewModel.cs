@@ -109,7 +109,6 @@
             Game.DiceRollEventHandler += Game_DiceRollEventHandler;
             Game.BuyEventHandler += Game_BuyEventHandler;
 
-            Game.WaitForPlayerInputEventHandler += Game_WaitForPlayerInputEventHandler;
             Game.TurnOverEventHandler += Game_TurnOverEventHandler;
         }
 

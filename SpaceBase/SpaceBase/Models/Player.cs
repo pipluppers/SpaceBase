@@ -104,7 +104,9 @@
         /// <exception cref="ArgumentOutOfRangeException">The ID is invalid.</exception>
         public void ActivateDeployedCardsEffect(int sectorID)
         {
-            GetSector(sectorID).DeployedCards.ForEach((card) => card.ActivateDeployedEffect(this));
+            var deployedCards = GetSector(sectorID).DeployedCards;
+            foreach (var deployedCard in deployedCards)
+                deployedCard.ActivateDeployedEffect(this);
         }
 
         public void UpdateCurrentPlayer(bool isCurrentPlayer)

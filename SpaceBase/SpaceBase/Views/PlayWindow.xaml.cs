@@ -12,12 +12,9 @@ namespace SpaceBase
         {
             InitializeComponent();
 
-            string backgroundPath = @"C:\Users\nguye\Pictures\Space_Base.png";
-            string iconPath = @"C:\Users\nguye\Pictures\Star.png";
-
-            Title = "Space Base";
-            Background = new ImageBrush(new BitmapImage(new Uri(backgroundPath)));
-            Icon = new BitmapImage(new Uri(iconPath));
+            Title = Constants.GameTitle;
+            Background = new ImageBrush(new BitmapImage(new Uri(Constants.BackgroundSplashScreenPath)));
+            Icon = new BitmapImage(new Uri(Constants.IconPath));
         }
     }
 }

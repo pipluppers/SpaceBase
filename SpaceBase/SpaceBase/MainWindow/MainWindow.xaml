@@ -7,12 +7,17 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
         x:Name="MainGameWindow"
-        Title="MainWindow" Height="1000" MinHeight="1000" Width="1024" MinWidth="1024" MaxWidth="1024"
+        Title="MainWindow"
+        Height="1200" MinHeight="1200"
+        Width="1024" MinWidth="1024" MaxWidth="1024"
         Background="Black"
         Closed="MainGameWindow_Closed">
     <Window.Resources>
-        <local:NullVisibilityConverter x:Key="NullVisibilityConverter"/>
-        <local:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="..\SharedStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -20,7 +25,7 @@
             <RowDefinition Height="150"/>
         </Grid.RowDefinitions>
 
-        <Canvas x:Name="MainCanvas" Grid.Row="0" Grid.RowSpan="2" AllowDrop="True" Height="1000">
+        <Canvas Grid.Row="0" AllowDrop="True">
             <Canvas.Resources>
                 <Style x:Key="DraggableCardStyle" TargetType="local:CardControl">
                     <Setter Property="AllowDrop" Value="True"/>
@@ -66,8 +71,8 @@
             <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>
             <ItemsControl Style="{StaticResource CardPoolControlStyle}" Canvas.Left="{x:Static local:Constants.CardPoolLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}" ItemsSource="{Binding Game.Level3Cards}"/>
 
-            <Grid Canvas.Left="0" Canvas.Top="600" Width="{Binding Width, ElementName=MainGameWindow}" Height="244" Background="Transparent" IsHitTestVisible="True" DataContext="{Binding HumanPlayer}">
-                <ItemsControl x:Name="SectorItemsControl" Grid.Row="0" ItemsSource="{Binding Board.Sectors}" Margin="10,0,10,20" Loaded="SectorItemsControl_Loaded">
+            <Grid Canvas.Left="0" Canvas.Bottom="0" Width="{Binding Width, ElementName=MainGameWindow}" Height="344" Background="Transparent" IsHitTestVisible="True" DataContext="{Binding HumanPlayer}">
+                <ItemsControl x:Name="SectorItemsControl" Grid.Row="0" ItemsSource="{Binding Board.Sectors}" Margin="10,0,10,20" Loaded="SectorItemsControl_Loaded" VerticalAlignment="Bottom">
                     <ItemsControl.Template>
                         <ControlTemplate>
                             <Border BorderBrush="Black" BorderThickness="1">
@@ -82,59 +87,10 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border BorderBrush="Black" BorderThickness="1" Width="82" Padding="10,10,10,10" AllowDrop="True" Drop="Border_Drop" IsHitTestVisible="True">
-                                <Grid AllowDrop="False">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-
-                                    <local:CardControl Grid.Row="0" DataContext="{Binding StationedCard}"/>
-
-                                    <Border Grid.Row="1" Background="OrangeRed" BorderThickness="1" BorderBrush="Black" Width="30" Height="30" CornerRadius="50" HorizontalAlignment="Center" Margin="0,10,0,0" AllowDrop="False">
-                                        <Label Content="{Binding ID}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
-                                    </Border>
-                                </Grid>
-                            </Border>
+                            <local:SectorView />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-            </Grid>
-
-            <Grid Canvas.Left="0" Canvas.Top="840" Width="300" Height="90" Background="LightGray" Margin="10,0,10,0">
-                <Grid.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="Height" Value="{x:Static local:Constants.CostSectorBubbleWidthHeight}"/>
-                        <Setter Property="Width" Value="{x:Static local:Constants.CostSectorBubbleWidthHeight}"/>
-                        <Setter Property="VerticalAlignment" Value="Center"/>
-                        <Setter Property="BorderThickness" Value="1"/>
-                        <Setter Property="CornerRadius" Value="45"/>
-                        <Setter Property="BorderBrush" Value="Black"/>
-                    </Style>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="VerticalAlignment" Value="Center"/>
-                        <Setter Property="FontSize" Value="15"/>
-                        <Setter Property="FontWeight" Value="Bold"/>
-                    </Style>
-                </Grid.Resources>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="30"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <Border Grid.Row="0" Grid.Column="0" Background="Yellow"/>
-                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding HumanPlayer.Credits, Mode=OneWay}"/>
-
-                <Border Grid.Row="1" Grid.Column="0" Background="LightGreen"/>
-                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding HumanPlayer.Income, Mode=OneWay}"/>
-
-                <Border Grid.Row="2" Grid.Column="0" Background="DodgerBlue"/>
-                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding HumanPlayer.VictoryPoints, Mode=OneWay}"/>
             </Grid>
         </Canvas>
 
@@ -148,14 +104,6 @@
 
             <Grid Grid.Column="0" Background="LightGray" Margin="10,20,10,20">
                 <Grid.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="Height" Value="{x:Static local:Constants.CostSectorBubbleWidthHeight}"/>
-                        <Setter Property="Width" Value="{x:Static local:Constants.CostSectorBubbleWidthHeight}"/>
-                        <Setter Property="VerticalAlignment" Value="Center"/>
-                        <Setter Property="BorderThickness" Value="1"/>
-                        <Setter Property="CornerRadius" Value="45"/>
-                        <Setter Property="BorderBrush" Value="Black"/>
-                    </Style>
                     <Style TargetType="TextBlock">
                         <Setter Property="VerticalAlignment" Value="Center"/>
                         <Setter Property="FontSize" Value="15"/>
@@ -172,13 +120,13 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Border Grid.Row="0" Grid.Column="0" Background="Yellow"/>
+                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource BubbleBorderStyle}" Background="Yellow"/>
                 <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding HumanPlayer.Credits, Mode=OneWay}"/>
 
-                <Border Grid.Row="1" Grid.Column="0" Background="LightGreen"/>
+                <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource BubbleBorderStyle}" Background="LightGreen"/>
                 <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding HumanPlayer.Income, Mode=OneWay}"/>
 
-                <Border Grid.Row="2" Grid.Column="0" Background="DodgerBlue"/>
+                <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource BubbleBorderStyle}" Background="DodgerBlue"/>
                 <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding HumanPlayer.VictoryPoints, Mode=OneWay}"/>
             </Grid>
 

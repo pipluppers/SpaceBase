@@ -4,7 +4,7 @@
     {
         private readonly int _id;
         private Card? _stationedCard;
-        private readonly List<Card> _deployedCards;
+        private readonly ObservableCollection<Card> _deployedCards;
 
         public Sector(int id, Card? card)
         {
@@ -18,7 +18,7 @@
 
         public int ID { get => _id; }
         public Card? StationedCard { get => _stationedCard; private set => SetProperty(ref _stationedCard, value); }
-        public List<Card> DeployedCards => _deployedCards;
+        public ObservableCollection<Card> DeployedCards => _deployedCards;
 
         /// <summary>
         /// Deploys the current card and sets the current card to the provided one.

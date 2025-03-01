@@ -1,4 +1,6 @@
-﻿namespace SpaceBase
+﻿using System.Windows.Media.Imaging;
+
+namespace SpaceBase
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -11,6 +13,8 @@
         public MainWindow()
         {
             InitializeComponent();
+            Title = Constants.GameTitle;
+            Icon = new BitmapImage(new Uri(Constants.IconPath));
 
             _borders = [];
         }
@@ -77,7 +81,7 @@
             if (card.SectorID != sector.ID)
                 return;
 
-            Grid? grid = Utilities.FindAncestor<Grid>(border);
+            Grid? grid = Utilities.FindAncestor<Grid>(border, 2);
             if (grid == null)
                 return;
 
