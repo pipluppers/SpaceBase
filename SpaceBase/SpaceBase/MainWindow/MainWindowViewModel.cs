@@ -39,6 +39,8 @@
 
         public HumanPlayer HumanPlayer { get => _humanPlayer; set => SetProperty(ref _humanPlayer, value); }
 
+        public bool IsHumanPlayerActive { get => HumanPlayer != null && Game != null && HumanPlayer.ID == Game.CurrentPlayerID; }
+
         public bool ShowDiceRollControl
         {
             get => _showDiceRollControl;
@@ -60,12 +62,23 @@
                 _isIndividualDieChosen = value;
                 if (value)
                 {
-                    HumanPlayer.ActivateCardEffect(Dice1);
-                    HumanPlayer.ActivateCardEffect(Dice2);
+                    if (IsHumanPlayerActive)
+                    {
+                        HumanPlayer.ActivateCardEffect(Dice1);
+                        HumanPlayer.ActivateCardEffect(Dice2);
+                    }
+                    else
+                    {
+                        HumanPlayer.ActivateDeployedCardsEffect(Dice1);
+                        HumanPlayer.ActivateDeployedCardsEffect(Dice2);
+                    }
                 }
                 else
                 {
-                    HumanPlayer.ActivateCardEffect(Dice1 + Dice2);
+                    if (IsHumanPlayerActive)
+                        HumanPlayer.ActivateCardEffect(Dice1 + Dice2);
+                    else
+                        HumanPlayer.ActivateDeployedCardsEffect(Dice1 + Dice2);
                 }
             }
         }
@@ -149,12 +162,16 @@
 
         private void Game_BuyEventHandler(object? sender, EventArgs e)
         {
-            WaitForPlayerInput = true;
-            CanDragCards = true;
+            if (IsHumanPlayerActive)
+            {
+                WaitForPlayerInput = true;
+                CanDragCards = true;
 
-            while (WaitForPlayerInput) { }
+                while (WaitForPlayerInput) { }
 
-            CanDragCards = false;
+                //HumanPlayer.ResetCredits();
+                CanDragCards = false;
+            }
         }
 
         /// <summary>
@@ -176,6 +193,7 @@
         private void Game_TurnOverEventHandler(object sender, TurnOverEventArgs e)
         {
             WaitForPlayerInput = true;
+            NotifyPropertyChanged(nameof(IsHumanPlayerActive));
         }
 
         #endregion Event handlers

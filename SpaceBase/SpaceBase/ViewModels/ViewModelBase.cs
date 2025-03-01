@@ -25,5 +25,10 @@ namespace SpaceBase
 
             return true;
         }
+
+        protected void NotifyPropertyChanged(string propertyName)
+        {
+            OnPropertyChanged(propertyName);
+        }
     }
 }

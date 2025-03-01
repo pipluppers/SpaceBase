@@ -45,8 +45,8 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Individual" Style="{StaticResource ChoiceStyle}"/>
-            <local:DiceSectorControl Grid.Row="1" Grid.Column="0" Dice1Value="{Binding Dice1, Mode=TwoWay}"/>
-            <local:DiceSectorControl Grid.Row="1" Grid.Column="1" Dice1Value="{Binding Dice2, Mode=TwoWay}"/>
+            <local:DiceSectorControl Grid.Row="1" Grid.Column="0" IsHumanPlayerActive="{Binding IsHumanPlayerActive}" Dice1Value="{Binding Dice1, Mode=TwoWay}"/>
+            <local:DiceSectorControl Grid.Row="1" Grid.Column="1" IsHumanPlayerActive="{Binding IsHumanPlayerActive}" Dice1Value="{Binding Dice2, Mode=TwoWay}"/>
         </Grid>
 
         <!-- Separator -->
@@ -63,7 +63,7 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Sum" Style="{StaticResource ChoiceStyle}"/>
-            <local:DiceSectorControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Dice1Value="{Binding Dice1}" Dice2Value="{Binding Dice2}"/>
+            <local:DiceSectorControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsHumanPlayerActive="{Binding IsHumanPlayerActive}" Dice1Value="{Binding Dice1}" Dice2Value="{Binding Dice2}"/>
 
             <Button Grid.Row="0" Grid.Column="1" Content="Hello" Margin="0,10,10,0" Command="{Binding ShowMainWindowCommand}">
                 

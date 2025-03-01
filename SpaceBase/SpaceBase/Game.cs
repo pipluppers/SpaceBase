@@ -9,7 +9,6 @@
         private readonly int _maxNumRounds;
         private int _roundNumber;
         private int _turnNumber;
-        private int _currentPlayer = 0;
         private bool _isGameOver = false;
         private readonly Random _random;
 
@@ -24,12 +23,13 @@
 
         public Game(int numPlayers) : this(numPlayers, Constants.MaxNumRounds) { }
 
-        public Game(int numPlayers, int maxNumRounds)
+        private Game(int numPlayers, int maxNumRounds)
         {
             if (numPlayers < Constants.MinNumPlayers || numPlayers > Constants.MaxNumPlayers)
                 throw new ArgumentException($"The number of players must be between {Constants.MinNumPlayers} and {Constants.MaxNumPlayers}.");
 
             _random = new Random(1);
+            CurrentPlayerID = 0;
 
             _maxNumRounds = maxNumRounds;
             RoundOverEvent += MaxNumRoundsHandler;
@@ -69,6 +69,8 @@
 
         public List<Player> Players { get => _players; }
 
+        public int CurrentPlayerID { get; set; }
+
         public int TurnNumber { get => _turnNumber; }
 
         public int RoundNumber { get => _roundNumber; }
@@ -94,7 +96,7 @@
 
             _roundNumber = 1;
             _turnNumber = 1;
-            _currentPlayer = 0;
+            CurrentPlayerID = 1; // TODO Just set human player to first player for now
 
             await PlayGame();
         }
@@ -120,7 +122,12 @@
 
                 // Reset current player's credits to income if applicable
 
-                UpdateNextPlayer();
+                if (CurrentPlayerID < _players.Count)
+                    ++CurrentPlayerID;
+                else
+                    CurrentPlayerID = 1;
+
+                //UpdateNextPlayer();
 
                 if (_turnNumber < _players.Count)
                 {
@@ -353,14 +360,14 @@
         /// </summary>
         private void UpdateNextPlayer()
         {
-            _players[_currentPlayer].UpdateCurrentPlayer(false);
+            _players[CurrentPlayerID].UpdateCurrentPlayer(false);
 
-            if (_currentPlayer < _players.Count - 1)
-                ++_currentPlayer;
+            if (CurrentPlayerID < _players.Count - 1)
+                ++CurrentPlayerID;
             else
-                _currentPlayer = 0;
+                CurrentPlayerID = 0;
 
-            _players[_currentPlayer].UpdateCurrentPlayer(true);
+            _players[CurrentPlayerID].UpdateCurrentPlayer(true);
         }
     }
 }

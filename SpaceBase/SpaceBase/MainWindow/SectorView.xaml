@@ -37,14 +37,7 @@
                 <DataTemplate>
                     <Grid Style="{StaticResource CardGridBackgroundStyle}" Margin="10,0,10,0" Height="30">
                         <Border BorderBrush="Black" BorderThickness="1" Margin="5,0,5,0" Background="Red">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Border Style="{StaticResource BubbleBorderStyle}" Background="{Binding DeployedEffect, Converter={StaticResource ActionTypeBackgroundConverter}, ConverterParameter=1, Mode=OneWay}">
-                                    <TextBlock Text="{Binding DeployedAmount}" HorizontalAlignment="Center"/>
-                                </Border>
-                                <Border Style="{StaticResource BubbleBorderStyle}" Visibility="{Binding DeployedSecondaryAmount, Converter={StaticResource CollapsedIfEqualIntegerConverter}, ConverterParameter=0, Mode=OneWay}" Background="{Binding DeployedEffect, Converter={StaticResource ActionTypeBackgroundConverter}, ConverterParameter=2, Mode=OneWay}" Margin="3,0,0,0">
-                                    <TextBlock Text="{Binding DeployedSecondaryAmount}" HorizontalAlignment="Center"/>
-                                </Border>
-                            </StackPanel>
+                            <local:CardEffectControl IsStationedEffect="False"/>
                         </Border>
                     </Grid>
                 </DataTemplate>

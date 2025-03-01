@@ -11,13 +11,18 @@
             Dice2Value = -1;
         }
 
+        public static readonly DependencyProperty IsHumanPlayerActiveProperty =
+            DependencyProperty.Register("IsHumanPlayerActive", typeof(bool), typeof(DiceSectorControl), new PropertyMetadata());
+
+        public bool IsHumanPlayerActive { get => (bool)GetValue(IsHumanPlayerActiveProperty); set => SetValue(IsHumanPlayerActiveProperty, value); }
+
         public readonly static DependencyProperty Dice1ValueProperty =
             DependencyProperty.Register("Dice1Value", typeof(int), typeof(DiceSectorControl), new PropertyMetadata());
 
         /// <summary>
         /// The value of the first dice.
         /// </summary>
-        public int Dice1Value { get => (int)GetValue(Dice1ValueProperty); set { SetValue(Dice1ValueProperty, value); } }
+        public int Dice1Value { get => (int)GetValue(Dice1ValueProperty); set => SetValue(Dice1ValueProperty, value); }
 
         public readonly static DependencyProperty Dice2ValueProperty =
             DependencyProperty.Register("Dice2Value", typeof(int), typeof(DiceSectorControl), new PropertyMetadata());
@@ -25,7 +30,7 @@
         /// <summary>
         /// The value will be -1 if this control is not referencing the sum. Otherwise, it will be the value of the second dice.
         /// </summary>
-        public int Dice2Value { get => (int)GetValue(Dice2ValueProperty); set { SetValue(Dice2ValueProperty, value); } }
+        public int Dice2Value { get => (int)GetValue(Dice2ValueProperty); set => SetValue(Dice2ValueProperty, value); }
 
         /// <summary>
         /// If the control is made visible, update the text showing the sector number.

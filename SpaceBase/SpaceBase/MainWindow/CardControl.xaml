@@ -46,25 +46,11 @@
                 </Border>
 
                 <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1" Margin="5,10,5,5" Background="DeepSkyBlue">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Border Style="{StaticResource BubbleBorderStyle}" Background="{Binding Effect, Converter={StaticResource ActionTypeBackgroundConverter}, ConverterParameter=1, Mode=OneWay}">
-                            <TextBlock Text="{Binding Amount}"/>
-                        </Border>
-                        <Border Style="{StaticResource BubbleBorderStyle}" Visibility="{Binding SecondaryAmount, Converter={StaticResource CollapsedIfEqualIntegerConverter}, ConverterParameter=0, Mode=OneWay}" Background="{Binding Effect, Converter={StaticResource ActionTypeBackgroundConverter}, ConverterParameter=2, Mode=OneWay}" Margin="3,0,0,0">
-                            <TextBlock Text="{Binding SecondaryAmount}"/>
-                        </Border>
-                    </StackPanel>
+                    <local:CardEffectControl IsStationedEffect="True"/>
                 </Border>
 
                 <Border Grid.Row="2" BorderBrush="Black" BorderThickness="1" Margin="5,5,5,10" Background="Red">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Border Style="{StaticResource BubbleBorderStyle}" Background="{Binding DeployedEffect, Converter={StaticResource ActionTypeBackgroundConverter}, ConverterParameter=1, Mode=OneWay}">
-                            <TextBlock Text="{Binding DeployedAmount}"/>
-                        </Border>
-                        <Border Style="{StaticResource BubbleBorderStyle}" Visibility="{Binding DeployedSecondaryAmount, Converter={StaticResource CollapsedIfEqualIntegerConverter}, ConverterParameter=0, Mode=OneWay}" Background="{Binding DeployedEffect, Converter={StaticResource ActionTypeBackgroundConverter}, ConverterParameter=2, Mode=OneWay}" Margin="3,0,0,0">
-                            <TextBlock Text="{Binding DeployedSecondaryAmount}"/>
-                        </Border>
-                    </StackPanel>
+                    <local:CardEffectControl IsStationedEffect="False"/>
                 </Border>
             </Grid>
         </Border>
