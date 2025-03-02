@@ -92,6 +92,9 @@
         {
             if (_players.Count < 2) return;
 
+            foreach (var player in _players)
+                player.AddCredits(5);
+
             // TODO Each player draws a card. Player order is determined by highest cost
 
             _roundNumber = 1;

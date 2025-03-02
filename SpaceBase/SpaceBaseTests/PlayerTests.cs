@@ -25,7 +25,7 @@ namespace SpaceBaseTests
 
             Assert.Multiple(() =>
             {
-                Assert.That(player.Credits, Is.EqualTo(5), "Each player should start with 5 credits.");
+                Assert.That(player.Credits, Is.EqualTo(0));
                 Assert.That(player.Income, Is.EqualTo(0));
                 Assert.That(player.VictoryPoints, Is.EqualTo(0));
                 Assert.That(player.ChargeCubes, Is.EqualTo(0));
@@ -43,7 +43,7 @@ namespace SpaceBaseTests
 
             Assert.Multiple(() =>
             {
-                Assert.That(player.Credits, Is.EqualTo(5 + credits), "The 5 is from the player's starting amount.");
+                Assert.That(player.Credits, Is.EqualTo(credits));
                 Assert.That(player.Income, Is.EqualTo(income));
             });
 
@@ -108,10 +108,9 @@ namespace SpaceBaseTests
 
             player.ActivateDeployedCardsEffect(sectorID);
 
-            int expectedCredits = 5 + deployedNumCreditsToAdd;
             Assert.Multiple(() =>
             {
-                Assert.That(player.Credits, Is.EqualTo(expectedCredits), $"The player starts off with 5 credits and gets {deployedNumCreditsToAdd} from the deployed effect.");
+                Assert.That(player.Credits, Is.EqualTo(deployedNumCreditsToAdd), $"The player should have {deployedNumCreditsToAdd} from the deployed effect.");
                 Assert.That(player.Income, Is.EqualTo(deployedNumIncomeToAdd), $"The player should have gotten {deployedNumIncomeToAdd} from the deployed effect.");
                 Assert.That(player.VictoryPoints, Is.EqualTo(deployedNumVictoryPointsToAdd), $"The player should have gotten {deployedNumVictoryPointsToAdd} from the deployed effect.");
             });
@@ -127,22 +126,18 @@ namespace SpaceBaseTests
             var player = new HumanPlayer(1);
             var card = new Card(1, sectorID, 3, ActionType.AddCredits, numCreditsToAdd, null, ActionType.AddCredits, deployedNumCreditsToAdd, null);
 
-            Assert.That(player.Credits, Is.EqualTo(5), "Pre-test: Player should start with 5 credits.");
-
             player.AddCard(card);
             Assert.That(player.GetSector(sectorID).StationedCard, Is.Not.Null);
 
             player.ActivateCardEffect(sectorID);
-            int expectedCredits = 5 + numCreditsToAdd;
-            Assert.That(player.Credits, Is.EqualTo(expectedCredits), $"The player should have 5 + {numCreditsToAdd} credits.");
+            Assert.That(player.Credits, Is.EqualTo(numCreditsToAdd), $"The player should have {numCreditsToAdd} credits since AddCard resets credits.");
 
             // Deploy the card and try activating the deployed effect
 
             player.AddCard(card);
             player.ActivateDeployedCardsEffect(sectorID);
 
-            expectedCredits += deployedNumCreditsToAdd;
-            Assert.That(player.Credits, Is.EqualTo(expectedCredits), $"The player should have 5 + {numCreditsToAdd} + {deployedNumCreditsToAdd} credits.");
+            Assert.That(player.Credits, Is.EqualTo(deployedNumCreditsToAdd), $"The player should have {deployedNumCreditsToAdd} credits since AddCard resets credits.");
         }
 
         [Test]

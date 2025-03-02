@@ -58,7 +58,6 @@ namespace SpaceBase
             try
             {
                 player.AddCard(card);
-                player.ResetCredits();
             }
             catch (Exception ex)
             {

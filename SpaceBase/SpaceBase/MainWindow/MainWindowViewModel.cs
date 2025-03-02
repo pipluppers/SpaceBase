@@ -169,7 +169,6 @@
 
                 while (WaitForPlayerInput) { }
 
-                //HumanPlayer.ResetCredits();
                 CanDragCards = false;
             }
         }

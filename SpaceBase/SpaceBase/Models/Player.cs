@@ -3,7 +3,7 @@
     public abstract class Player(int id) : PropertyChangedBase
     {
         private readonly Board _board = new();
-        private int _credits = 5;
+        private int _credits = 0;
         private int _income = 0;
         private int _victoryPoints = 0;
         private int _chargeCubes = 0;
@@ -83,6 +83,7 @@
                 throw new ArgumentOutOfRangeException(nameof(card), $"The input sector ID of the card must be between {Constants.MinSectorID} and {Constants.MaxSectorID}");
 
             GetSector(card.SectorID).AddCard(card);
+            ResetCredits();
 
             AddCardToSectorEvent?.Invoke(this, new AddCardToSectorEventArgs(card));
         }
