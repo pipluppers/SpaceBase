@@ -3,21 +3,19 @@ using System.Text.Json.Serialization;
 
 namespace SpaceBase.Models
 {
-    public enum CardType
-    {
-        Standard = 0,
-        Charge = 1,
-        Colony = 2
-    }
-
     public abstract class CardBase : ISerializable
     {
-        private protected int _level;
-        private protected int _sectorID;
-        private protected int _cost;
+        private readonly int _sectorID;
+        private readonly int _cost;
 
-        [JsonPropertyOrder(0)]
-        public int Level { get => _level; }
+        protected CardBase(int sectorID, int cost)
+        {
+            if (sectorID < Constants.MinSectorID || sectorID > Constants.MaxSectorID)
+                throw new ArgumentOutOfRangeException(nameof(sectorID), $"The sector must be between {Constants.MinSectorID} and {Constants.MaxSectorID} inclusive.");
+
+            _sectorID = sectorID;
+            _cost = cost;
+        }
 
         [JsonPropertyOrder(2)]
         public int SectorID { get => _sectorID; }
@@ -27,6 +25,8 @@ namespace SpaceBase.Models
 
         [JsonIgnore]
         public abstract CardType CardType { get; }
+
+        public abstract void ActivateStationedEffect(Player player);
 
         #region ISerializable methods
 
@@ -45,13 +45,24 @@ namespace SpaceBase.Models
 
         #endregion ISerializable methods
 
-        public abstract override bool Equals(object? obj);
+        #region Equatable methods
 
-        public abstract override int GetHashCode();
+        public override bool Equals(object? obj)
+        {
+            if (obj is not CardBase other)
+                return false;
+
+            return SectorID == other.SectorID && Cost == other.Cost && CardType == other.CardType;
+        }
+
+        public override int GetHashCode() => SectorID * 17 + Cost * 17 + (int)CardType * 17;
+
+        #endregion Equatable methods
     }
 
     public class Card : CardBase
     {
+        private protected int _level;
         private readonly Action<Player, int, int> _effect;
         private readonly int _amount;
         private readonly int _secondaryAmount;
@@ -61,7 +72,7 @@ namespace SpaceBase.Models
 
         [JsonConstructor]
         public Card(int level, int sectorID, int cost, ActionType effectType, int amount, int? secondaryAmount,
-            ActionType deployedEffectType, int deployedAmount, int? deployedSecondaryAmount)
+            ActionType deployedEffectType, int deployedAmount, int? deployedSecondaryAmount) : base(sectorID, cost)
         {
             if (level < Constants.MinCardLevel || level > Constants.MaxCardLevel)
                 throw new ArgumentOutOfRangeException($"The card level must be between {Constants.MinCardLevel} and {Constants.MaxCardLevel} inclusive.");
@@ -73,12 +84,7 @@ namespace SpaceBase.Models
             else if (level == 3 && (cost < 12 || cost > 14))
                 throw new ArgumentOutOfRangeException(nameof(cost), "If the level is 3, then the cost must be between 12 and 14.");
 
-            if (sectorID < Constants.MinSectorID || sectorID > Constants.MaxSectorID)
-                throw new ArgumentOutOfRangeException($"The sector must be between {Constants.MinSectorID} and {Constants.MaxSectorID} inclusive.");
-
             _level = level;
-            _sectorID = sectorID;
-            _cost = cost;
             EffectType = effectType;
             _effect = CardActions.GetAction(effectType);
             _amount = amount;
@@ -88,6 +94,9 @@ namespace SpaceBase.Models
             _deployedAmount = deployedAmount;
             _deployedSecondaryAmount = deployedSecondaryAmount ?? 0;
         }
+
+        [JsonPropertyOrder(1)]
+        public int Level { get => _level; }
 
         [JsonPropertyOrder(4), JsonConverter(typeof(JsonStringEnumConverter))]
         public ActionType EffectType { get; }
@@ -120,7 +129,7 @@ namespace SpaceBase.Models
         /// Activates the stationed effect and updates the given player's resources.
         /// </summary>
         /// <param name="player">The player to receive the resources.</param>
-        public void ActivateStationedEffect(Player player) => Effect.Invoke(player, Amount, _secondaryAmount);
+        public override void ActivateStationedEffect(Player player) => Effect.Invoke(player, Amount, _secondaryAmount);
 
         /// <summary>
         /// Activates the deployed effect and updates the given player's resources.
@@ -136,15 +145,16 @@ namespace SpaceBase.Models
 
         #endregion ISerializable methods
 
+        #region Equatable methods
+
         public override bool Equals(object? obj)
         {
             if (obj is not Card otherCard)
                 return false;
 
-            return Level == otherCard.Level &&
-                SectorID == otherCard.SectorID &&
-                Cost == otherCard.Cost &&
-                EffectType == otherCard.EffectType &&
+            if (!base.Equals(obj)) return false;
+
+            return EffectType == otherCard.EffectType &&
                 Amount == otherCard.Amount &&
                 SecondaryAmount == otherCard.SecondaryAmount &&
                 DeployedEffectType == otherCard.DeployedEffectType &&
@@ -152,18 +162,9 @@ namespace SpaceBase.Models
                 DeployedSecondaryAmount == otherCard.DeployedSecondaryAmount;
         }
 
-        public override int GetHashCode()
-        {
-            return Level * 17 + SectorID * 17 + Cost * 17 + (int)EffectType * 17 + (int)DeployedEffectType * 17;
-        }
+        public override int GetHashCode() => base.GetHashCode() + (int)EffectType * 17 + (int)DeployedEffectType * 17;
 
-    }
-
-    public enum ChargeCardType
-    {
-        Turn = 0,
-        OpponentTurn = 1,
-        Anytime = 2
+        #endregion Equatable methods
     }
 
     public sealed class ChargeCard : Card
@@ -223,6 +224,8 @@ namespace SpaceBase.Models
 
         #endregion ISerializable methods
 
+        #region Equatable methods
+
         public override bool Equals(object? obj)
         {
             if (obj is not ChargeCard otherCard)
@@ -237,28 +240,23 @@ namespace SpaceBase.Models
                 ChargeCardType == otherCard.ChargeCardType;
         }
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode() + (int)EffectType * 17 + (int)DeployedEffectType * 17 + (int)ChargeEffectType * 17;
-        }
+        public override int GetHashCode() => base.GetHashCode() + (int)ChargeEffectType * 17;
+
+        #endregion Equatable methods
     }
 
     /// <summary>
     /// A colony card is a simple card with only a sector ID and cost.
     /// </summary>
-    public sealed class ColonyCard : CardBase, ISerializable
+    public sealed class ColonyCard(int sectorID, int cost) : CardBase(sectorID, cost), ISerializable
     {
-        public ColonyCard(int sectorID, int cost)
-        {
-            if (sectorID < Constants.MinSectorID || sectorID > Constants.MaxSectorID)
-                throw new NotSupportedException($"The sector must be between {Constants.MinSectorID} and {Constants.MaxSectorID} inclusive.");
-
-            _sectorID = sectorID;
-            _cost = cost;
-        }
-
         [JsonIgnore]
         public override CardType CardType { get => CardType.Colony; }
+
+        /// <summary>
+        /// Colony cards have no stationed effects so this will do nothing.
+        /// </summary>
+        public override void ActivateStationedEffect(Player _) { }
 
         #region ISerializable methods
 
@@ -267,20 +265,5 @@ namespace SpaceBase.Models
         public override object? Deserialize(string str) => JsonSerializer.Deserialize<ColonyCard>(str);
 
         #endregion ISerializable methods
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is not Card otherCard)
-                return false;
-
-            return Level == otherCard.Level &&
-                SectorID == otherCard.SectorID &&
-                Cost == otherCard.Cost;
-        }
-
-        public override int GetHashCode()
-        {
-            return Level * 17 + SectorID * 17 + Cost * 17;
-        }
     }
 }

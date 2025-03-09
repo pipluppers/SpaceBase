@@ -26,8 +26,8 @@ namespace SpaceBaseTests
 
             Assert.Multiple(() =>
             {
-                Assert.Throws<ArgumentOutOfRangeException>(() => new Card(0, invalidSectorID1, 3, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
-                Assert.Throws<ArgumentOutOfRangeException>(() => new Card(0, invalidSectorID2, 3, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+                Assert.Throws<ArgumentOutOfRangeException>(() => new Card(1, invalidSectorID1, 3, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+                Assert.Throws<ArgumentOutOfRangeException>(() => new Card(1, invalidSectorID2, 3, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
             });
         }
 

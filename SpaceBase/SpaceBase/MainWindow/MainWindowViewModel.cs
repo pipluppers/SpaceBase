@@ -89,7 +89,7 @@
         public bool WaitForPlayerInput { get; set; }
 
         /// <summary>
-        /// 
+        /// True if the user is allowed to drag cards. Otherwise, false.
         /// </summary>
         public bool CanDragCards { get => _canDragCards; set => SetProperty(ref _canDragCards, value); }
 
