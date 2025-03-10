@@ -1,6 +1,6 @@
 ﻿namespace SpaceBase.Models
 {
-    public class Game
+    public class Game : PropertyChangedBase
     {
         private readonly List<Player> _players;
         private readonly ObservableCollection<Card?> _level1Cards;
@@ -11,6 +11,7 @@
         private int _turnNumber;
         private bool _isGameOver = false;
         private readonly Random _random;
+        private int _currentPlayerID;
 
         public event DiceRollEventHandler<DiceRollEventArgs>? DiceRollEventHandler;
         public event EventHandler<EventArgs>? PreDiceRollEventHandler;
@@ -69,7 +70,7 @@
 
         public List<Player> Players { get => _players; }
 
-        public int CurrentPlayerID { get; set; }
+        public int CurrentPlayerID { get => _currentPlayerID; set => SetProperty(ref _currentPlayerID, value); }
 
         public int TurnNumber { get => _turnNumber; }
 
@@ -355,7 +356,7 @@
             int dice2 = (_random.Next() % 6) + 1;
 
             if (DiceRollEventHandler != null)
-                await Task.Run(() => DiceRollEventHandler.Invoke(this, new DiceRollEventArgs(dice1, dice2)));
+                await Task.Run(() => DiceRollEventHandler.Invoke(this, new DiceRollEventArgs(dice1, dice2, CurrentPlayerID)));
         }
 
         /// <summary>

@@ -8,7 +8,7 @@
         d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
         x:Name="MainGameWindow"
         Title="MainWindow"
-        Height="1200" MinHeight="1200"
+        Height="1300" MinHeight="1300"
         Width="1024" MinWidth="1024" MaxWidth="1024"
         Background="Black"
         Closed="MainGameWindow_Closed">
@@ -21,11 +21,39 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="150"/>
         </Grid.RowDefinitions>
 
-        <Canvas Grid.Row="0" AllowDrop="True">
+        <Grid Grid.Row="0" Background="DarkGray">
+            <Grid.Resources>
+                <Style TargetType="Label">
+                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="FontSize" Value="20"/>
+                </Style>
+            </Grid.Resources>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="0" Content="{Binding Game.CurrentPlayerID, Converter={StaticResource IDToPlayerTextConverter}, Mode=OneWay}"/>
+
+            <Grid Grid.Column="1" Background="Navy">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0" Content="{Binding Dice1, Converter={StaticResource DiceToTextConverter}, ConverterParameter=1, Mode=OneWay}"/>
+                <Label Grid.Column="1" Content="{Binding Dice2, Converter={StaticResource DiceToTextConverter}, ConverterParameter=2, Mode=OneWay}"/>
+            </Grid>
+        </Grid>
+
+        <Canvas Grid.Row="1" AllowDrop="True">
             <Canvas.Resources>
                 <Style x:Key="DraggableCardStyle" TargetType="local:CardControl">
                     <Setter Property="AllowDrop" Value="True"/>
@@ -60,8 +88,6 @@
                 </Style>
             </Canvas.Resources>
 
-            <Button Canvas.Top="10" Canvas.Right="10" Visibility="{Binding PeekAtGameWindow, Converter={StaticResource BoolVisibilityConverter}}" Content="Herro" Command="{Binding ReturnToDiceControlCommand}"/>
-
             <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
             <ItemsControl Style="{StaticResource CardPoolControlStyle}" Canvas.Left="{x:Static local:Constants.CardPoolLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}" ItemsSource="{Binding Game.Level1Cards}"/>
 
@@ -94,9 +120,7 @@
             </Grid>
         </Canvas>
 
-        <local:DiceRollControl Grid.Row="0" Grid.RowSpan="2" Panel.ZIndex="1" Visibility="{Binding ShowDiceRollControl, Converter={StaticResource BoolVisibilityConverter}}"/>
-
-        <Grid Grid.Row="1" Panel.ZIndex="2">
+        <Grid Grid.Row="2" Panel.ZIndex="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>

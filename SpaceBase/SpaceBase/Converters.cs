@@ -139,4 +139,36 @@
             throw new NotImplementedException();
         }
     }
+
+    public class IDToPlayerTextConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is int intValue)
+                return $"Current Turn: Player {intValue}";
+
+            return string.Empty;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class DiceToTextConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is not int intValue || parameter is not string stringParameter)
+                return string.Empty;
+
+            return $"Dice {stringParameter}: {intValue}";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

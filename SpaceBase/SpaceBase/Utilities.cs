@@ -1,4 +1,6 @@
-﻿namespace SpaceBase
+﻿using System.Windows.Documents;
+
+namespace SpaceBase
 {
     interface ISerializable
     {
@@ -169,5 +171,22 @@
         /// <param name="serializableObject">The object to get the string representation of.</param>
         /// <returns>The string representation of the given object.</returns>
         public static string Serialize(ISerializable serializableObject) => serializableObject.Serialize();
+
+        /// <summary>
+        /// Remove all adorners from a UI element.
+        /// </summary>
+        /// <param name="element">The element to remove all adorners from.</param>
+        public static void RemoveAllAdorners(UIElement element)
+        {
+            AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(element);
+            if (adornerLayer == null) return;
+
+            var adorners = adornerLayer.GetAdorners(element);
+            if (adorners == null) return;
+
+            foreach (var adorner in adorners)
+                adornerLayer.Remove(adorner);
+        }
     }
+
 }

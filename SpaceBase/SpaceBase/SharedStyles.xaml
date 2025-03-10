@@ -6,6 +6,8 @@
     <sb:ActionTypeBackgroundConverter x:Key="ActionTypeBackgroundConverter"/>
     <sb:CostVisibilityConverter x:Key="CostVisibilityConverter"/>
     <sb:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
+    <sb:IDToPlayerTextConverter x:Key="IDToPlayerTextConverter"/>
+    <sb:DiceToTextConverter x:Key="DiceToTextConverter"/>
 
     <Style x:Key="BubbleBorderStyle" TargetType="Border">
         <Setter Property="Height" Value="{x:Static sb:Constants.CostSectorBubbleWidthHeight}"/>
