@@ -154,7 +154,7 @@
                 <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding HumanPlayer.VictoryPoints, Mode=OneWay}"/>
             </Grid>
 
-            <Grid Grid.Column="1" Visibility="{Binding ShowDiceRollControl, Converter={StaticResource BoolVisibilityConverter}, ConverterParameter=Invert}">
+            <Grid Grid.Column="1">
                 <Grid.Resources>
                     <Style TargetType="Button">
                         <Setter Property="Height" Value="50"/>

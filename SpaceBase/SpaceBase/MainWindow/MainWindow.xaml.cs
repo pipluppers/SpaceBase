@@ -10,7 +10,7 @@ namespace SpaceBase
     {
         public const int Left1 = 21;
         private readonly List<Border> _sectorViewBorders;
-        private int _dice1 = 0, _dice2 = 0, _currentPlayerID = 0;
+        private DiceRollEventArgs _currentDiceRollArgs;
 
         public MainWindow()
         {
@@ -19,6 +19,7 @@ namespace SpaceBase
             Icon = new BitmapImage(new Uri(Constants.IconPath));
 
             _sectorViewBorders = [];
+            _currentDiceRollArgs = new DiceRollEventArgs(0, 0, 0);
 
             DataContextChanged += MainWindow_DataContextChanged;
         }
@@ -29,10 +30,10 @@ namespace SpaceBase
         private void MainWindow_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (e.OldValue is MainWindowViewModel oldViewModel)
-                oldViewModel.UpdateAvailableMovesFromDiceRollEventHandler -= ViewModel_UpdateAvailableMovesFromDiceRollEventHandler;
+                oldViewModel.HelpDiceRollEvent -= ViewModel_HelpDiceRollEventHandler;
 
             if (e.NewValue is MainWindowViewModel newViewModel)
-                newViewModel.UpdateAvailableMovesFromDiceRollEventHandler += ViewModel_UpdateAvailableMovesFromDiceRollEventHandler;
+                newViewModel.HelpDiceRollEvent += ViewModel_HelpDiceRollEventHandler;
         }
 
         /// <summary>
@@ -40,14 +41,12 @@ namespace SpaceBase
         /// </summary>
         /// <param name="sender">The view model.</param>
         /// <param name="e">The arguments describing the dice roll.</param>
-        private async void ViewModel_UpdateAvailableMovesFromDiceRollEventHandler(object sender, DiceRollEventArgs e)
+        private async void ViewModel_HelpDiceRollEventHandler(object sender, DiceRollEventArgs e)
         {
             if (_sectorViewBorders == null)
                 return;
 
-            _dice1 = e.Dice1;
-            _dice2 = e.Dice2;
-            _currentPlayerID = e.CurrentPlayerID;
+            _currentDiceRollArgs = e;
 
             // Adorners can only be added on the UI thread
             await Dispatcher.BeginInvoke(() =>
@@ -56,7 +55,7 @@ namespace SpaceBase
                 {
                     Border border = _sectorViewBorders[i];
 
-                    if (i == _dice1 - 1 || i == _dice2 - 1)
+                    if (i == e.Dice1 - 1 || i == e.Dice2 - 1)
                     {
                         var borderHighlightAdorner = new BorderIndividualRewardAdorner(border);
                         AdornerLayer layer = AdornerLayer.GetAdornerLayer(border);
@@ -64,7 +63,7 @@ namespace SpaceBase
 
                         border.MouseDown += SectorView_MouseDown;
                     }
-                    else if (i == _dice1 + _dice2 - 1)
+                    else if (i == e.Dice1 + e.Dice2 - 1)
                     {
                         var borderHighlightAdorner = new BorderSumRewardAdorner(border);
                         AdornerLayer layer = AdornerLayer.GetAdornerLayer(border);
@@ -97,16 +96,18 @@ namespace SpaceBase
                 else player.ActivateDeployedCardsEffect(sectorID);
             };
 
+            int dice1 = _currentDiceRollArgs.Dice1, dice2 = _currentDiceRollArgs.Dice2, currentPlayerID = _currentDiceRollArgs.CurrentPlayerID;
+
             HumanPlayer player = viewModel.HumanPlayer;
 
-            if (sector.ID == _dice1 || sector.ID == _dice2)
+            if (sector.ID == dice1 || sector.ID == dice2)
             {
-                ActivateEffect(player, _dice1, _currentPlayerID);
-                ActivateEffect(player, _dice2, _currentPlayerID);
+                ActivateEffect(player, dice1, currentPlayerID);
+                ActivateEffect(player, dice2, currentPlayerID);
             }
-            else if (sector.ID == _dice1 + _dice2)
+            else if (sector.ID == dice1 + dice2)
             {
-                ActivateEffect(player, _dice1 + _dice2, _currentPlayerID);
+                ActivateEffect(player, dice1 + dice2, currentPlayerID);
             }
             else
             {
@@ -119,7 +120,7 @@ namespace SpaceBase
             {
                 Border border2 = _sectorViewBorders[i];
 
-                if (i == _dice1 - 1 || i == _dice2 - 1 || i == (_dice1 + _dice2 - 1))
+                if (i == dice1 - 1 || i == dice2 - 1 || i == (dice1 + dice2 - 1))
                 {
                     Utilities.RemoveAllAdorners(border2);
                     border2.MouseDown -= SectorView_MouseDown;
@@ -141,6 +142,11 @@ namespace SpaceBase
             e.Handled = true;
         }
 
+        /// <summary>
+        /// Start the drag/drop.
+        /// </summary>
+        /// <param name="sender">The CardControl.</param>
+        /// <param name="e">The mouse event args.</param>
         private void CardControl_MouseMove(object sender, MouseEventArgs e)
         {
             if (sender is not CardControl cardControl || cardControl.DataContext is not Card card || e.LeftButton != MouseButtonState.Pressed)
@@ -152,7 +158,7 @@ namespace SpaceBase
             Border? border = _sectorViewBorders[card.SectorID - 1];
             Debug.Assert(border != null);
 
-            var borderHighlightAdorner = new BorderHighlightAdorner(border);
+            var borderHighlightAdorner = new BorderDragAdorner(border);
             AdornerLayer layer = AdornerLayer.GetAdornerLayer(border);
 
             try
@@ -254,11 +260,11 @@ namespace SpaceBase
     /// <summary>
     /// Adorner to add a yellow highlight around a border to help user pick a sector to drag a card to.
     /// </summary>
-    public class BorderHighlightAdorner : Adorner
+    public class BorderDragAdorner : Adorner
     {
         private readonly Pen _highlightedPen;
 
-        public BorderHighlightAdorner(UIElement adornedElement) : base(adornedElement)
+        public BorderDragAdorner(UIElement adornedElement) : base(adornedElement)
         {
             _highlightedPen = new Pen(Brushes.Yellow, 5);
             _highlightedPen.Freeze();

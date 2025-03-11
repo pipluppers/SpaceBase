@@ -7,7 +7,7 @@
         public int CurrentPlayerID { get; } = currentPlayerID;
     }
     public delegate void DiceRollEventHandler<DiceRollEventArgs>(object sender, DiceRollEventArgs e);
-    public delegate void UpdateAvailableMovesFromDiceRollEventHandler<DiceRollEventArgs>(object sender, DiceRollEventArgs e);
+    public delegate void HelpDiceRollEventHandler<DiceRollEventArgs>(object sender, DiceRollEventArgs e);
 
     public class AddCardToSectorEventArgs(Card addedCard)
     {

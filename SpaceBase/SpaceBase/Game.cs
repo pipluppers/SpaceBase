@@ -13,10 +13,10 @@
         private readonly Random _random;
         private int _currentPlayerID;
 
-        public event DiceRollEventHandler<DiceRollEventArgs>? DiceRollEventHandler;
-        public event EventHandler<EventArgs>? PreDiceRollEventHandler;
-        public event EventHandler<EventArgs>? BuyEventHandler;
-        public event TurnOverEvent<TurnOverEventArgs>? TurnOverEventHandler;
+        public event EventHandler<EventArgs>? PreDiceRollEvent;
+        public event DiceRollEventHandler<DiceRollEventArgs>? DiceRollEvent;
+        public event EventHandler<EventArgs>? BuyEvent;
+        public event TurnOverEvent<TurnOverEventArgs>? TurnOverEvent;
         public event RoundOverEventHandler<RoundOverEventArgs>? RoundOverEvent;
         public event GameOverEventHandler<GameOverEventArgs>? GameOverEvent;
 
@@ -46,14 +46,14 @@
 
             var humanPlayer = new HumanPlayer(1);
             humanPlayer.PlayerReachedVictoryThresholdEvent += BeginGameOverRoutine;
-            DiceRollEventHandler += humanPlayer.ChooseDiceRoll;
+            DiceRollEvent += humanPlayer.ChooseDiceRoll;
             _players.Add(humanPlayer);
 
             for (int i = 1; i < numPlayers; ++i)
             {
                 var player = new ComputerPlayer(i + 1);
                 player.PlayerReachedVictoryThresholdEvent += BeginGameOverRoutine;
-                DiceRollEventHandler += player.ChooseDiceRoll;
+                DiceRollEvent += player.ChooseDiceRoll;
 
                 _players.Add(player);
             }
@@ -114,24 +114,20 @@
             {
                 // Broadcast PreDiceRollEvent
 
-                if (PreDiceRollEventHandler != null) await Task.Run(() => PreDiceRollEventHandler.Invoke(this, new EventArgs()));
+                if (PreDiceRollEvent != null) await Task.Run(() => PreDiceRollEvent.Invoke(this, new EventArgs()));
 
                 await RollDice();
 
-                if (BuyEventHandler != null) await Task.Run(() => BuyEventHandler.Invoke(this, new EventArgs()));
+                if (BuyEvent != null) await Task.Run(() => BuyEvent.Invoke(this, new EventArgs()));
 
                 // Broadcast PlayerMoveEvent
                 //   Current player can choose to buy and/or use charge cubes
                 //   Other players can choose to use charge cubes
 
-                // Reset current player's credits to income if applicable
-
                 if (CurrentPlayerID < _players.Count)
                     ++CurrentPlayerID;
                 else
                     CurrentPlayerID = 1;
-
-                //UpdateNextPlayer();
 
                 if (_turnNumber < _players.Count)
                 {
@@ -143,7 +139,7 @@
                     RoundOverEvent?.Invoke(this, new RoundOverEventArgs(_roundNumber++));
                 }
 
-                TurnOverEventHandler?.Invoke(this, new TurnOverEventArgs());
+                TurnOverEvent?.Invoke(this, new TurnOverEventArgs());
             }
 
             int curr = 0;
@@ -348,30 +344,15 @@
         }
 
         /// <summary>
-        /// Selects two random numbers for the two die and invokes the DiceRollEventHandler.
+        /// Selects two random numbers for the two die and invokes the DiceRollEvent.
         /// </summary>
         private async Task RollDice()
         {
             int dice1 = (_random.Next() % 6) + 1;
             int dice2 = (_random.Next() % 6) + 1;
 
-            if (DiceRollEventHandler != null)
-                await Task.Run(() => DiceRollEventHandler.Invoke(this, new DiceRollEventArgs(dice1, dice2, CurrentPlayerID)));
-        }
-
-        /// <summary>
-        /// Updates the state of the game to the next player.
-        /// </summary>
-        private void UpdateNextPlayer()
-        {
-            _players[CurrentPlayerID].UpdateCurrentPlayer(false);
-
-            if (CurrentPlayerID < _players.Count - 1)
-                ++CurrentPlayerID;
-            else
-                CurrentPlayerID = 0;
-
-            _players[CurrentPlayerID].UpdateCurrentPlayer(true);
+            if (DiceRollEvent != null)
+                await Task.Run(() => DiceRollEvent.Invoke(this, new DiceRollEventArgs(dice1, dice2, CurrentPlayerID)));
         }
     }
 }

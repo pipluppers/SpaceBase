@@ -4,19 +4,25 @@
     {
         private readonly MainWindow _mainWindow;
         public HumanPlayer _humanPlayer;
-        private bool _showDiceRollControl;
         private int _dice1;
         private int _dice2;
+        private bool _canRollDice;
         private bool _canDragCards;
 
         private readonly RelayCommand _rollDiceCommand;
         private readonly RelayCommand _dontBuyCommand;
 
+        #region Events
+
+        public event HelpDiceRollEventHandler<DiceRollEventArgs>? HelpDiceRollEvent;
+
+        #endregion Events
+
         public MainWindowViewModel()
         {
             Game = new Game();
             _humanPlayer = (HumanPlayer)Game.Players.First(p => p is HumanPlayer);
-            _showDiceRollControl = false;
+            _canRollDice = true;
             _canDragCards = false;
 
             _rollDiceCommand = new RelayCommand(RollDice, () => CanRollDice);
@@ -37,13 +43,6 @@
 
         public bool IsHumanPlayerActive { get => HumanPlayer != null && Game != null && HumanPlayer.ID == Game.CurrentPlayerID; }
 
-        public bool ShowDiceRollControl
-        {
-            get => _showDiceRollControl;
-            set => SetProperty(ref _showDiceRollControl, value);
-        }
-
-        private bool _canRollDice = true;
         public bool CanRollDice { get => _canRollDice; set => SetProperty(ref _canRollDice, value); }
 
         public int Dice1 { get => _dice1; set => SetProperty(ref _dice1, value); }
@@ -57,12 +56,6 @@
         public bool CanDragCards { get => _canDragCards; set => SetProperty(ref _canDragCards, value); }
 
         #endregion Properties
-
-        #region Events
-
-        public event UpdateAvailableMovesFromDiceRollEventHandler<DiceRollEventArgs>? UpdateAvailableMovesFromDiceRollEventHandler;
-
-        #endregion Events
 
         /// <summary>
         /// Show the main window.
@@ -87,11 +80,10 @@
         {
             HumanPlayer.AddCardToSectorEvent += HumanPlayer_AddCardToSectorEvent;
 
-            Game.PreDiceRollEventHandler += Game_PreDiceRollEventHandler;
-            Game.DiceRollEventHandler += Game_DiceRollEventHandler;
-            Game.BuyEventHandler += Game_BuyEventHandler;
-
-            Game.TurnOverEventHandler += Game_TurnOverEventHandler;
+            Game.PreDiceRollEvent += Game_PreDiceRollEventHandler;
+            Game.DiceRollEvent += Game_DiceRollEventHandler;
+            Game.BuyEvent += Game_BuyEventHandler;
+            Game.TurnOverEvent += Game_TurnOverEventHandler;
         }
 
         private void HumanPlayer_AddCardToSectorEvent(object sender, AddCardToSectorEventArgs e)
@@ -125,7 +117,7 @@
             Dice1 = e.Dice1;
             Dice2 = e.Dice2;
 
-            UpdateAvailableMovesFromDiceRollEventHandler?.Invoke(this, e);
+            HelpDiceRollEvent?.Invoke(this, e);
 
             while (WaitForPlayerInput) { }
         }

@@ -75,7 +75,7 @@ namespace SpaceBaseTests
 
             var game = new Game();
 
-            game.DiceRollEventHandler += (sender, args) =>
+            game.DiceRollEvent += (sender, args) =>
             {
                 Assert.Multiple(() =>
                 {

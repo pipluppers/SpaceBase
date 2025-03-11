@@ -7,7 +7,6 @@
         private int _income = 0;
         private int _victoryPoints = 0;
         private int _chargeCubes = 0;
-        private bool _isCurrentPlayer = false;
 
         public event PlayerReachedVictoryThresholdEvent<PlayerReachedVictoryThresholdEventArgs>? PlayerReachedVictoryThresholdEvent;
         public event AddCardToSectorEvent<AddCardToSectorEventArgs>? AddCardToSectorEvent;
@@ -108,11 +107,6 @@
             var deployedCards = GetSector(sectorID).DeployedCards;
             foreach (var deployedCard in deployedCards)
                 deployedCard.ActivateDeployedEffect(this);
-        }
-
-        public void UpdateCurrentPlayer(bool isCurrentPlayer)
-        {
-            _isCurrentPlayer = isCurrentPlayer;
         }
 
         /// <summary>
