@@ -23,27 +23,29 @@
         </Grid.RowDefinitions>
 
         <!-- Deployed cards above the stationed cards -->
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding DeployedCards}">
-            <ItemsControl.Template>
-                <ControlTemplate>
-                    <ItemsPresenter/>
-                </ControlTemplate>
-            </ItemsControl.Template>
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Grid Style="{StaticResource CardGridBackgroundStyle}" Margin="10,0,10,0" Height="30">
-                        <Border BorderBrush="Black" BorderThickness="1" Margin="5,0,5,0" Background="Red">
-                            <local:CardEffectControl IsStationedEffect="False"/>
-                        </Border>
-                    </Grid>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <AdornerDecorator Grid.Row="1">
+            <ItemsControl ItemsSource="{Binding DeployedCards}">
+                <ItemsControl.Template>
+                    <ControlTemplate>
+                        <ItemsPresenter/>
+                    </ControlTemplate>
+                </ItemsControl.Template>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Top"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Style="{StaticResource CardGridBackgroundStyle}" Margin="10,0,10,0" Height="30">
+                            <Border BorderBrush="Black" BorderThickness="1" Margin="5,0,5,0" Background="Red">
+                                <local:CardEffectControl IsStationedEffect="False"/>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </AdornerDecorator>
 
         <AdornerDecorator Grid.Row="2">
             <Border BorderBrush="Black" BorderThickness="1" Width="82" Padding="10,10,10,10" AllowDrop="True" Drop="Border_Drop" IsHitTestVisible="True">

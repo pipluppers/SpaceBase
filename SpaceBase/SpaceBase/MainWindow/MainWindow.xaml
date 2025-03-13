@@ -40,7 +40,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Column="0" Content="{Binding Game.CurrentPlayerID, Converter={StaticResource IDToPlayerTextConverter}, Mode=OneWay}"/>
+            <Label Grid.Column="0" Content="{Binding Game.ActivePlayerID, Converter={StaticResource IDToPlayerTextConverter}, Mode=OneWay}"/>
 
             <Grid Grid.Column="1" Background="Navy">
                 <Grid.ColumnDefinitions>

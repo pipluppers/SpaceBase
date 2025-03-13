@@ -10,6 +10,7 @@ namespace SpaceBase
     {
         public const int Left1 = 21;
         private readonly List<Border> _sectorViewBorders;
+        private readonly List<ItemsControl> _deployedSectorItemsControls;
         private DiceRollEventArgs _currentDiceRollArgs;
 
         public MainWindow()
@@ -19,7 +20,8 @@ namespace SpaceBase
             Icon = new BitmapImage(new Uri(Constants.IconPath));
 
             _sectorViewBorders = [];
-            _currentDiceRollArgs = new DiceRollEventArgs(0, 0, 0);
+            _deployedSectorItemsControls = [];
+            _currentDiceRollArgs = new DiceRollEventArgs(0, 0, true);
 
             DataContextChanged += MainWindow_DataContextChanged;
         }
@@ -54,6 +56,7 @@ namespace SpaceBase
                 for (int i = 0; i < _sectorViewBorders.Count; ++i)
                 {
                     Border border = _sectorViewBorders[i];
+                    ItemsControl itemsControl = _deployedSectorItemsControls[i];
 
                     if (i == e.Dice1 - 1 || i == e.Dice2 - 1)
                     {
@@ -62,6 +65,15 @@ namespace SpaceBase
                         layer.Add(borderHighlightAdorner);
 
                         border.MouseDown += SectorView_MouseDown;
+
+                        var deployedBorderHighlightAdorner = new BorderIndividualRewardAdorner(itemsControl);
+                        AdornerLayer deployedLayer = AdornerLayer.GetAdornerLayer(itemsControl);
+                        deployedLayer.Add(deployedBorderHighlightAdorner);
+
+                        if (!e.IsCurrentPlayerActive)
+                            border.Opacity = 0.5;
+                        else
+                            itemsControl.Opacity = 0.5;
                     }
                     else if (i == e.Dice1 + e.Dice2 - 1)
                     {
@@ -70,10 +82,20 @@ namespace SpaceBase
                         layer.Add(borderHighlightAdorner);
 
                         border.MouseDown += SectorView_MouseDown;
+
+                        var deployedBorderHighlightAdorner = new BorderSumRewardAdorner(itemsControl);
+                        AdornerLayer deployedLayer = AdornerLayer.GetAdornerLayer(itemsControl);
+                        deployedLayer.Add(deployedBorderHighlightAdorner);
+
+                        if (!e.IsCurrentPlayerActive)
+                            border.Opacity = 0.5;
+                        else
+                            itemsControl.Opacity = 0.5;
                     }
                     else
                     {
                         border.Opacity = 0.5;
+                        itemsControl.Opacity = 0.5;
                     }
                 }
             }, System.Windows.Threading.DispatcherPriority.Input);
@@ -87,27 +109,27 @@ namespace SpaceBase
         /// <param name="sender">The sector view reprsenting the clicked sector.</param>
         private void SectorView_MouseDown(object sender, MouseButtonEventArgs _)
         {
-            if (sender is not Border border || border.DataContext is not Sector sector || DataContext is not MainWindowViewModel viewModel)
+            if (sender is not Border sectorBorder || sectorBorder.DataContext is not Sector sector || DataContext is not MainWindowViewModel viewModel)
                 return;
 
-            static void ActivateEffect(Player player, int sectorID, int currentPlayerID)
+            static void ActivateEffect(Player player, int sectorID, bool isCurrentPlayerActive)
             {
-                if (player.ID == currentPlayerID) player.ActivateCardEffect(sectorID);
+                if (isCurrentPlayerActive) player.ActivateCardEffect(sectorID);
                 else player.ActivateDeployedCardsEffect(sectorID);
             };
 
-            int dice1 = _currentDiceRollArgs.Dice1, dice2 = _currentDiceRollArgs.Dice2, currentPlayerID = _currentDiceRollArgs.CurrentPlayerID;
+            int dice1 = _currentDiceRollArgs.Dice1, dice2 = _currentDiceRollArgs.Dice2;
 
             HumanPlayer player = viewModel.HumanPlayer;
 
             if (sector.ID == dice1 || sector.ID == dice2)
             {
-                ActivateEffect(player, dice1, currentPlayerID);
-                ActivateEffect(player, dice2, currentPlayerID);
+                ActivateEffect(player, dice1, _currentDiceRollArgs.IsCurrentPlayerActive);
+                ActivateEffect(player, dice2, _currentDiceRollArgs.IsCurrentPlayerActive);
             }
             else if (sector.ID == dice1 + dice2)
             {
-                ActivateEffect(player, dice1 + dice2, currentPlayerID);
+                ActivateEffect(player, dice1 + dice2, _currentDiceRollArgs.IsCurrentPlayerActive);
             }
             else
             {
@@ -118,17 +140,18 @@ namespace SpaceBase
 
             for (int i = 0; i < _sectorViewBorders.Count; ++i)
             {
-                Border border2 = _sectorViewBorders[i];
+                Border border = _sectorViewBorders[i];
+                ItemsControl itemsControl = _deployedSectorItemsControls[i];
 
                 if (i == dice1 - 1 || i == dice2 - 1 || i == (dice1 + dice2 - 1))
                 {
-                    Utilities.RemoveAllAdorners(border2);
-                    border2.MouseDown -= SectorView_MouseDown;
+                    Utilities.RemoveAllAdorners(border);
+                    Utilities.RemoveAllAdorners(itemsControl);
+                    border.MouseDown -= SectorView_MouseDown;
                 }
-                else
-                {
-                    border2.Opacity = 1.0;
-                }
+
+                border.Opacity = 1.0;
+                itemsControl.Opacity = 1.0;
             }
 
             viewModel.WaitForPlayerInput = false;
@@ -191,8 +214,11 @@ namespace SpaceBase
                     ContentPresenter? contentPresenter = Utilities.FindVisualChild<ContentPresenter>(container);
                     if (contentPresenter != null)
                     {
-                        Border? border = Utilities.FindVisualChild<Border>(contentPresenter);
+                        ItemsControl? deployedItemsControl = Utilities.FindVisualChild<ItemsControl>(contentPresenter);
+                        if (deployedItemsControl != null)
+                            _deployedSectorItemsControls.Add(deployedItemsControl);
 
+                        Border? border = Utilities.FindVisualChild<Border>(contentPresenter);
                         if (border != null)
                             _sectorViewBorders.Add(border);
                     }

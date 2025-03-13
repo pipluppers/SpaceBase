@@ -30,7 +30,7 @@
                 throw new ArgumentException($"The number of players must be between {Constants.MinNumPlayers} and {Constants.MaxNumPlayers}.");
 
             _random = new Random(1);
-            CurrentPlayerID = 0;
+            ActivePlayerID = 0;
 
             _maxNumRounds = maxNumRounds;
             RoundOverEvent += MaxNumRoundsHandler;
@@ -70,7 +70,7 @@
 
         public List<Player> Players { get => _players; }
 
-        public int CurrentPlayerID { get => _currentPlayerID; set => SetProperty(ref _currentPlayerID, value); }
+        public int ActivePlayerID { get => _currentPlayerID; set => SetProperty(ref _currentPlayerID, value); }
 
         public int TurnNumber { get => _turnNumber; }
 
@@ -100,7 +100,7 @@
 
             _roundNumber = 1;
             _turnNumber = 1;
-            CurrentPlayerID = 1; // TODO Just set human player to first player for now
+            ActivePlayerID = 1; // TODO Just set human player to first player for now
 
             await PlayGame();
         }
@@ -124,12 +124,12 @@
                 //   Current player can choose to buy and/or use charge cubes
                 //   Other players can choose to use charge cubes
 
-                _players[CurrentPlayerID - 1].ResetCredits();
+                _players[ActivePlayerID - 1].ResetCredits();
 
-                if (CurrentPlayerID < _players.Count)
-                    ++CurrentPlayerID;
+                if (ActivePlayerID < _players.Count)
+                    ++ActivePlayerID;
                 else
-                    CurrentPlayerID = 1;
+                    ActivePlayerID = 1;
 
                 if (_turnNumber < _players.Count)
                 {
@@ -353,8 +353,9 @@
             int dice1 = (_random.Next() % 6) + 1;
             int dice2 = (_random.Next() % 6) + 1;
 
+            // TODO: Currently, the current player's ID is always 1. This will change later on.
             if (DiceRollEvent != null)
-                await Task.Run(() => DiceRollEvent.Invoke(this, new DiceRollEventArgs(dice1, dice2, CurrentPlayerID)));
+                await Task.Run(() => DiceRollEvent.Invoke(this, new DiceRollEventArgs(dice1, dice2, ActivePlayerID == 1)));
         }
     }
 }

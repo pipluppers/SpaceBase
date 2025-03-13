@@ -41,7 +41,7 @@
 
         public HumanPlayer HumanPlayer { get => _humanPlayer; set => SetProperty(ref _humanPlayer, value); }
 
-        public bool IsHumanPlayerActive { get => HumanPlayer != null && Game != null && HumanPlayer.ID == Game.CurrentPlayerID; }
+        public bool IsHumanPlayerActive { get => HumanPlayer != null && Game != null && HumanPlayer.ID == Game.ActivePlayerID; }
 
         public bool CanRollDice { get => _canRollDice; set => SetProperty(ref _canRollDice, value); }
 
