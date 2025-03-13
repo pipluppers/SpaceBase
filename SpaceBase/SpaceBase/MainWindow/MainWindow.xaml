@@ -96,7 +96,7 @@
             <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>
             <ItemsControl Style="{StaticResource CardPoolControlStyle}" Canvas.Left="{x:Static local:Constants.CardPoolLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}" ItemsSource="{Binding Game.Level3Cards}"/>
 
-            <Grid Canvas.Left="0" Canvas.Bottom="0" Width="{Binding Width, ElementName=MainGameWindow}" Height="344" Background="Transparent" IsHitTestVisible="True" DataContext="{Binding HumanPlayer}">
+            <Grid Canvas.Left="0" Canvas.Bottom="0" Width="Auto" Height="344" Background="Transparent" IsHitTestVisible="True" DataContext="{Binding HumanPlayer}">
                 <ItemsControl x:Name="SectorItemsControl" Grid.Row="0" ItemsSource="{Binding Board.Sectors}" Margin="10,0,10,20" Loaded="SectorItemsControl_Loaded" VerticalAlignment="Bottom">
                     <ItemsControl.Template>
                         <ControlTemplate>
