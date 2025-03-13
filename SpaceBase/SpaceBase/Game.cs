@@ -124,6 +124,8 @@
                 //   Current player can choose to buy and/or use charge cubes
                 //   Other players can choose to use charge cubes
 
+                _players[CurrentPlayerID - 1].ResetCredits();
+
                 if (CurrentPlayerID < _players.Count)
                     ++CurrentPlayerID;
                 else

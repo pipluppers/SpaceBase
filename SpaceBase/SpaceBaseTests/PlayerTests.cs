@@ -32,10 +32,9 @@ namespace SpaceBaseTests
             });
         }
 
-        [TestCase(0, 0, TestName = "ResetWillSetPlayerCreditsToIncome_0Credits_0Income")]
-        [TestCase(5, 2, TestName = "ResetWillSetPlayerCreditsToIncome_5Credits_2Income")]
-        [TestCase(12, 3, TestName = "ResetWillSetPlayerCreditsToIncome_12Credits_3Income")]
-        public void ResetWillSetPlayerCreditsToIncome(int credits, int income)
+        [TestCase(0, 0, TestName = "ResetWillSetPlayerCreditsToIncomeIfLowerCredits_0Credits_0Income")]
+        [TestCase(1, 2, TestName = "ResetWillSetPlayerCreditsToIncomeIfLowerCredits_1Credits_2Income")]
+        public void ResetWillSetPlayerCreditsToIncomeIfLowerCredits(int credits, int income)
         {
             var player = new HumanPlayer(1);
             player.AddCredits(credits);
@@ -49,6 +48,24 @@ namespace SpaceBaseTests
 
             player.ResetCredits();
             Assert.That(player.Credits, Is.EqualTo(income));
+        }
+
+        [TestCase(5, 5, TestName = "ResetWillNotSetPlayerCreditsToIncomeIfHigherOrEqualCredits_5Credits_5Income")]
+        [TestCase(6, 5, TestName = "ResetWillNotSetPlayerCreditsToIncomeIfHigherOrEqualCredits_6Credits_5Income")]
+        public void ResetWillNotSetPlayerCreditsToIncomeIfHigherOrEqualCredits(int credits, int income)
+        {
+            var player = new HumanPlayer(1);
+            player.AddCredits(credits);
+            player.AddIncome(income);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(player.Credits, Is.EqualTo(credits));
+                Assert.That(player.Income, Is.EqualTo(income));
+            });
+
+            player.ResetCredits();
+            Assert.That(player.Credits, Is.EqualTo(credits));
         }
 
         [Test]
@@ -71,6 +88,30 @@ namespace SpaceBaseTests
         }
 
         [Test]
+        public void BuyingACardWithHigherCostThanCreditsShouldFail()
+        {
+            var player = new HumanPlayer(1);
+            var card = new Card(1, 10, 3, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
+
+            Assert.Throws<InvalidOperationException>(() => player.BuyCard(card));
+            Assert.Throws<InvalidOperationException>(() => player.BuyCard(card, false));
+        }
+
+        [Test]
+        public void SafeBuyShouldNotReduceCreditsToZero()
+        {
+            int startingCredits = 10;
+            int cardCost = 3;
+
+            var player = new HumanPlayer(1);
+            var card = new Card(1, 10, cardCost, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
+
+            player.AddCredits(startingCredits);
+            player.BuyCard(card, false);
+            Assert.That(player.Credits, Is.EqualTo(startingCredits - cardCost));
+        }
+
+        [Test]
         public void PlayerAddCardToSectorEventFires()
         {
             var player = new HumanPlayer(1);
@@ -82,6 +123,44 @@ namespace SpaceBaseTests
             var card = new Card(1, 10, 3, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
 
             player.AddCard(card);
+
+            Assert.Fail("The AddCardToSectorEvent should have fired.");
+        }
+
+        [Test]
+        public void PlayerBuyCardTriggersAddCardToSectorEvent()
+        {
+            var player = new HumanPlayer(1);
+            player.AddCardToSectorEvent += (sender, e) =>
+            {
+                Assert.Pass();
+            };
+
+            var card = new Card(1, 12, 3, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
+
+            // Make sure the player has enough credits
+            player.AddCredits(5);
+
+            player.BuyCard(card);
+
+            Assert.Fail("The AddCardToSectorEvent should have fired.");
+        }
+
+        [Test]
+        public void PlayerSafeBuyCardTriggersAddCardToSectorEvent()
+        {
+            var player = new HumanPlayer(1);
+            player.AddCardToSectorEvent += (sender, e) =>
+            {
+                Assert.Pass();
+            };
+
+            var card = new Card(1, 12, 3, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
+
+            // Make sure the player has enough credits
+            player.AddCredits(5);
+
+            player.BuyCard(card, false);
 
             Assert.Fail("The AddCardToSectorEvent should have fired.");
         }
@@ -130,14 +209,15 @@ namespace SpaceBaseTests
             Assert.That(player.GetSector(sectorID).StationedCard, Is.Not.Null);
 
             player.ActivateCardEffect(sectorID);
-            Assert.That(player.Credits, Is.EqualTo(numCreditsToAdd), $"The player should have {numCreditsToAdd} credits since AddCard resets credits.");
+            Assert.That(player.Credits, Is.EqualTo(numCreditsToAdd), $"The player should have {numCreditsToAdd} credits.");
 
             // Deploy the card and try activating the deployed effect
 
             player.AddCard(card);
             player.ActivateDeployedCardsEffect(sectorID);
 
-            Assert.That(player.Credits, Is.EqualTo(deployedNumCreditsToAdd), $"The player should have {deployedNumCreditsToAdd} credits since AddCard resets credits.");
+            int expectedNumCredits = numCreditsToAdd + deployedNumCreditsToAdd;
+            Assert.That(player.Credits, Is.EqualTo(expectedNumCredits), $"The player should have {expectedNumCredits} credits.");
         }
 
         [Test]

@@ -58,7 +58,6 @@
                 <Style x:Key="DraggableCardStyle" TargetType="local:CardControl">
                     <Setter Property="AllowDrop" Value="True"/>
                     <Setter Property="Panel.ZIndex" Value="1"/>
-                    <EventSetter Event="MouseLeftButtonDown" Handler="CardControl_MouseLeftButtonDown"/>
                     <EventSetter Event="MouseMove" Handler="CardControl_MouseMove"/>
                 </Style>
                 <Style TargetType="Rectangle">

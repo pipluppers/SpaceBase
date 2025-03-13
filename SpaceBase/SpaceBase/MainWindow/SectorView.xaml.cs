@@ -57,7 +57,7 @@ namespace SpaceBase
 
             try
             {
-                player.AddCard(card);
+                player.BuyCard(card);
             }
             catch (Exception ex)
             {

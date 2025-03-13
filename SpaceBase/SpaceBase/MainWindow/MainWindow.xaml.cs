@@ -134,14 +134,6 @@ namespace SpaceBase
             viewModel.WaitForPlayerInput = false;
         }
 
-        private void CardControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (sender is not CardControl)
-                return;
-
-            e.Handled = true;
-        }
-
         /// <summary>
         /// Start the drag/drop.
         /// </summary>
@@ -178,46 +170,6 @@ namespace SpaceBase
                 layer.Remove(borderHighlightAdorner);
 
                 for (int i = 0; i < 12; ++i) if (i != card.SectorID - 1) _sectorViewBorders[i].Opacity = 1.0;
-            }
-        }
-
-        /// <summary>
-        /// Adds the dragged card to the sector at the dropped location.
-        /// </summary>
-        /// <param name="sender">The dropped location.</param>
-        /// <param name="e">The arguments with the dragged card.</param>
-        private void Border_Drop(object sender, DragEventArgs e)
-        {
-            if (sender is not Border border || e.Source is not CardControl)
-                return;
-
-            if (border.DataContext is not Sector sector)
-                return;
-
-            string serializedString = (string)e.Data.GetData(DataFormats.Text);
-
-            Card? card = JsonSerializer.Deserialize<Card>(serializedString);
-
-            if (card == null)
-                return;
-
-            if (card.SectorID != sector.ID)
-                return;
-
-            Grid? grid = Utilities.FindAncestor<Grid>(border, 2);
-            if (grid == null)
-                return;
-
-            if (grid.DataContext is not Player player)
-                return;
-
-            try
-            {
-                player.AddCard(card);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"STRAUGHT TO JAIL. {ex.Message}");
             }
         }
 

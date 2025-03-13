@@ -82,7 +82,39 @@
                 throw new ArgumentOutOfRangeException(nameof(card), $"The input sector ID of the card must be between {Constants.MinSectorID} and {Constants.MaxSectorID}");
 
             GetSector(card.SectorID).AddCard(card);
-            ResetCredits();
+
+            AddCardToSectorEvent?.Invoke(this, new AddCardToSectorEventArgs(card));
+        }
+
+        /// <summary>
+        /// Adds the card at the sectorID referenced by the card and then reduces the player's credits to 0.
+        /// </summary>
+        /// <param name="card">The card to add.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The ID of the card is invalid.</exception>
+        /// <exception cref="InvalidOperationException">The player does not have enough credits to purchase this card.</exception>
+        public void BuyCard(Card card)
+        {
+            BuyCard(card, true);
+        }
+
+        /// <summary>
+        /// Adds the card at the sectorID referenced by the card and either reduces the player's credits by the cost of the card or reduces them to 0.
+        /// </summary>
+        /// <param name="card">The card to add.</param>
+        /// <param name="removeAllCredits">If true, the player's credits will reduce to 0. Otherwise, the player's credits will reduce by the cost of the card.</param>
+        /// <exception cref="ArgumentOutOfRangeException">The ID of the card is invalid.</exception>
+        /// <exception cref="InvalidOperationException">The player does not have enough credits to purchase this card.</exception>
+        public void BuyCard(Card card, bool removeAllCredits)
+        {
+            if (card.SectorID < Constants.MinSectorID || card.SectorID > Constants.MaxSectorID)
+                throw new ArgumentOutOfRangeException(nameof(card), $"The input sector ID of the card must be between {Constants.MinSectorID} and {Constants.MaxSectorID}");
+
+            if (Credits < card.Cost)
+                throw new InvalidOperationException("The player does not have enough credits to purchase this card.");
+
+            GetSector(card.SectorID).AddCard(card);
+
+            Credits = removeAllCredits ? 0 : Credits - card.Cost;
 
             AddCardToSectorEvent?.Invoke(this, new AddCardToSectorEventArgs(card));
         }
@@ -110,11 +142,12 @@
         }
 
         /// <summary>
-        /// Resets the player's credits to their income.
+        /// Resets the player's credits to their income if the number of credits is less than the income.
         /// </summary>
         public void ResetCredits()
         {
-            Credits = Income;
+            if (Credits < Income)
+                Credits = Income;
         }
 
         #region Overridable methods
