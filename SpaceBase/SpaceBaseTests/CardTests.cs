@@ -90,5 +90,19 @@ namespace SpaceBaseTests
             Assert.DoesNotThrow(() =>  new Card(3, 2, 14, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
         }
 
+        [Test]
+        public void CanCreateChargeCard()
+        {
+            int requiredChargeCubes = 1;
+            int chargeCubeLimit = 2;
+
+            // This is the add to sum card
+            ChargeCard chargeCard = new(1, 1, 4, ActionType.AddChargeCube, 1, null, ActionType.AddChargeCube, 1, null,
+                ChargeActionType.AddToSum1, requiredChargeCubes, chargeCubeLimit, ChargeCardType.Anytime);
+
+            Assert.That(chargeCard.RequiredChargeCubes, Is.EqualTo(requiredChargeCubes));
+            Assert.That(chargeCard.ChargeCubeLimit, Is.EqualTo(chargeCubeLimit));
+        }
+
     }
 }

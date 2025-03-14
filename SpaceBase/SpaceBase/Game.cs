@@ -323,7 +323,7 @@
                 return new ChargeCard(level, sectorID, cost,
                     (ActionType)effect, effectAmount, secondaryEffectAmount,
                     (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount,
-                    (ActionType)chargeEffect, requiredChargeCubes, chargeCubeLimit, (ChargeCardType)chargeCardType);
+                    (ChargeActionType)chargeEffect, requiredChargeCubes, chargeCubeLimit, (ChargeCardType)chargeCardType);
             }
         }
 

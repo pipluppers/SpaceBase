@@ -275,5 +275,26 @@ namespace SpaceBaseTests
             expectedVictoryPoints += deployedNumVictoryPointsToAdd;
             Assert.That(player.VictoryPoints, Is.EqualTo(expectedVictoryPoints), $"The player should have {numVictoryPointsToAdd} + {deployedNumVictoryPointsToAdd} victory points.");
         }
+
+        [Test]
+        public void PlayerCanUseAddChargeCubesToCard()
+        {
+            int sectorID = 1;
+
+            HumanPlayer player = new(1);
+            ChargeCard chargeCard = new(1, sectorID, 4, ActionType.AddChargeCube, 1, null, ActionType.AddChargeCube, 1, null, ChargeActionType.AddToSum1, 1, 2, ChargeCardType.Anytime);
+
+            player.AddCard(chargeCard);
+
+            ChargeCard? playerChargeCard = player.GetSector(sectorID).StationedCard as ChargeCard;
+            Assert.That(playerChargeCard, Is.Not.Null);
+
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            Assert.That(playerChargeCard.NumChargeCubes, Is.EqualTo(0));
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+
+            player.ActivateCardEffect(sectorID);
+            Assert.That(playerChargeCard.NumChargeCubes, Is.EqualTo(1));
+        }
     }
 }

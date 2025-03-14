@@ -62,10 +62,10 @@ namespace SpaceBase.Models
     public class Card : CardBase
     {
         private protected int _level;
-        private readonly Action<Player, int, int> _effect;
+        private readonly Action<Player, Card, int, int> _effect;
         private readonly int _amount;
         private readonly int _secondaryAmount;
-        private readonly Action<Player, int, int> _deployedEffect;
+        private readonly Action<Player, Card, int, int> _deployedEffect;
         private readonly int _deployedAmount;
         private readonly int _deployedSecondaryAmount;
 
@@ -116,10 +116,10 @@ namespace SpaceBase.Models
         public int? DeployedSecondaryAmount { get => _deployedSecondaryAmount; }
 
         [JsonIgnore]
-        public Action<Player, int, int> Effect { get => _effect; }
+        public Action<Player, Card, int, int> Effect { get => _effect; }
 
         [JsonIgnore]
-        public Action<Player, int, int> DeployedEffect { get => _deployedEffect; }
+        public Action<Player, Card, int, int> DeployedEffect { get => _deployedEffect; }
 
         [JsonIgnore]
         public override CardType CardType { get => CardType.Standard; }
@@ -128,13 +128,13 @@ namespace SpaceBase.Models
         /// Activates the stationed effect and updates the given player's resources.
         /// </summary>
         /// <param name="player">The player to receive the resources.</param>
-        public override void ActivateStationedEffect(Player player) => Effect.Invoke(player, Amount, _secondaryAmount);
+        public override void ActivateStationedEffect(Player player) => Effect.Invoke(player, this, Amount, _secondaryAmount);
 
         /// <summary>
         /// Activates the deployed effect and updates the given player's resources.
         /// </summary>
         /// <param name="player">The player to receive the resources.</param>
-        public void ActivateDeployedEffect(Player player) => DeployedEffect.Invoke(player, DeployedAmount, _deployedSecondaryAmount);
+        public void ActivateDeployedEffect(Player player) => DeployedEffect.Invoke(player, this, DeployedAmount, _deployedSecondaryAmount);
 
         #region ISerializable methods
 
@@ -168,24 +168,24 @@ namespace SpaceBase.Models
 
     public sealed class ChargeCard : Card
     {
-        private int _numChargeCubes;
-
         [JsonConstructor]
         public ChargeCard(int level, int sectorID, int cost, ActionType effectType, int amount, int? secondaryAmount,
             ActionType deployedEffectType, int deployedAmount, int? deployedSecondaryAmount,
-            ActionType chargeEffectType, int requiredChargeCubes, int chargeCubeLimit, ChargeCardType chargeCardType)
+            ChargeActionType chargeEffectType, int requiredChargeCubes, int chargeCubeLimit, ChargeCardType chargeCardType)
             : base(level, sectorID, cost, effectType, amount, secondaryAmount, deployedEffectType, deployedAmount, deployedSecondaryAmount)
         {
-            _numChargeCubes = 0;
+            // Note: A charge card doesn't have to have charge effects for both stationed and deployed effects.
+
+            NumChargeCubes = 0;
             ChargeEffectType = chargeEffectType;
-            ChargeEffect = CardActions.GetAction(ChargeEffectType);
+            ChargeEffect = CardActions.GetChargeAction(ChargeEffectType);
             RequiredChargeCubes = requiredChargeCubes;
             ChargeCubeLimit = chargeCubeLimit;
             ChargeCardType = chargeCardType;
         }
 
         [JsonPropertyOrder(10), JsonConverter(typeof(JsonStringEnumConverter))]
-        public ActionType ChargeEffectType { get; }
+        public ChargeActionType ChargeEffectType { get; }
 
         [JsonPropertyOrder(11)]
         public int RequiredChargeCubes { get; }
@@ -202,17 +202,29 @@ namespace SpaceBase.Models
         [JsonIgnore]
         public Action<Player, int, int> ChargeEffect { get; }
 
+        [JsonIgnore]
+        public int NumChargeCubes { get; private set; }
+
+        /// <summary>
+        /// Adds a charge cube to this card.
+        /// </summary>
+        public void AddChargeCube()
+        {
+            if (NumChargeCubes < ChargeCubeLimit)
+                NumChargeCubes++;
+        }
+
         /// <summary>
         /// Activates the charge cube effect, if applicable, and updates the given player's resources. Then reduces the amount of charge cubes on this card.
         /// </summary>
         /// <param name="player">The player to receive the resources.</param>
         public void ActivateChargeEffect(Player player)
         {
-            if (_numChargeCubes < RequiredChargeCubes)
+            if (NumChargeCubes < RequiredChargeCubes)
                 return;
 
             ChargeEffect.Invoke(player, 1, 1);
-            _numChargeCubes -= RequiredChargeCubes;
+            NumChargeCubes -= RequiredChargeCubes;
         }
 
         #region ISerializable methods

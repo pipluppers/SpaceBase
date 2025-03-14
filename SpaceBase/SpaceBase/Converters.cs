@@ -93,7 +93,7 @@
         /// <returns></returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is not Action<Player, int, int> action)
+            if (value is not Action<Player, Card, int, int> action)
                 return InvalidBrush;
 
             string parameterString = parameter?.ToString() ?? string.Empty;
