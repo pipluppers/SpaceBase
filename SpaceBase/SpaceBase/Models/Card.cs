@@ -171,10 +171,14 @@ namespace SpaceBase.Models
         [JsonConstructor]
         public ChargeCard(int level, int sectorID, int cost, ActionType effectType, int amount, int? secondaryAmount,
             ActionType deployedEffectType, int deployedAmount, int? deployedSecondaryAmount,
-            ChargeActionType chargeEffectType, int requiredChargeCubes, int chargeCubeLimit, ChargeCardType chargeCardType)
+            ChargeActionType chargeEffectType, int requiredChargeCubes, int chargeCubeLimit, ChargeCardType chargeCardType,
+            ChargeActionType deployedChargeEffectType, int deployedRequiredChargeCubes, int deployedChargeCubeLimit, ChargeCardType deployedChargeCardType)
             : base(level, sectorID, cost, effectType, amount, secondaryAmount, deployedEffectType, deployedAmount, deployedSecondaryAmount)
         {
             // Note: A charge card doesn't have to have charge effects for both stationed and deployed effects.
+
+            if (requiredChargeCubes > chargeCubeLimit || deployedRequiredChargeCubes > deployedChargeCubeLimit)
+                throw new ArgumentException("A charge card can't require more cubes that it is allowed to have.");
 
             NumChargeCubes = 0;
             ChargeEffectType = chargeEffectType;
@@ -182,6 +186,10 @@ namespace SpaceBase.Models
             RequiredChargeCubes = requiredChargeCubes;
             ChargeCubeLimit = chargeCubeLimit;
             ChargeCardType = chargeCardType;
+            DeployedChargeEffectType = deployedChargeEffectType;
+            DeployedRequiredChargeCubes = deployedRequiredChargeCubes;
+            DeployedChargeCubeLimit = deployedChargeCubeLimit;
+            DeployedChargeCardType = deployedChargeCardType;
         }
 
         [JsonPropertyOrder(10), JsonConverter(typeof(JsonStringEnumConverter))]
@@ -195,6 +203,18 @@ namespace SpaceBase.Models
 
         [JsonPropertyOrder(13), JsonConverter(typeof(JsonStringEnumConverter))]
         public ChargeCardType ChargeCardType { get; }
+
+        [JsonPropertyOrder(14), JsonConverter(typeof(JsonStringEnumConverter))]
+        public ChargeActionType DeployedChargeEffectType { get; }
+
+        [JsonPropertyOrder(15)]
+        public int DeployedRequiredChargeCubes { get; }
+
+        [JsonPropertyOrder(16)]
+        public int DeployedChargeCubeLimit { get; }
+
+        [JsonPropertyOrder(17), JsonConverter(typeof(JsonStringEnumConverter))]
+        public ChargeCardType DeployedChargeCardType { get; }
 
         [JsonIgnore]
         public override CardType CardType { get => CardType.Charge; }

@@ -319,11 +319,16 @@
                 int requiredChargeCubes = reader.GetInt32(10);
                 int chargeCubeLimit = reader.GetInt32(11);
                 int chargeCardType = reader.GetInt32(12);
+                int deployedChargeEffect = reader.GetInt32(13);
+                int deployedRequiredChargeCubes = reader.GetInt32(14);
+                int deployedChargeCubeLimit = reader.GetInt32(15);
+                int deployedChargeCardType = reader.GetInt32(16);
 
                 return new ChargeCard(level, sectorID, cost,
                     (ActionType)effect, effectAmount, secondaryEffectAmount,
                     (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount,
-                    (ChargeActionType)chargeEffect, requiredChargeCubes, chargeCubeLimit, (ChargeCardType)chargeCardType);
+                    (ChargeActionType)chargeEffect, requiredChargeCubes, chargeCubeLimit, (ChargeCardType)chargeCardType,
+                    (ChargeActionType)deployedChargeEffect, deployedRequiredChargeCubes, deployedChargeCubeLimit, (ChargeCardType)deployedChargeCardType);
             }
         }
 

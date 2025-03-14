@@ -282,7 +282,9 @@ namespace SpaceBaseTests
             int sectorID = 1;
 
             HumanPlayer player = new(1);
-            ChargeCard chargeCard = new(1, sectorID, 4, ActionType.AddChargeCube, 1, null, ActionType.AddChargeCube, 1, null, ChargeActionType.AddToSum1, 1, 2, ChargeCardType.Anytime);
+            ChargeCard chargeCard = new(1, sectorID, 4, ActionType.AddChargeCube, 1, null, ActionType.AddChargeCube, 1, null,
+                ChargeActionType.AddToSum1, 1, 2, ChargeCardType.Anytime,
+                ChargeActionType.AddToSum1, 2, 2, ChargeCardType.Anytime);
 
             player.AddCard(chargeCard);
 

@@ -95,13 +95,34 @@ namespace SpaceBaseTests
         {
             int requiredChargeCubes = 1;
             int chargeCubeLimit = 2;
+            int deployedRequiredChargeCubes = 2;
+            int deployedChargeCubeLimit = 2;
 
             // This is the add to sum card
             ChargeCard chargeCard = new(1, 1, 4, ActionType.AddChargeCube, 1, null, ActionType.AddChargeCube, 1, null,
-                ChargeActionType.AddToSum1, requiredChargeCubes, chargeCubeLimit, ChargeCardType.Anytime);
+                ChargeActionType.AddToSum1, requiredChargeCubes, chargeCubeLimit, ChargeCardType.Anytime,
+                ChargeActionType.AddToSum1, deployedRequiredChargeCubes, deployedChargeCubeLimit, ChargeCardType.Anytime);
 
             Assert.That(chargeCard.RequiredChargeCubes, Is.EqualTo(requiredChargeCubes));
             Assert.That(chargeCard.ChargeCubeLimit, Is.EqualTo(chargeCubeLimit));
+            Assert.That(chargeCard.DeployedRequiredChargeCubes, Is.EqualTo(deployedChargeCubeLimit));
+            Assert.That(chargeCard.DeployedChargeCubeLimit, Is.EqualTo(deployedChargeCubeLimit));
+        }
+
+        [Test]
+        public void CreatingAChargeCardThatRequiresMoreCubesThanLimitShouldFail()
+        {
+            Assert.Throws<ArgumentException>(() => new ChargeCard(0, 1, 1, ActionType.AddChargeCube, 1, null, ActionType.AddChargeCube, 1, null,
+                ChargeActionType.AddToSum1, 3, 2, ChargeCardType.Anytime,
+                ChargeActionType.AddToSum1, 2, 2, ChargeCardType.Anytime));
+
+            Assert.Throws<ArgumentException>(() => new ChargeCard(0, 1, 1, ActionType.AddChargeCube, 1, null, ActionType.AddChargeCube, 1, null,
+                ChargeActionType.AddToSum1, 2, 2, ChargeCardType.Anytime,
+                ChargeActionType.AddToSum1, 3, 2, ChargeCardType.Anytime));
+
+            Assert.Throws<ArgumentException>(() => new ChargeCard(0, 1, 1, ActionType.AddChargeCube, 1, null, ActionType.AddChargeCube, 1, null,
+                ChargeActionType.AddToSum1, 3, 2, ChargeCardType.Anytime,
+                ChargeActionType.AddToSum1, 3, 2, ChargeCardType.Anytime));
         }
 
     }
