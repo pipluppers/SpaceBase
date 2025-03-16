@@ -46,7 +46,9 @@
                 </Border>
 
                 <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1" Margin="5,10,5,5" Background="DeepSkyBlue">
-                    <local:CardEffectControl IsStationedEffect="True"/>
+                    <Grid>
+                        <local:CardEffectControl IsStationedEffect="True"/>
+                    </Grid>
                 </Border>
 
                 <Border Grid.Row="2" BorderBrush="Black" BorderThickness="1" Margin="5,5,5,10" Background="Red">

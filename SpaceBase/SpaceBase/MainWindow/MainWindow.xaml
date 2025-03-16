@@ -8,7 +8,7 @@
         d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
         x:Name="MainGameWindow"
         Title="MainWindow"
-        Height="1300" MinHeight="1300"
+        Height="1700" MinHeight="1300"
         Width="1024" MinWidth="1024" MaxWidth="1024"
         Background="Black"
         Closed="MainGameWindow_Closed">
@@ -21,12 +21,15 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="100"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="150"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Background="DarkGray">
+        <local:PlayerBoardControl Grid.Row="0" Player="{Binding Game.Players[1]}"/>
+
+        <Grid Grid.Row="1" Background="DarkGray" Height="50">
             <Grid.Resources>
                 <Style TargetType="Label">
                     <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -53,7 +56,7 @@
             </Grid>
         </Grid>
 
-        <Canvas Grid.Row="1" AllowDrop="True">
+        <Canvas Grid.Row="2" AllowDrop="True">
             <Canvas.Resources>
                 <Style x:Key="DraggableCardStyle" TargetType="local:CardControl">
                     <Setter Property="AllowDrop" Value="True"/>
@@ -96,30 +99,10 @@
             <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>
             <ItemsControl Style="{StaticResource CardPoolControlStyle}" Canvas.Left="{x:Static local:Constants.CardPoolLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}" ItemsSource="{Binding Game.Level3Cards}"/>
 
-            <Grid Canvas.Left="0" Canvas.Bottom="0" Width="Auto" Height="344" Background="Transparent" IsHitTestVisible="True" DataContext="{Binding HumanPlayer}">
-                <ItemsControl x:Name="SectorItemsControl" Grid.Row="0" ItemsSource="{Binding Board.Sectors}" Margin="10,0,10,20" Loaded="SectorItemsControl_Loaded" VerticalAlignment="Bottom">
-                    <ItemsControl.Template>
-                        <ControlTemplate>
-                            <Border BorderBrush="Black" BorderThickness="1">
-                                <ItemsPresenter />
-                            </Border>
-                        </ControlTemplate>
-                    </ItemsControl.Template>
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Background="LightGreen"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <local:SectorView />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </Grid>
+            <local:PlayerBoardControl Canvas.Left="0" Canvas.Bottom="0" Player="{Binding HumanPlayer}"/>
         </Canvas>
 
-        <Grid Grid.Row="2" Panel.ZIndex="2">
+        <Grid Grid.Row="3" Panel.ZIndex="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>

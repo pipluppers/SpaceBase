@@ -125,10 +125,15 @@
         /// </summary>
         /// <param name="player">The player whose dice roll is affected.</param>
         /// <param name="amount">The amount to add to the sum of the dice roll.</param>
-        internal static void AddToSum(Player player, int amount, int _)
+        internal static async void AddToSum(Player player, int amount, int _)
         {
             // TODO
             // Wait for user input
+
+            await Task.Run(() =>
+            {
+
+            });
         }
 
     }

@@ -26,6 +26,9 @@ namespace SpaceBase
             DataContextChanged += MainWindow_DataContextChanged;
         }
 
+        public List<Border> SectorViewBorders { get => _sectorViewBorders; }
+        public List<ItemsControl> DeployedSectorItemsControls { get => _deployedSectorItemsControls; }
+
         /// <summary>
         /// Adds necessary event handlers.
         /// </summary>
@@ -193,36 +196,6 @@ namespace SpaceBase
                 layer.Remove(borderHighlightAdorner);
 
                 for (int i = 0; i < 12; ++i) if (i != card.SectorID - 1) _sectorViewBorders[i].Opacity = 1.0;
-            }
-        }
-
-        /// <summary>
-        /// Cache all of the borders to quickly update the UI during drag/drop.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void SectorItemsControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is not ItemsControl itemsControl)
-                return;
-
-            for (int i = 0; i < itemsControl.Items.Count; ++i)
-            {
-                var container = itemsControl.ItemContainerGenerator.ContainerFromItem(itemsControl.Items[i]);
-                if (container != null)
-                {
-                    ContentPresenter? contentPresenter = Utilities.FindVisualChild<ContentPresenter>(container);
-                    if (contentPresenter != null)
-                    {
-                        ItemsControl? deployedItemsControl = Utilities.FindVisualChild<ItemsControl>(contentPresenter);
-                        if (deployedItemsControl != null)
-                            _deployedSectorItemsControls.Add(deployedItemsControl);
-
-                        Border? border = Utilities.FindVisualChild<Border>(contentPresenter);
-                        if (border != null)
-                            _sectorViewBorders.Add(border);
-                    }
-                }
             }
         }
 
