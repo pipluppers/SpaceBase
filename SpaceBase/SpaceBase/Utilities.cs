@@ -57,6 +57,11 @@ namespace SpaceBase
     internal static class Utilities
     {
         /// <summary>
+        /// A card representing an empty space for the UI.
+        /// </summary>
+        public static Card NullLevelCard => new(Constants.MinCardLevel, 1, Constants.NullCardCost, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null);
+
+        /// <summary>
         /// Gets the first ancestor of the given type.
         /// </summary>
         /// <typeparam name="T">The type for the ancestor.</typeparam>

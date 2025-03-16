@@ -3,9 +3,9 @@
     public class Game : PropertyChangedBase
     {
         private readonly ObservableCollection<Player> _players;
-        private readonly ObservableCollection<Card?> _level1Cards;
-        private readonly ObservableCollection<Card?> _level2Cards;
-        private readonly ObservableCollection<Card?> _level3Cards;
+        private readonly ObservableCollection<Card> _level1Cards;
+        private readonly ObservableCollection<Card> _level2Cards;
+        private readonly ObservableCollection<Card> _level3Cards;
         private readonly int _maxNumRounds;
         private int _roundNumber;
         private int _turnNumber;
@@ -76,9 +76,9 @@
 
         public int RoundNumber { get => _roundNumber; }
 
-        public ObservableCollection<Card?> Level1Cards { get => _level1Cards; }
-        public ObservableCollection<Card?> Level2Cards { get => _level2Cards; }
-        public ObservableCollection<Card?> Level3Cards { get => _level3Cards; }
+        public ObservableCollection<Card> Level1Cards { get => _level1Cards; }
+        public ObservableCollection<Card> Level2Cards { get => _level2Cards; }
+        public ObservableCollection<Card> Level3Cards { get => _level3Cards; }
 
         public Stack<Card> Level1Deck { get; }
         public Stack<Card> Level2Deck { get; }
@@ -183,41 +183,33 @@
             if (sender == null || args == null)
                 return;
 
-            // Find the card
+            // Draw the next card from the stack of the appropriate level.
+
+            static void DrawCard(Stack<Card> stackOfCards, ObservableCollection<Card> visibleRowOfCards, Card addedCard)
+            {
+                int index = visibleRowOfCards.IndexOf(addedCard);
+                if (index == -1)
+                    return;
+
+                if (stackOfCards.TryPop(out Card? card) && card != null)
+                    visibleRowOfCards[index] = card;
+                else
+                    visibleRowOfCards[index] = Utilities.NullLevelCard;
+            }
+
             int cardLevel = args.AddedCard.Level;
 
             if (cardLevel == 1)
             {
-                int index = Level1Cards.IndexOf(args.AddedCard);
-                if (index == -1)
-                    return;
-
-                if (Level1Deck.TryPop(out Card? card) && card != null)
-                    Level1Cards[index] = card;
-                else
-                    Level1Cards[index] = null;
+                DrawCard(Level1Deck, Level1Cards, args.AddedCard);
             }
             else if (cardLevel == 2)
             {
-                int index = Level2Cards.IndexOf(args.AddedCard);
-                if (index == -1)
-                    return;
-
-                if (Level2Deck.TryPop(out Card? card) && card != null)
-                    Level2Cards[index] = card;
-                else
-                    Level2Cards[index] = null;
+                DrawCard(Level2Deck, Level2Cards, args.AddedCard);
             }
             else
             {
-                int index = Level3Cards.IndexOf(args.AddedCard);
-                if (index == -1)
-                    return;
-
-                if (Level3Deck.TryPop(out Card? card) && card != null)
-                    Level3Cards[index] = card;
-                else
-                    Level3Cards[index] = null;
+                DrawCard(Level3Deck, Level3Cards, args.AddedCard);
             }
         }
 

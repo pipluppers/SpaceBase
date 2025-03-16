@@ -4,6 +4,7 @@
     <sb:NullVisibilityConverter x:Key="NullVisibilityConverter"/>
     <sb:CollapsedIfEqualIntegerConverter x:Key="CollapsedIfEqualIntegerConverter"/>
     <sb:ActionTypeBackgroundConverter x:Key="ActionTypeBackgroundConverter"/>
+    <sb:NullCardVisibilityConverter x:Key="NullCardVisibilityConverter"/>
     <sb:CostVisibilityConverter x:Key="CostVisibilityConverter"/>
     <sb:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
     <sb:IDToPlayerTextConverter x:Key="IDToPlayerTextConverter"/>

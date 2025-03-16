@@ -86,7 +86,10 @@
             Game.TurnOverEvent += Game_TurnOverEventHandler;
         }
 
-        private void HumanPlayer_AddCardToSectorEvent(object sender, AddCardToSectorEventArgs e)
+        /// <summary>
+        /// Transition to the next state and refresh buttons' enable state.
+        /// </summary>
+        private void HumanPlayer_AddCardToSectorEvent(object _, AddCardToSectorEventArgs __)
         {
             _rollDiceCommand.RaiseCanExecuteChanged();
             _dontBuyCommand.RaiseCanExecuteChanged();
@@ -146,12 +149,12 @@
                 Debug.Assert(computerPlayer != null);
 
                 Card? cardToBuy = null;
-                static Card? GetCardToBuy(ObservableCollection<Card?> cards, int credits)
+                static Card? GetCardToBuy(ObservableCollection<Card> cards, int credits)
                 {
                     // TODO Always buy the first card you can
                     foreach (var card in cards)
                     {
-                        if (card != null && card.Cost <= credits)
+                        if (card.Cost <= credits)
                             return card;
                     }
 

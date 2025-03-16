@@ -124,6 +124,25 @@
         }
     }
 
+    public class NullCardVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is not int intValue)
+                return Visibility.Visible;
+
+            if (!string.Equals(parameter?.ToString(), "Invert"))
+                return intValue == Constants.NullCardCost ? Visibility.Collapsed : Visibility.Visible;
+            else
+                return intValue == Constants.NullCardCost ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class SectorTextConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

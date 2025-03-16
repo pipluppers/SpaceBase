@@ -19,41 +19,44 @@
     </UserControl.Resources>
     <Grid AllowDrop="False">
         <Border Panel.ZIndex="2" AllowDrop="True" IsHitTestVisible="True">
-            <Grid Style="{StaticResource CardGridBackgroundStyle}">
-                <Grid.Resources>
-                    <Style x:Key="DecorationBorder" TargetType="Border">
-                        <Setter Property="Height" Value="{x:Static local:Constants.CostSectorBubbleWidthHeight}"/>
-                        <Setter Property="Width" Value="{x:Static local:Constants.CostSectorBubbleWidthHeight}"/>
-                        <Setter Property="VerticalAlignment" Value="Center"/>
-                        <Setter Property="BorderThickness" Value="1"/>
-                    </Style>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="HorizontalAlignment" Value="Center"/>
-                        <Setter Property="VerticalAlignment" Value="Center"/>
-                    </Style>
-                </Grid.Resources>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+            <Grid>
+                <Grid Style="{StaticResource CardGridBackgroundStyle}" Visibility="{Binding Cost, Converter={StaticResource NullCardVisibilityConverter}, Mode=OneWay}">
+                    <Grid.Resources>
+                        <Style x:Key="DecorationBorder" TargetType="Border">
+                            <Setter Property="Height" Value="{x:Static local:Constants.CostSectorBubbleWidthHeight}"/>
+                            <Setter Property="Width" Value="{x:Static local:Constants.CostSectorBubbleWidthHeight}"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="BorderThickness" Value="1"/>
+                        </Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </Grid.Resources>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                <Border CornerRadius="45" Height="{x:Static local:Constants.CostSectorBubbleWidthHeight}" Width="{x:Static local:Constants.CostSectorBubbleWidthHeight}" Background="Yellow" HorizontalAlignment="Left" Margin="5,5,0,0" Visibility="{Binding Cost, Converter={StaticResource CostVisibilityConverter}, Mode=OneWay}">
-                    <TextBlock Text="{Binding Cost}"/>
-                </Border>
-                <Border Style="{StaticResource DecorationBorder}" HorizontalAlignment="Right" Background="Silver" Margin="0,5,5,0">
-                    <TextBlock Text="{Binding SectorID}"/>
-                </Border>
+                    <Border CornerRadius="45" Height="{x:Static local:Constants.CostSectorBubbleWidthHeight}" Width="{x:Static local:Constants.CostSectorBubbleWidthHeight}" Background="Yellow" HorizontalAlignment="Left" Margin="5,5,0,0" Visibility="{Binding Cost, Converter={StaticResource CostVisibilityConverter}, Mode=OneWay}">
+                        <TextBlock Text="{Binding Cost}"/>
+                    </Border>
+                    <Border Style="{StaticResource DecorationBorder}" HorizontalAlignment="Right" Background="Silver" Margin="0,5,5,0">
+                        <TextBlock Text="{Binding SectorID}"/>
+                    </Border>
 
-                <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1" Margin="5,10,5,5" Background="DeepSkyBlue">
-                    <Grid>
-                        <local:CardEffectControl IsStationedEffect="True"/>
-                    </Grid>
-                </Border>
+                    <Border Grid.Row="1" BorderBrush="Black" BorderThickness="1" Margin="5,10,5,5" Background="DeepSkyBlue">
+                        <Grid>
+                            <local:CardEffectControl IsStationedEffect="True"/>
+                        </Grid>
+                    </Border>
 
-                <Border Grid.Row="2" BorderBrush="Black" BorderThickness="1" Margin="5,5,5,10" Background="Red">
-                    <local:CardEffectControl IsStationedEffect="False"/>
-                </Border>
+                    <Border Grid.Row="2" BorderBrush="Black" BorderThickness="1" Margin="5,5,5,10" Background="Red">
+                        <local:CardEffectControl IsStationedEffect="False"/>
+                    </Border>
+                </Grid>
+                <Grid Style="{StaticResource CardGridBackgroundStyle}" Visibility="{Binding Cost, Converter={StaticResource NullCardVisibilityConverter}, ConverterParameter=Invert, Mode=OneWay}"/>
             </Grid>
         </Border>
         <Rectangle Panel.ZIndex="1" Height="{x:Static local:Constants.CardHeight}" Width="{x:Static local:Constants.CardWidth}" Stroke="Black" StrokeThickness="1" Fill="Transparent"/>

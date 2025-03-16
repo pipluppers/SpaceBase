@@ -73,7 +73,7 @@ namespace SpaceBase.Models
         public Card(int level, int sectorID, int cost, ActionType effectType, int amount, int? secondaryAmount,
             ActionType deployedEffectType, int deployedAmount, int? deployedSecondaryAmount) : base(sectorID, cost)
         {
-            if (level < Constants.MinCardLevel || level > Constants.MaxCardLevel)
+            if (level != 0 && level < Constants.MinCardLevel || level > Constants.MaxCardLevel)
                 throw new ArgumentOutOfRangeException($"The card level must be between {Constants.MinCardLevel} and {Constants.MaxCardLevel} inclusive.");
 
             if (level == 1 && (cost < 2 || cost > 5))
