@@ -9,9 +9,11 @@
         x:Name="MainGameWindow"
         Title="MainWindow"
         Height="1700" MinHeight="1300"
-        Width="1024" MinWidth="1024" MaxWidth="1024"
+        Width="1024" MinWidth="1024"
         Background="Black"
-        Closed="MainGameWindow_Closed">
+        Closed="MainGameWindow_Closed"
+        WindowState="Maximized"
+        WindowStyle="None">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -19,89 +21,98 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Key="Esc" Command="{Binding ShowEscapeMenuCommand}"/>
+        <KeyBinding Key="R" Command="{Binding RollDiceCommand}"/>
+        <KeyBinding Key="S" Command="{Binding DontBuyCommand}"/>
+    </Window.InputBindings>
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+        <local:EscapeMenuControl Visibility="{Binding ShowEscapeMenu, Converter={StaticResource BoolVisibilityConverter}}"/>
 
-        <local:PlayerBoardControl Grid.Row="0" Player="{Binding Game.Players[1]}"/>
+        <Grid Visibility="{Binding ShowEscapeMenu, Converter={StaticResource BoolVisibilityConverter}, ConverterParameter=Invert}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <Grid Grid.Row="1" Background="DarkGray" Height="50">
-            <Grid.Resources>
-                <Style TargetType="Label">
-                    <Setter Property="HorizontalAlignment" Value="Center"/>
-                    <Setter Property="VerticalAlignment" Value="Center"/>
-                    <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="FontSize" Value="20"/>
-                </Style>
-            </Grid.Resources>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+            <local:PlayerBoardControl Grid.Row="0" Player="{Binding Game.Players[1]}"/>
 
-            <Label Grid.Column="0" Content="{Binding Game.ActivePlayerID, Converter={StaticResource IDToPlayerTurnTextConverter}, Mode=OneWay}"/>
-
-            <Grid Grid.Column="1" Background="Navy">
+            <Grid Grid.Row="1" Background="DarkGray" Height="50">
+                <Grid.Resources>
+                    <Style TargetType="Label">
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontSize" Value="20"/>
+                    </Style>
+                </Grid.Resources>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Label Grid.Column="0" Content="{Binding Dice1, Converter={StaticResource DiceToTextConverter}, ConverterParameter=1, Mode=OneWay}"/>
-                <Label Grid.Column="1" Content="{Binding Dice2, Converter={StaticResource DiceToTextConverter}, ConverterParameter=2, Mode=OneWay}"/>
+                <Label Grid.Column="0" Content="{Binding Game.ActivePlayerID, Converter={StaticResource IDToPlayerTurnTextConverter}, Mode=OneWay}"/>
+
+                <Grid Grid.Column="1" Background="Navy">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="0" Content="{Binding Dice1, Converter={StaticResource DiceToTextConverter}, ConverterParameter=1, Mode=OneWay}"/>
+                    <Label Grid.Column="1" Content="{Binding Dice2, Converter={StaticResource DiceToTextConverter}, ConverterParameter=2, Mode=OneWay}"/>
+                </Grid>
             </Grid>
+
+            <Canvas Grid.Row="2" AllowDrop="True">
+                <Canvas.Resources>
+                    <Style x:Key="DraggableCardStyle" TargetType="local:CardControl">
+                        <Setter Property="AllowDrop" Value="True"/>
+                        <Setter Property="Panel.ZIndex" Value="1"/>
+                        <EventSetter Event="MouseMove" Handler="CardControl_MouseMove"/>
+                    </Style>
+                    <Style TargetType="Rectangle">
+                        <Setter Property="Stroke" Value="Black"/>
+                        <Setter Property="Height" Value="{x:Static local:Constants.CardHeight}"/>
+                        <Setter Property="Width" Value="{x:Static local:Constants.CardWidth}"/>
+                        <Setter Property="Panel.ZIndex" Value="1"/>
+                        <Setter Property="Fill" Value="Blue"/>
+                    </Style>
+                    <Style x:Key="CardPoolControlStyle" TargetType="ItemsControl">
+                        <Setter Property="Width" Value="600"/>
+                        <Setter Property="Height" Value="{x:Static local:Constants.CardHeight}"/>
+                        <Setter Property="ItemsPanel">
+                            <Setter.Value>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Background="Transparent"/>
+                                </ItemsPanelTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="ItemTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <local:CardControl Style="{StaticResource DraggableCardStyle}" Margin="30,0,0,0"/>
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Canvas.Resources>
+
+                <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
+                <ItemsControl Style="{StaticResource CardPoolControlStyle}" Canvas.Left="{x:Static local:Constants.CardPoolLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}" ItemsSource="{Binding Game.Level1Cards}"/>
+
+                <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}"/>
+                <ItemsControl Style="{StaticResource CardPoolControlStyle}" Canvas.Left="{x:Static local:Constants.CardPoolLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}" ItemsSource="{Binding Game.Level2Cards}"/>
+
+                <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>
+                <ItemsControl Style="{StaticResource CardPoolControlStyle}" Canvas.Left="{x:Static local:Constants.CardPoolLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}" ItemsSource="{Binding Game.Level3Cards}"/>
+
+                <local:PlayerBoardControl Canvas.Left="0" Canvas.Bottom="0" Player="{Binding HumanPlayer}"/>
+            </Canvas>
+
+            <local:ScoreboardControl Grid.Row="3" Panel.ZIndex="2"/>
         </Grid>
-
-        <Canvas Grid.Row="2" AllowDrop="True">
-            <Canvas.Resources>
-                <Style x:Key="DraggableCardStyle" TargetType="local:CardControl">
-                    <Setter Property="AllowDrop" Value="True"/>
-                    <Setter Property="Panel.ZIndex" Value="1"/>
-                    <EventSetter Event="MouseMove" Handler="CardControl_MouseMove"/>
-                </Style>
-                <Style TargetType="Rectangle">
-                    <Setter Property="Stroke" Value="Black"/>
-                    <Setter Property="Height" Value="{x:Static local:Constants.CardHeight}"/>
-                    <Setter Property="Width" Value="{x:Static local:Constants.CardWidth}"/>
-                    <Setter Property="Panel.ZIndex" Value="1"/>
-                    <Setter Property="Fill" Value="Blue"/>
-                </Style>
-                <Style x:Key="CardPoolControlStyle" TargetType="ItemsControl">
-                    <Setter Property="Width" Value="600"/>
-                    <Setter Property="Height" Value="{x:Static local:Constants.CardHeight}"/>
-                    <Setter Property="ItemsPanel">
-                        <Setter.Value>
-                            <ItemsPanelTemplate>
-                                <WrapPanel Background="Transparent"/>
-                            </ItemsPanelTemplate>
-                        </Setter.Value>
-                    </Setter>
-                    <Setter Property="ItemTemplate">
-                        <Setter.Value>
-                            <DataTemplate>
-                                <local:CardControl Style="{StaticResource DraggableCardStyle}" Margin="30,0,0,0"/>
-                            </DataTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </Canvas.Resources>
-
-            <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}"/>
-            <ItemsControl Style="{StaticResource CardPoolControlStyle}" Canvas.Left="{x:Static local:Constants.CardPoolLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop1}" ItemsSource="{Binding Game.Level1Cards}"/>
-
-            <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}"/>
-            <ItemsControl Style="{StaticResource CardPoolControlStyle}" Canvas.Left="{x:Static local:Constants.CardPoolLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop2}" ItemsSource="{Binding Game.Level2Cards}"/>
-
-            <Rectangle Canvas.Left="{x:Static local:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}"/>
-            <ItemsControl Style="{StaticResource CardPoolControlStyle}" Canvas.Left="{x:Static local:Constants.CardPoolLeft}" Canvas.Top="{x:Static local:Constants.CardPoolTop3}" ItemsSource="{Binding Game.Level3Cards}"/>
-
-            <local:PlayerBoardControl Canvas.Left="0" Canvas.Bottom="0" Player="{Binding HumanPlayer}"/>
-        </Canvas>
-
-        <local:ScoreboardControl Grid.Row="3" Panel.ZIndex="2"/>
     </Grid>
 </Window>

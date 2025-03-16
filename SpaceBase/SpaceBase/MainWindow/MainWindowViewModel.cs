@@ -3,12 +3,16 @@
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly MainWindow _mainWindow;
-        public HumanPlayer _humanPlayer;
+        private bool _showEscapeMenu;
+        private HumanPlayer _humanPlayer;
         private int _dice1;
         private int _dice2;
         private bool _canRollDice;
         private bool _canDragCards;
 
+        private readonly RelayCommand _showEscapeMenuCommand;
+        private readonly RelayCommand _continuePlayingCommand;
+        private readonly RelayCommand _quitGameCommand;
         private readonly RelayCommand _rollDiceCommand;
         private readonly RelayCommand _dontBuyCommand;
 
@@ -20,11 +24,15 @@
 
         public MainWindowViewModel()
         {
+            _showEscapeMenu = false;
             Game = new Game();
             _humanPlayer = (HumanPlayer)Game.Players.First(p => p is HumanPlayer);
             _canRollDice = true;
             _canDragCards = false;
 
+            _showEscapeMenuCommand = new RelayCommand(ShowEscapeMenuA, () => true);
+            _continuePlayingCommand = new RelayCommand(ContinuePlaying, () => ShowEscapeMenu);
+            _quitGameCommand = new RelayCommand(QuitGame, () => ShowEscapeMenu);
             _rollDiceCommand = new RelayCommand(RollDice, () => CanRollDice);
             _dontBuyCommand = new RelayCommand(DontBuy, () => CanDragCards);
 
@@ -36,6 +44,22 @@
         }
 
         #region Properties
+
+        /// <summary>
+        /// If true, then show the escape menu. Otherwise, hide it.
+        /// </summary>
+        public bool ShowEscapeMenu
+        {
+            get => _showEscapeMenu;
+            set
+            {
+                if (SetProperty(ref _showEscapeMenu, value))
+                {
+                    _continuePlayingCommand.RaiseCanExecuteChanged();
+                    _quitGameCommand.RaiseCanExecuteChanged();
+                }
+            }
+        }
 
         public Game Game { get; }
 
@@ -203,16 +227,46 @@
 
         #region Commands
 
+        public ICommand ShowEscapeMenuCommand { get => _showEscapeMenuCommand; }
+        /// <summary>
+        /// Hide the game display and show the escape menu.
+        /// </summary>
+        private void ShowEscapeMenuA()
+        {
+            ShowEscapeMenu = true;
+        }
+
+        public ICommand ContinuePlayingCommand { get => _continuePlayingCommand; }
+        /// <summary>
+        /// Hide the escape menu and show the game display again.
+        /// </summary>
+        private void ContinuePlaying()
+        {
+            ShowEscapeMenu = false;
+        }
+
+        public ICommand QuitGameCommand { get => _quitGameCommand; }
+        /// <summary>
+        /// Close the application.
+        /// </summary>
+        private void QuitGame()
+        {
+            Application.Current.Shutdown();
+        }
+
+        public ICommand RollDiceCommand { get => _rollDiceCommand; }
         /// <summary>
         /// Starts the round with the dice roll.
         /// </summary>
-        public ICommand RollDiceCommand { get => _rollDiceCommand; }
         private void RollDice()
         {
             WaitForPlayerInput = false;
         }
 
         public ICommand DontBuyCommand { get => _dontBuyCommand; }
+        /// <summary>
+        /// Skip the buy phase and continue the game.
+        /// </summary>
         private void DontBuy()
         {
             WaitForPlayerInput = false;

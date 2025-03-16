@@ -47,7 +47,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Content="Roll dice" Command="{Binding RollDiceCommand}"/>
-            <Button Grid.Column="1" Content="Don't buy" Command="{Binding DontBuyCommand}"/>
+            <Button Grid.Column="1" Content="Skip" Command="{Binding DontBuyCommand}"/>
         </Grid>
     </Grid>
 </UserControl>
