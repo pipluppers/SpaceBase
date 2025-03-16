@@ -2,7 +2,7 @@
 {
     public class Game : PropertyChangedBase
     {
-        private readonly List<Player> _players;
+        private readonly ObservableCollection<Player> _players;
         private readonly ObservableCollection<Card?> _level1Cards;
         private readonly ObservableCollection<Card?> _level2Cards;
         private readonly ObservableCollection<Card?> _level3Cards;
@@ -11,7 +11,7 @@
         private int _turnNumber;
         private bool _isGameOver = false;
         private readonly Random _random;
-        private int _currentPlayerID;
+        private int _activePlayerID;
 
         public event EventHandler<EventArgs>? PreDiceRollEvent;
         public event DiceRollEventHandler<DiceRollEventArgs>? DiceRollEvent;
@@ -42,12 +42,12 @@
             _level2Cards = [];
             _level3Cards = [];
 
-            _players = new List<Player>(numPlayers);
+            _players = [];
 
             var humanPlayer = new HumanPlayer(1);
             humanPlayer.PlayerReachedVictoryThresholdEvent += BeginGameOverRoutine;
             DiceRollEvent += humanPlayer.ChooseDiceRoll;
-            _players.Add(humanPlayer);
+            Players.Add(humanPlayer);
 
             for (int i = 1; i < numPlayers; ++i)
             {
@@ -55,7 +55,7 @@
                 player.PlayerReachedVictoryThresholdEvent += BeginGameOverRoutine;
                 DiceRollEvent += player.ChooseDiceRoll;
 
-                _players.Add(player);
+                Players.Add(player);
             }
 
             CacheCards();
@@ -68,9 +68,9 @@
         /// </summary>
         public Random Random { get => _random; init => _random = value; }
 
-        public List<Player> Players { get => _players; }
+        public ObservableCollection<Player> Players { get => _players; }
 
-        public int ActivePlayerID { get => _currentPlayerID; set => SetProperty(ref _currentPlayerID, value); }
+        public int ActivePlayerID { get => _activePlayerID; set => SetProperty(ref _activePlayerID, value); }
 
         public int TurnNumber { get => _turnNumber; }
 
@@ -91,9 +91,9 @@
         /// </summary>
         public async Task StartGame()
         {
-            if (_players.Count < 2) return;
+            if (Players.Count < 2) return;
 
-            foreach (var player in _players)
+            foreach (var player in Players)
                 player.AddCredits(5);
 
             // TODO Each player draws a card. Player order is determined by highest cost
@@ -124,14 +124,14 @@
                 //   Current player can choose to buy and/or use charge cubes
                 //   Other players can choose to use charge cubes
 
-                _players[ActivePlayerID - 1].ResetCredits();
+                Players[ActivePlayerID - 1].ResetCredits();
 
-                if (ActivePlayerID < _players.Count)
+                if (ActivePlayerID < Players.Count)
                     ++ActivePlayerID;
                 else
                     ActivePlayerID = 1;
 
-                if (_turnNumber < _players.Count)
+                if (_turnNumber < Players.Count)
                 {
                     ++_turnNumber;
                 }
@@ -146,7 +146,7 @@
 
             int curr = 0;
             var victoryPlayerIDs = new List<int>();
-            foreach (var player in _players)
+            foreach (var player in Players)
             {
                 if (player.VictoryPoints > curr)
                 {
@@ -344,10 +344,12 @@
 
                 var card = CreateCard(reader);
 
-                _players.ForEach((player) => player.AddCard(card));
+                foreach (var player in Players)
+                    player.AddCard(card);
             }
 
-            _players.ForEach((player) => player.AddCardToSectorEvent += AddCardToSectorHandler);
+            foreach (var player in Players)
+                player.AddCardToSectorEvent += AddCardToSectorHandler;
         }
 
         /// <summary>
@@ -360,7 +362,7 @@
 
             // TODO: Currently, the current player's ID is always 1. This will change later on.
             if (DiceRollEvent != null)
-                await Task.Run(() => DiceRollEvent.Invoke(this, new DiceRollEventArgs(dice1, dice2, ActivePlayerID == 1)));
+                await Task.Run(() => DiceRollEvent.Invoke(this, new DiceRollEventArgs(dice1, dice2, ActivePlayerID)));
         }
     }
 }

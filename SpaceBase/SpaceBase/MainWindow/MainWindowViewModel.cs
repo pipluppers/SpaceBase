@@ -88,6 +88,8 @@
 
         private void HumanPlayer_AddCardToSectorEvent(object sender, AddCardToSectorEventArgs e)
         {
+            _rollDiceCommand.RaiseCanExecuteChanged();
+            _dontBuyCommand.RaiseCanExecuteChanged();
             WaitForPlayerInput = false;
         }
 
@@ -122,7 +124,10 @@
             while (WaitForPlayerInput) { }
         }
 
-        private void Game_BuyEventHandler(object? sender, EventArgs e)
+        /// <summary>
+        /// If the active player is the current player, set up the window to allow buying a card. If the active player is a computer player, select a card based on a heuristic.
+        /// </summary>
+        private void Game_BuyEventHandler(object? _, EventArgs __)
         {
             if (IsHumanPlayerActive)
             {
@@ -133,15 +138,49 @@
 
                 CanDragCards = false;
             }
+            else
+            {
+                CanDragCards = false;
+
+                ComputerPlayer? computerPlayer = Game.Players[Game.ActivePlayerID - 1] as ComputerPlayer;
+                Debug.Assert(computerPlayer != null);
+
+                Card? cardToBuy = null;
+                static Card? GetCardToBuy(ObservableCollection<Card?> cards, int credits)
+                {
+                    // TODO Always buy the first card you can
+                    foreach (var card in cards)
+                    {
+                        if (card != null && card.Cost <= credits)
+                            return card;
+                    }
+
+                    return null;
+                }
+
+                if (computerPlayer.Credits >= 12)
+                    cardToBuy = GetCardToBuy(Game.Level3Cards, computerPlayer.Credits);
+
+                if (cardToBuy == null && computerPlayer.Credits >= 7)
+                    cardToBuy = GetCardToBuy(Game.Level2Cards, computerPlayer.Credits);
+
+                cardToBuy ??= GetCardToBuy(Game.Level1Cards, computerPlayer.Credits);
+
+                if (cardToBuy != null)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        computerPlayer.BuyCard(cardToBuy);
+                    });
+                }
+            }
         }
 
         /// <summary>
         /// Loop until the user interacts with the appropriate control based on the current state of the game.
         /// </summary>
         /// <remarks>This function should be spinning on a worker thread, not the UI thread.</remarks>
-        /// <param name="sender">The game.</param>
-        /// <param name="e">Unused arguments.</param>
-        private void Game_WaitForPlayerInputEventHandler(object? sender, EventArgs e)
+        private void Game_WaitForPlayerInputEventHandler(object? _, EventArgs __)
         {
             while (WaitForPlayerInput) { }
         }

@@ -14,15 +14,29 @@ namespace SpaceBase
             remove { CommandManager.RequerySuggested -= value; }
         }
 
+        /// <summary>
+        /// Gets whether or not the command can be executed.
+        /// </summary>
+        /// <param name="parameter">Any parameters needed to execute.</param>
+        /// <returns>True if the command can be executed. Otherwise, false.</returns>
         public bool CanExecute(object? parameter)
         {
             return canExecute == null || canExecute();
         }
 
+        /// <summary>
+        /// Execute the command.
+        /// </summary>
+        /// <param name="parameter">Any parameters needed to execute.</param>
         public void Execute(object? parameter)
         {
             _execute();
         }
+
+        /// <summary>
+        /// Update any listeners to command to refresh whether or not the command can be executed.
+        /// </summary>
+        public void RaiseCanExecuteChanged() => CommandManager.InvalidateRequerySuggested();
     }
 
     internal class RelayCommand<T>(Action<T> execute, Func<T, bool> canExecute) : ICommand where T : notnull
@@ -31,7 +45,11 @@ namespace SpaceBase
 
         public RelayCommand(Action<T> execute) : this(execute, (arg) => true) { }
 
-        public event EventHandler? CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged
+        {
+            add { if (value != null) CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
 
 #pragma warning disable CS8600
 #pragma warning disable CS8604
@@ -47,9 +65,9 @@ namespace SpaceBase
 #pragma warning restore CS8600
 #pragma warning restore CS8604
 
-        public void RaiseCanExecuteChanged()
-        {
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-        }
+        /// <summary>
+        /// Update any listeners to command to refresh whether or not the command can be executed.
+        /// </summary>
+        public void RaiseCanExecuteChanged() => CommandManager.InvalidateRequerySuggested();
     }
 }

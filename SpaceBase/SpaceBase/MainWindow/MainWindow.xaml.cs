@@ -21,7 +21,7 @@ namespace SpaceBase
 
             _sectorViewBorders = [];
             _deployedSectorItemsControls = [];
-            _currentDiceRollArgs = new DiceRollEventArgs(0, 0, true);
+            _currentDiceRollArgs = new DiceRollEventArgs(0, 0, 0);
 
             DataContextChanged += MainWindow_DataContextChanged;
         }
@@ -73,7 +73,7 @@ namespace SpaceBase
                         AdornerLayer deployedLayer = AdornerLayer.GetAdornerLayer(itemsControl);
                         deployedLayer.Add(deployedBorderHighlightAdorner);
 
-                        if (!e.IsCurrentPlayerActive)
+                        if (e.ActivePlayerID != 1)
                             border.Opacity = 0.5;
                         else
                             itemsControl.Opacity = 0.5;
@@ -90,7 +90,7 @@ namespace SpaceBase
                         AdornerLayer deployedLayer = AdornerLayer.GetAdornerLayer(itemsControl);
                         deployedLayer.Add(deployedBorderHighlightAdorner);
 
-                        if (!e.IsCurrentPlayerActive)
+                        if (e.ActivePlayerID != 1)
                             border.Opacity = 0.5;
                         else
                             itemsControl.Opacity = 0.5;
@@ -109,17 +109,28 @@ namespace SpaceBase
         /// <summary>
         /// Activates the effects of the clicked sectors.
         /// </summary>
+        /// <remarks>This handler will also choose the cards for the computer players.</remarks>
         /// <param name="sender">The sector view reprsenting the clicked sector.</param>
         private void SectorView_MouseDown(object sender, MouseButtonEventArgs _)
         {
             if (sender is not Border sectorBorder || sectorBorder.DataContext is not Sector sector || DataContext is not MainWindowViewModel viewModel)
                 return;
 
-            static void ActivateEffect(Player player, int sectorID, bool isCurrentPlayerActive)
+            static void ActivateEffect(Player player, int sectorID, int activePlayerID)
             {
-                if (isCurrentPlayerActive) player.ActivateCardEffect(sectorID);
+                if (player.ID == activePlayerID) player.ActivateCardEffect(sectorID);
                 else player.ActivateDeployedCardsEffect(sectorID);
             };
+
+            static void ChooseComputerPlayersSectors(ObservableCollection<Player> players, int dice1, int dice2, int activePlayerID)
+            {
+                // TODO For testing's sake, always pick the individual amounts for now
+                foreach (var computerPlayer in players.OfType<ComputerPlayer>())
+                {
+                    ActivateEffect(computerPlayer, dice1, activePlayerID);
+                    ActivateEffect(computerPlayer, dice2, activePlayerID);
+                }
+            }
 
             int dice1 = _currentDiceRollArgs.Dice1, dice2 = _currentDiceRollArgs.Dice2;
 
@@ -127,12 +138,12 @@ namespace SpaceBase
 
             if (sector.ID == dice1 || sector.ID == dice2)
             {
-                ActivateEffect(player, dice1, _currentDiceRollArgs.IsCurrentPlayerActive);
-                ActivateEffect(player, dice2, _currentDiceRollArgs.IsCurrentPlayerActive);
+                ActivateEffect(player, dice1, _currentDiceRollArgs.ActivePlayerID);
+                ActivateEffect(player, dice2, _currentDiceRollArgs.ActivePlayerID);
             }
             else if (sector.ID == dice1 + dice2)
             {
-                ActivateEffect(player, dice1 + dice2, _currentDiceRollArgs.IsCurrentPlayerActive);
+                ActivateEffect(player, dice1 + dice2, _currentDiceRollArgs.ActivePlayerID);
             }
             else
             {
@@ -156,6 +167,10 @@ namespace SpaceBase
                 border.Opacity = 1.0;
                 itemsControl.Opacity = 1.0;
             }
+
+            // Opponent players will now pick their choice at random
+
+            ChooseComputerPlayersSectors(viewModel.Game.Players, dice1, dice2, _currentDiceRollArgs.ActivePlayerID);
 
             viewModel.WaitForPlayerInput = false;
         }

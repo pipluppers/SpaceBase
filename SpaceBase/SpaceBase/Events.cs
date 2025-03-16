@@ -1,10 +1,10 @@
 ﻿namespace SpaceBase
 {
-    public class DiceRollEventArgs(int dice1, int dice2, bool isCurrentPlayerActive) : EventArgs
+    public class DiceRollEventArgs(int dice1, int dice2, int activePlayerID) : EventArgs
     {
         public int Dice1 { get; } = dice1;
         public int Dice2 { get; } = dice2;
-        public bool IsCurrentPlayerActive { get; } = isCurrentPlayerActive;
+        public int ActivePlayerID { get; } = activePlayerID;
     }
     public delegate void DiceRollEventHandler<DiceRollEventArgs>(object sender, DiceRollEventArgs e);
     public delegate void HelpDiceRollEventHandler<DiceRollEventArgs>(object sender, DiceRollEventArgs e);
