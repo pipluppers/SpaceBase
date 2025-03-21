@@ -62,6 +62,59 @@ namespace SpaceBase
         public static Card NullLevelCard => new(Constants.MinCardLevel, 1, Constants.NullCardCost, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null);
 
         /// <summary>
+        /// Activates the card effect at the given sector for the player.
+        /// </summary>
+        /// <param name="player">The player who has the card.</param>
+        /// <param name="sectorID">The sector ID of the card to activate.</param>
+        /// <param name="activePlayerID">The ID of the active player.</param>
+        public static void ActivateCardEffect(Player player, int sectorID, int activePlayerID)
+        {
+            if (player.ID == activePlayerID) player.ActivateCardEffect(sectorID);
+            else player.ActivateDeployedCardsEffect(sectorID);
+        }
+
+        /// <summary>
+        /// Activates the card effect at the given sector(s) for the current player.
+        /// </summary>
+        /// <param name="humanPlayer">The current player.</param>
+        /// <param name="sectorID">
+        /// The sector ID of the cards to activate. If this matches dice 1 or dice 2, then activate the cards at both of the sectors.
+        /// Else if it matches the sum, then just activate the cards at that sector.
+        /// </param>
+        /// <param name="dice1">The value of the first dice.</param>
+        /// <param name="dice2">The value of the second dice.</param>
+        /// <param name="activePlayerID">The ID of the active player.</param>
+        public static void ActivateCurrentPlayerCardEffects(HumanPlayer humanPlayer, int sectorID, int dice1, int dice2, int activePlayerID)
+        {
+            if (sectorID == dice1 || sectorID == dice2)
+            {
+                Utilities.ActivateCardEffect(humanPlayer, dice1, activePlayerID);
+                Utilities.ActivateCardEffect(humanPlayer, dice2, activePlayerID);
+            }
+            else if (sectorID == dice1 + dice2)
+            {
+                Utilities.ActivateCardEffect(humanPlayer, dice1 + dice2, activePlayerID);
+            }
+        }
+
+        /// <summary>
+        /// Activates the card effects for each computer player.
+        /// </summary>
+        /// <param name="players">The collection of players.</param>
+        /// <param name="dice1">The value of the first dice.</param>
+        /// <param name="dice2">The value of the second dice.</param>
+        /// <param name="activePlayerID">The ID of the active player.</param>
+        public static void ChooseComputerPlayersSectors(ObservableCollection<Player> players, int dice1, int dice2, int activePlayerID)
+        {
+            // TODO For testing's sake, always pick the individual amounts for now
+            foreach (var computerPlayer in players.OfType<ComputerPlayer>())
+            {
+                ActivateCardEffect(computerPlayer, dice1, activePlayerID);
+                ActivateCardEffect(computerPlayer, dice2, activePlayerID);
+            }
+        }
+
+        /// <summary>
         /// Gets the first ancestor of the given type.
         /// </summary>
         /// <typeparam name="T">The type for the ancestor.</typeparam>

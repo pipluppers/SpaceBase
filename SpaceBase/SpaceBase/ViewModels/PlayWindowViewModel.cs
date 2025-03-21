@@ -4,33 +4,53 @@ namespace SpaceBase
 {
     public class PlayWindowViewModel : ViewModelBase
     {
+        private readonly PlayWindow _playwindow;
         private readonly MainWindowViewModel _mainWindowViewModel;
+
+        private readonly RelayCommand _playGameCommand;
+        private readonly RelayCommand _quitGameCommand;
 
         public PlayWindowViewModel()
         {
+            _playwindow = new PlayWindow() { DataContext = this };
+            _mainWindowViewModel = new MainWindowViewModel();
+
             _playGameCommand = new(PlayGame);
             _quitGameCommand = new(QuitGame);
-            _mainWindowViewModel = new MainWindowViewModel();
+
+        }
+
+        /// <summary>
+        /// Shows the PlayWindow.
+        /// </summary>
+        public void Show()
+        {
+            Debug.Assert(_playwindow != null);
+            _playwindow.Show();
+        }
+
+        /// <summary>
+        /// Clean up resources.
+        /// </summary>
+        public void Close()
+        {
+            _mainWindowViewModel.Close();
         }
 
         #region Commands
 
-        private readonly RelayCommand<PlayWindow> _playGameCommand;
         public ICommand PlayGameCommand { get => _playGameCommand; }
 
         /// <summary>
         /// Launches the Game UI and closes the PlayWindow.
         /// </summary>
-        private async void PlayGame(PlayWindow playWindow)
+        private async void PlayGame()
         {
-            Debug.Assert(playWindow != null);
-
-            playWindow.Close();
+            _playwindow.CloseAndShowMainWindow();
             _mainWindowViewModel.Show();
             await _mainWindowViewModel.StartGame();
         }
 
-        private readonly RelayCommand _quitGameCommand;
         public ICommand QuitGameCommand { get => _quitGameCommand; }
 
         /// <summary>

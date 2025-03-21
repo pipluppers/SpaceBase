@@ -15,10 +15,12 @@
         private readonly RelayCommand _quitGameCommand;
         private readonly RelayCommand _rollDiceCommand;
         private readonly RelayCommand _dontBuyCommand;
+        private readonly RelayCommand<object> _chooseDiceRollKeyCommand;
 
         #region Events
 
         public event HelpDiceRollEventHandler<DiceRollEventArgs>? HelpDiceRollEvent;
+        public event RemoveHelpDiceRollEffectsEventHandler<DiceRollEventArgs>? RemoveHelpDiceRollEffectsEvent;
 
         #endregion Events
 
@@ -35,10 +37,12 @@
             _quitGameCommand = new RelayCommand(QuitGame, () => ShowEscapeMenu);
             _rollDiceCommand = new RelayCommand(RollDice, () => CanRollDice);
             _dontBuyCommand = new RelayCommand(DontBuy, () => CanDragCards);
+            _chooseDiceRollKeyCommand = new RelayCommand<object>(ChooseDiceRollKey, (o) => WaitForPlayerDiceRollSelection);
 
             _mainWindow = new MainWindow() { DataContext = this };
 
             WaitForPlayerInput = false;
+            WaitForPlayerDiceRollSelection = false;
 
             SubscribeToEvents();
         }
@@ -74,6 +78,8 @@
 
         public bool WaitForPlayerInput { get; set; }
 
+        public bool WaitForPlayerDiceRollSelection { get; set; }
+
         /// <summary>
         /// True if the user is allowed to drag cards. Otherwise, false.
         /// </summary>
@@ -94,6 +100,11 @@
             WaitForPlayerInput = true;
             await Game.StartGame();
         }
+
+        /// <summary>
+        /// Clean up reference to view.
+        /// </summary>
+        public void Close() => _mainWindow.Close();
 
         #region Event handlers
 
@@ -141,14 +152,14 @@
         /// <param name="e">The arguments describing the dice roll event.</param>
         private void Game_DiceRollEventHandler(object sender, DiceRollEventArgs e)
         {
-            WaitForPlayerInput = true;
+            WaitForPlayerDiceRollSelection = true;
 
             Dice1 = e.Dice1;
             Dice2 = e.Dice2;
 
             HelpDiceRollEvent?.Invoke(this, e);
 
-            while (WaitForPlayerInput) { }
+            while (WaitForPlayerDiceRollSelection) { }
         }
 
         /// <summary>
@@ -270,6 +281,27 @@
         private void DontBuy()
         {
             WaitForPlayerInput = false;
+        }
+
+        public ICommand ChooseDiceRollKeyCommand { get => _chooseDiceRollKeyCommand; }
+        /// <summary>
+        /// Activates the card effects at the given sectors if applicable.
+        /// </summary>
+        /// <param name="parameter">The ID of the sector that was pressed.</param>
+        private void ChooseDiceRollKey(object parameter)
+        {
+            if (!int.TryParse(parameter?.ToString(), out int chosenValue))
+                return;
+
+            if (chosenValue != Dice1 && chosenValue != Dice2 && chosenValue != Dice1 + Dice2)
+                return;
+
+            Utilities.ActivateCurrentPlayerCardEffects(HumanPlayer, chosenValue, Dice1, Dice2, Game.ActivePlayerID);
+            Utilities.ChooseComputerPlayersSectors(Game.Players, Dice1, Dice2, Game.ActivePlayerID);
+
+            RemoveHelpDiceRollEffectsEvent?.Invoke(this, new DiceRollEventArgs(Dice1, Dice2, Game.ActivePlayerID));
+
+            WaitForPlayerDiceRollSelection = false;
         }
 
         #endregion Commands

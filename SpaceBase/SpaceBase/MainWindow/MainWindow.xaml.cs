@@ -35,10 +35,16 @@ namespace SpaceBase
         private void MainWindow_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (e.OldValue is MainWindowViewModel oldViewModel)
+            {
                 oldViewModel.HelpDiceRollEvent -= ViewModel_HelpDiceRollEventHandler;
+                oldViewModel.RemoveHelpDiceRollEffectsEvent -= ViewModel_RemoveHelpDiceRollEffectsEvent;
+            }
 
             if (e.NewValue is MainWindowViewModel newViewModel)
+            {
                 newViewModel.HelpDiceRollEvent += ViewModel_HelpDiceRollEventHandler;
+                newViewModel.RemoveHelpDiceRollEffectsEvent += ViewModel_RemoveHelpDiceRollEffectsEvent;
+            }
         }
 
         /// <summary>
@@ -116,42 +122,37 @@ namespace SpaceBase
             if (sender is not Border sectorBorder || sectorBorder.DataContext is not Sector sector || DataContext is not MainWindowViewModel viewModel)
                 return;
 
-            static void ActivateEffect(Player player, int sectorID, int activePlayerID)
-            {
-                if (player.ID == activePlayerID) player.ActivateCardEffect(sectorID);
-                else player.ActivateDeployedCardsEffect(sectorID);
-            };
-
-            static void ChooseComputerPlayersSectors(ObservableCollection<Player> players, int dice1, int dice2, int activePlayerID)
-            {
-                // TODO For testing's sake, always pick the individual amounts for now
-                foreach (var computerPlayer in players.OfType<ComputerPlayer>())
-                {
-                    ActivateEffect(computerPlayer, dice1, activePlayerID);
-                    ActivateEffect(computerPlayer, dice2, activePlayerID);
-                }
-            }
-
             int dice1 = _currentDiceRollArgs.Dice1, dice2 = _currentDiceRollArgs.Dice2;
+
+            if (sector.ID != dice1 && sector.ID != dice2 && sector.ID != dice1 + dice2)
+                return;
 
             HumanPlayer player = viewModel.HumanPlayer;
 
-            if (sector.ID == dice1 || sector.ID == dice2)
-            {
-                ActivateEffect(player, dice1, _currentDiceRollArgs.ActivePlayerID);
-                ActivateEffect(player, dice2, _currentDiceRollArgs.ActivePlayerID);
-            }
-            else if (sector.ID == dice1 + dice2)
-            {
-                ActivateEffect(player, dice1 + dice2, _currentDiceRollArgs.ActivePlayerID);
-            }
-            else
-            {
-                Debug.Assert(false);
-            }
+            Utilities.ActivateCurrentPlayerCardEffects(player, sector.ID, dice1, dice2, _currentDiceRollArgs.ActivePlayerID);
+            Utilities.ChooseComputerPlayersSectors(viewModel.Game.Players, dice1, dice2, _currentDiceRollArgs.ActivePlayerID);
 
-            // Remove adorners, event handlers, and transparencies
+            RemoveHelpDiceRollEffects(dice1, dice2);
 
+            viewModel.WaitForPlayerDiceRollSelection = false;
+        }
+
+        /// <summary>
+        /// Removes adorners, event handlers, and transparencies.
+        /// </summary>
+        /// <param name="e">The dice roll event arguments.</param>
+        private void ViewModel_RemoveHelpDiceRollEffectsEvent(object _, DiceRollEventArgs e)
+        {
+            RemoveHelpDiceRollEffects(e.Dice1, e.Dice2);
+        }
+
+        /// <summary>
+        /// Removes adorners, event handlers, and transparencies.
+        /// </summary>
+        /// <param name="dice1">The value of the first sector to remove adorners and event handlers.</param>
+        /// <param name="dice2">The value of the second sector to remove adorners and event handlers.</param>
+        private void RemoveHelpDiceRollEffects(int dice1, int dice2)
+        {
             for (int i = 0; i < _sectorViewBorders.Count; ++i)
             {
                 Border border = _sectorViewBorders[i];
@@ -167,12 +168,6 @@ namespace SpaceBase
                 border.Opacity = 1.0;
                 itemsControl.Opacity = 1.0;
             }
-
-            // Opponent players will now pick their choice at random
-
-            ChooseComputerPlayersSectors(viewModel.Game.Players, dice1, dice2, _currentDiceRollArgs.ActivePlayerID);
-
-            viewModel.WaitForPlayerInput = false;
         }
 
         /// <summary>

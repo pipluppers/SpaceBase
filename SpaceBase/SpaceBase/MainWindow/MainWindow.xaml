@@ -25,6 +25,19 @@
         <KeyBinding Key="Esc" Command="{Binding ShowEscapeMenuCommand}"/>
         <KeyBinding Key="R" Command="{Binding RollDiceCommand}"/>
         <KeyBinding Key="S" Command="{Binding DontBuyCommand}"/>
+
+        <KeyBinding Key="D1" Command="{Binding ChooseDiceRollKeyCommand}" CommandParameter="1"/>
+        <KeyBinding Key="D2" Command="{Binding ChooseDiceRollKeyCommand}" CommandParameter="2"/>
+        <KeyBinding Key="D3" Command="{Binding ChooseDiceRollKeyCommand}" CommandParameter="3"/>
+        <KeyBinding Key="D4" Command="{Binding ChooseDiceRollKeyCommand}" CommandParameter="4"/>
+        <KeyBinding Key="D5" Command="{Binding ChooseDiceRollKeyCommand}" CommandParameter="5"/>
+        <KeyBinding Key="D6" Command="{Binding ChooseDiceRollKeyCommand}" CommandParameter="6"/>
+        <KeyBinding Key="D7" Command="{Binding ChooseDiceRollKeyCommand}" CommandParameter="7"/>
+        <KeyBinding Key="D8" Command="{Binding ChooseDiceRollKeyCommand}" CommandParameter="8"/>
+        <KeyBinding Key="D9" Command="{Binding ChooseDiceRollKeyCommand}" CommandParameter="9"/>
+        <KeyBinding Key="D0" Command="{Binding ChooseDiceRollKeyCommand}" CommandParameter="10"/>
+        <KeyBinding Modifiers="Ctrl" Key="D1" Command="{Binding ChooseDiceRollKeyCommand}" CommandParameter="11"/>
+        <KeyBinding Modifiers="Ctrl" Key="D2" Command="{Binding ChooseDiceRollKeyCommand}" CommandParameter="12"/>
     </Window.InputBindings>
     <Grid>
         <local:EscapeMenuControl Visibility="{Binding ShowEscapeMenu, Converter={StaticResource BoolVisibilityConverter}}"/>

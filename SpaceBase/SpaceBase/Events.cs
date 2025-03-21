@@ -8,6 +8,7 @@
     }
     public delegate void DiceRollEventHandler<DiceRollEventArgs>(object sender, DiceRollEventArgs e);
     public delegate void HelpDiceRollEventHandler<DiceRollEventArgs>(object sender, DiceRollEventArgs e);
+    public delegate void RemoveHelpDiceRollEffectsEventHandler<DiceRollEventArgs>(object sender, DiceRollEventArgs e);
 
     public class AddCardToSectorEventArgs(Card addedCard)
     {

@@ -12,12 +12,8 @@ namespace SpaceBaseApplication
         {
             base.OnStartup(e);
 
-            PlayWindow playWindow = new()
-            {
-                DataContext = new PlayWindowViewModel()
-            };
-
-            playWindow.Show();
+            PlayWindowViewModel playWindowViewModel = new();
+            playWindowViewModel.Show();
         }
     }
 }

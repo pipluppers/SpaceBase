@@ -46,14 +46,12 @@
 
             var humanPlayer = new HumanPlayer(1);
             humanPlayer.PlayerReachedVictoryThresholdEvent += BeginGameOverRoutine;
-            DiceRollEvent += humanPlayer.ChooseDiceRoll;
             Players.Add(humanPlayer);
 
             for (int i = 1; i < numPlayers; ++i)
             {
                 var player = new ComputerPlayer(i + 1);
                 player.PlayerReachedVictoryThresholdEvent += BeginGameOverRoutine;
-                DiceRollEvent += player.ChooseDiceRoll;
 
                 Players.Add(player);
             }
