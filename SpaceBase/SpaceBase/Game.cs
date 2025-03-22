@@ -218,24 +218,26 @@
         {
             try
             {
-                using var connection = GetSqlConnection();
-                connection.Open();
+                DataAccessLayer dataAccessLayer = new();
+                List<Card> cards = dataAccessLayer.GetCards();
 
-                string? table = Environment.GetEnvironmentVariable(Constants.CardsTableEnvironmentVariable, EnvironmentVariableTarget.User);
-                string queryString = $"SELECT * FROM {table}";
+                if (cards.Count < Constants.MaxSectorID)
+                    throw new Exception($"The database has less than {Constants.MaxSectorID} cards.");
 
-                using var command = new SqlCommand(queryString, connection);
-                using SqlDataReader reader = command.ExecuteReader();
+                int i = 0;
 
-                PopulatePlayerStartingCards(reader);
-
-                while (true)
+                for (; i < Constants.MaxSectorID; i++)
                 {
-                    if (!reader.Read())
-                        break;
+                    foreach (Player player in Players)
+                        player.AddCard(cards[i]);
+                }
 
-                    var card = CreateCard(reader);
+                foreach (Player player in Players)
+                    player.AddCardToSectorEvent += AddCardToSectorHandler;
 
+                for (; i < cards.Count; i++)
+                {
+                    Card card = cards[i];
                     if (card.Level == 1)
                     {
                         if (Level1Cards.Count >= 6) Level1Deck.Push(card);
