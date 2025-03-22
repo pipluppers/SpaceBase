@@ -1,4 +1,6 @@
-﻿namespace SpaceBaseApplication
+﻿using SpaceBaseApplication.MainWindow;
+
+namespace SpaceBaseApplication.PlayWindow
 {
     public class PlayWindowViewModel : ViewModelBase
     {

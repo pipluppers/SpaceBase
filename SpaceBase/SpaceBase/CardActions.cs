@@ -1,22 +1,5 @@
 ﻿namespace SpaceBase
 {
-    public enum ActionType
-    {
-        AddCredits = 1,
-        AddIncome = 2,
-        AddVictoryPoints = 3,
-        AddCreditsIncome = 4,
-        AddCreditsVictoryPoints = 5,
-        ClaimCardsAtLevel = 6,
-        AddChargeCube = 20
-    }
-
-    public enum ChargeActionType
-    {
-        AddToSum1 = 1,
-        AddToSum2 = 2,
-    }
-
     public static class CardActions
     {
         public static Action<Player, Card, int, int> GetAction(ActionType actionType)

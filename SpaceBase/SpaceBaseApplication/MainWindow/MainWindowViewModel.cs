@@ -1,4 +1,4 @@
-﻿namespace SpaceBaseApplication
+﻿namespace SpaceBaseApplication.MainWindow
 {
     public class MainWindowViewModel : ViewModelBase
     {

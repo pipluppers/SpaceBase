@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace SpaceBase
+﻿namespace SpaceBase
 {
     public abstract class PropertyChangedBase : INotifyPropertyChanged
     {
@@ -76,6 +74,29 @@ namespace SpaceBase
         /// Can only be activated on any player's turn. In the physical game, the color is green.
         /// </summary>
         Anytime = 2
+    }
+
+    /// <summary>
+    /// Represents a type of action for a card effect.
+    /// </summary>
+    public enum ActionType
+    {
+        AddCredits = 1,
+        AddIncome = 2,
+        AddVictoryPoints = 3,
+        AddCreditsIncome = 4,
+        AddCreditsVictoryPoints = 5,
+        ClaimCardsAtLevel = 6,
+        AddChargeCube = 20
+    }
+
+    /// <summary>
+    /// Represents a type of action for a card's charge effect.
+    /// </summary>
+    public enum ChargeActionType
+    {
+        AddToSum1 = 1,
+        AddToSum2 = 2,
     }
 
     #endregion Enumerations

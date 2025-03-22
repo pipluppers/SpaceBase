@@ -1,14 +1,14 @@
-﻿<UserControl x:Class="SpaceBaseApplication.CardEffectControl"
+﻿<UserControl x:Class="SpaceBaseApplication.MainWindow.CardEffectControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:SpaceBaseApplication"
-             xmlns:models="clr-namespace:SpaceBase.Models"
+             xmlns:app="clr-namespace:SpaceBaseApplication"
+             xmlns:models="clr-namespace:SpaceBase.Models;assembly=SpaceBase"
              d:DataContext="{d:DesignInstance Type=models:Card}"
              mc:Ignorable="d"
-             d:DesignHeight="{x:Static local:Constants.CostSectorBubbleWidthHeight}"
-             d:DesignWidth="{x:Static local:Constants.CostSectorBubbleWidthHeight}">
+             d:DesignHeight="{x:Static app:Constants.CostSectorBubbleWidthHeight}"
+             d:DesignWidth="{x:Static app:Constants.CostSectorBubbleWidthHeight}">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

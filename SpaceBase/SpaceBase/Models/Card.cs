@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace SpaceBase.Models
+﻿namespace SpaceBase.Models
 {
     public abstract class CardBase : ISerializable
     {
@@ -59,6 +57,9 @@ namespace SpaceBase.Models
         #endregion Equatable methods
     }
 
+    /// <summary>
+    /// A card that has stationed and deployed effects.
+    /// </summary>
     public class Card : CardBase
     {
         private protected int _level;
@@ -166,6 +167,9 @@ namespace SpaceBase.Models
         #endregion Equatable methods
     }
 
+    /// <summary>
+    /// A card that can use charge cubes.
+    /// </summary>
     public sealed class ChargeCard : Card
     {
         [JsonConstructor]

@@ -1,4 +1,4 @@
-﻿namespace SpaceBaseApplication
+﻿namespace SpaceBaseApplication.MainWindow
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
