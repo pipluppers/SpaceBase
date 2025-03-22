@@ -3,15 +3,12 @@
     public class Game : PropertyChangedBase
     {
         private readonly ObservableCollection<Player> _players;
-        private readonly ObservableCollection<Card> _level1Cards;
-        private readonly ObservableCollection<Card> _level2Cards;
-        private readonly ObservableCollection<Card> _level3Cards;
+        private bool _isGameOver;
         private readonly int _maxNumRounds;
         private int _roundNumber;
         private int _turnNumber;
-        private bool _isGameOver = false;
-        private readonly Random _random;
         private int _activePlayerID;
+        private readonly Random _randomNumberGenerator;
 
         public event EventHandler<EventArgs>? PreDiceRollEvent;
         public event DiceRollEventHandler<DiceRollEventArgs>? DiceRollEvent;
@@ -29,19 +26,6 @@
             if (numPlayers < Constants.MinNumPlayers || numPlayers > Constants.MaxNumPlayers)
                 throw new ArgumentException($"The number of players must be between {Constants.MinNumPlayers} and {Constants.MaxNumPlayers}.");
 
-            _random = new Random(1);
-            ActivePlayerID = 0;
-
-            _maxNumRounds = maxNumRounds;
-            RoundOverEvent += MaxNumRoundsHandler;
-
-            Level1Deck = [];
-            Level2Deck = [];
-            Level3Deck = [];
-            _level1Cards = [];
-            _level2Cards = [];
-            _level3Cards = [];
-
             _players = [];
 
             var humanPlayer = new HumanPlayer(1);
@@ -56,36 +40,116 @@
                 Players.Add(player);
             }
 
-            LoadCards();
+            Level1Deck = [];
+            Level2Deck = [];
+            Level3Deck = [];
+            Level1Cards = [];
+            Level2Cards = [];
+            Level3Cards = [];
+
+            _isGameOver = false;
+            _maxNumRounds = maxNumRounds;
+            _roundNumber = 0;
+            _turnNumber = 0;
+            _activePlayerID = 0;
+            _randomNumberGenerator = new Random(1);
+
+            RoundOverEvent += MaxNumRoundsHandler;
         }
 
         #region Properties
 
         /// <summary>
-        /// The random number generator for the dice rolls.
+        /// The collection of players.
         /// </summary>
-        public Random Random { get => _random; init => _random = value; }
-
         public ObservableCollection<Player> Players { get => _players; }
-
-        public int ActivePlayerID { get => _activePlayerID; set => SetProperty(ref _activePlayerID, value); }
-
-        public int TurnNumber { get => _turnNumber; }
-
-        public int RoundNumber { get => _roundNumber; }
-
-        public ObservableCollection<Card> Level1Cards { get => _level1Cards; }
-        public ObservableCollection<Card> Level2Cards { get => _level2Cards; }
-        public ObservableCollection<Card> Level3Cards { get => _level3Cards; }
 
         public Stack<Card> Level1Deck { get; }
         public Stack<Card> Level2Deck { get; }
         public Stack<Card> Level3Deck { get; }
 
-        #endregion Properties
+        public ObservableCollection<Card> Level1Cards { get; }
+        public ObservableCollection<Card> Level2Cards { get; }
+        public ObservableCollection<Card> Level3Cards { get; }
 
         /// <summary>
-        /// Prepare to play the game by loading cards into memory and initializing members.
+        /// The current turn number.
+        /// </summary>
+        /// <remarks>A turn is defined as the full set of a player's actions from the <see cref="Game.PreDiceRollEvent"/> to the <see cref="Game.TurnOverEvent"/>.</remarks>
+        public int TurnNumber { get => _turnNumber; }
+
+        /// <summary>
+        /// The current round number.
+        /// </summary>
+        /// <remarks>A round is defined as full cycle from the beginning of the starting player's turn to the end of the ending player's turn.</remarks>
+        public int RoundNumber { get => _roundNumber; }
+
+        /// <summary>
+        /// The ID of the player rolling the dice and going to receive stationed card effects.
+        /// </summary>
+        /// <remarks>This ID will be updated at the end of each turn.</remarks>
+        public int ActivePlayerID { get => _activePlayerID; set => SetProperty(ref _activePlayerID, value); }
+
+        #endregion Properties
+
+        #region Public methods
+
+        /// <summary>
+        /// Loads all card information from the database.
+        /// </summary>
+        public async Task LoadCards()
+        {
+            try
+            {
+                DataAccessLayer dataAccessLayer = new();
+                List<Card> cards = await dataAccessLayer.GetCards();
+
+                if (cards.Count < Constants.MaxSectorID)
+                    throw new Exception($"The database has less than {Constants.MaxSectorID} cards.");
+
+                int i = 0;
+
+                // First load the initial cards for each player.
+
+                for (; i < Constants.MaxSectorID; i++)
+                {
+                    foreach (Player player in Players)
+                        player.AddCard(cards[i]);
+                }
+
+                foreach (Player player in Players)
+                    player.AddCardToSectorEvent += AddCardToSectorHandler;
+
+                // Now load the decks.
+
+                for (; i < cards.Count; i++)
+                {
+                    Card card = cards[i];
+                    if (card.Level == 1)
+                    {
+                        if (Level1Cards.Count >= 6) Level1Deck.Push(card);
+                        else Level1Cards.Add(card);
+                    }
+                    else if (card.Level == 2)
+                    {
+                        if (Level2Cards.Count >= 6) Level2Deck.Push(card);
+                        else Level2Cards.Add(card);
+                    }
+                    else if (card.Level == 3)
+                    {
+                        if (Level3Cards.Count >= 6) Level3Deck.Push(card);
+                        else Level3Cards.Add(card);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"Error loading the cards from the database: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Initialize members and start the game.
         /// </summary>
         public async Task StartGame()
         {
@@ -102,6 +166,8 @@
 
             await PlayGame();
         }
+
+        #endregion Public methods
 
         /// <summary>
         /// Start the game loop.
@@ -160,12 +226,31 @@
             GameOverEvent?.Invoke(this, new GameOverEventArgs(victoryPlayerIDs));
         }
 
-        private void BeginGameOverRoutine(object sender, PlayerReachedVictoryThresholdEventArgs args)
+        /// <summary>
+        /// Selects two random numbers for the two die and invokes the DiceRollEvent.
+        /// </summary>
+        private async Task RollDice()
         {
+            int dice1 = (_randomNumberGenerator.Next() % 6) + 1;
+            int dice2 = (_randomNumberGenerator.Next() % 6) + 1;
+
+            if (DiceRollEvent != null)
+                await Task.Run(() => DiceRollEvent.Invoke(this, new DiceRollEventArgs(dice1, dice2, ActivePlayerID)));
+        }
+
+        /// <summary>
+        /// Mark the game as over.
+        /// </summary>
+        private void BeginGameOverRoutine(object _, PlayerReachedVictoryThresholdEventArgs __)
+        {
+            // TODO Do something with the winning player
             _isGameOver = true;
         }
 
-        private void MaxNumRoundsHandler(object sender, RoundOverEventArgs args)
+        /// <summary>
+        /// Mark the game as over after a specified amount of rounds.
+        /// </summary>
+        private void MaxNumRoundsHandler(object _, RoundOverEventArgs args)
         {
             if (args.EndingRoundNumber == _maxNumRounds)
                 _isGameOver = true;
@@ -209,73 +294,6 @@
             {
                 DrawCard(Level3Deck, Level3Cards, args.AddedCard);
             }
-        }
-
-        /// <summary>
-        /// Loads all card information from the database.
-        /// </summary>
-        private void LoadCards()
-        {
-            try
-            {
-                DataAccessLayer dataAccessLayer = new();
-                List<Card> cards = dataAccessLayer.GetCards();
-
-                if (cards.Count < Constants.MaxSectorID)
-                    throw new Exception($"The database has less than {Constants.MaxSectorID} cards.");
-
-                int i = 0;
-
-                // First load the initial cards for each player.
-
-                for (; i < Constants.MaxSectorID; i++)
-                {
-                    foreach (Player player in Players)
-                        player.AddCard(cards[i]);
-                }
-
-                foreach (Player player in Players)
-                    player.AddCardToSectorEvent += AddCardToSectorHandler;
-
-                // Now load the decks.
-
-                for (; i < cards.Count; i++)
-                {
-                    Card card = cards[i];
-                    if (card.Level == 1)
-                    {
-                        if (Level1Cards.Count >= 6) Level1Deck.Push(card);
-                        else Level1Cards.Add(card);
-                    }
-                    else if (card.Level == 2)
-                    {
-                        if (Level2Cards.Count >= 6) Level2Deck.Push(card);
-                        else Level2Cards.Add(card);
-                    }
-                    else if (card.Level == 3)
-                    {
-                        if (Level3Cards.Count >= 6) Level3Deck.Push(card);
-                        else Level3Cards.Add(card);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine($"Error loading the cards from the database: {ex.Message}");
-            }
-        }
-
-        /// <summary>
-        /// Selects two random numbers for the two die and invokes the DiceRollEvent.
-        /// </summary>
-        private async Task RollDice()
-        {
-            int dice1 = (_random.Next() % 6) + 1;
-            int dice2 = (_random.Next() % 6) + 1;
-
-            // TODO: Currently, the current player's ID is always 1. This will change later on.
-            if (DiceRollEvent != null)
-                await Task.Run(() => DiceRollEvent.Invoke(this, new DiceRollEventArgs(dice1, dice2, ActivePlayerID)));
         }
     }
 }

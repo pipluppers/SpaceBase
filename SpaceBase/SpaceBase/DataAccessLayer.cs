@@ -25,11 +25,11 @@ namespace SpaceBase
         /// </summary>
         /// <param name="connection">The connection to open.</param>
         /// <exception cref="Exception">The connection has failed to open.</exception>
-        private void Connect(IDbConnection connection)
+        private async Task Connect(SqlConnection connection)
         {
             try
             {
-                connection.Open();
+                await connection.OpenAsync();
             }
             catch (Exception ex)
             {
@@ -41,11 +41,11 @@ namespace SpaceBase
         /// Closes a connection along with error handling.
         /// </summary>
         /// <param name="connection">The connection to close.</param>
-        private void Disconnect(IDbConnection connection)
+        private async Task Disconnect(SqlConnection connection)
         {
             try
             {
-                connection.Close();
+                await connection.CloseAsync();
             }
             catch (Exception ex)
             {
@@ -58,7 +58,7 @@ namespace SpaceBase
         /// Gets the list of cards from the database connection.
         /// </summary>
         /// <returns>The list of cards from the database connection.</returns>
-        public List<Card> GetCards()
+        public async Task<List<Card>> GetCards()
         {
             List<Card> cards = [];
             SqlConnection? connection = null;
@@ -66,7 +66,7 @@ namespace SpaceBase
             try
             {
                 connection = new(_connectionString);
-                Connect(connection);
+                await Connect(connection);
 
                 string? table = Environment.GetEnvironmentVariable(Constants.CardsTableEnvironmentVariable, EnvironmentVariableTarget.User);
                 string queryString = $"SELECT * FROM {table}";
@@ -74,7 +74,7 @@ namespace SpaceBase
                 using var command = new SqlCommand(queryString, connection);
                 using SqlDataReader reader = command.ExecuteReader();
 
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     cards.Add(CreateCard(reader));
                 }
@@ -89,7 +89,7 @@ namespace SpaceBase
             {
                 if (connection != null)
                 {
-                    Disconnect(connection);
+                    await Disconnect(connection);
                     connection.Dispose();
                 }
             }

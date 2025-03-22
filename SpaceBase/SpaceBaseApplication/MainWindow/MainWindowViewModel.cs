@@ -93,10 +93,11 @@
         public void Show() => _mainWindow.Show();
 
         /// <summary>
-        /// Start the game.
+        /// Load the cards and start the game.
         /// </summary>
         public async Task StartGame()
         {
+            await Game.LoadCards();
             WaitForPlayerInput = true;
             await Game.StartGame();
         }
