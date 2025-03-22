@@ -1,6 +1,4 @@
-﻿using System.Windows.Controls;
-
-namespace SpaceBase
+﻿namespace SpaceBaseApplication
 {
     /// <summary>
     /// Interaction logic for PlayerBoardControl.xaml

@@ -1,6 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-namespace SpaceBase
+namespace SpaceBaseApplication
 {
     public abstract class ViewModelBase : PropertyChangedBase
     {

@@ -1,6 +1,4 @@
-﻿using System.Windows.Input;
-
-namespace SpaceBase
+﻿namespace SpaceBaseApplication
 {
     public class PlayWindowViewModel : ViewModelBase
     {

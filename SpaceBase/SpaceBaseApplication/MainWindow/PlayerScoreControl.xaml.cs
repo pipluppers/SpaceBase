@@ -1,4 +1,4 @@
-﻿namespace SpaceBase
+﻿namespace SpaceBaseApplication
 {
     /// <summary>
     /// Interaction logic for PlayerScoreControl.xaml

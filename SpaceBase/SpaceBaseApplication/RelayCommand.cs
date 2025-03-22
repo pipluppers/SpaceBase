@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace SpaceBase
+namespace SpaceBaseApplication
 {
     internal class RelayCommand(Action execute, Func<bool> canExecute) : ICommand
     {

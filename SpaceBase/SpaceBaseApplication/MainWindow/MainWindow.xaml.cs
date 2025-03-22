@@ -1,7 +1,4 @@
-﻿using System.Windows.Documents;
-using System.Windows.Media.Imaging;
-
-namespace SpaceBase
+﻿namespace SpaceBaseApplication
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

@@ -36,8 +36,4 @@
         public List<int> WinnerPlayerIDs { get; } = winnerPlayerIDs;
     }
     public delegate void GameOverEventHandler<GameOverEventArgs>(object sender, GameOverEventArgs e);
-
-    internal class Events
-    {
-    }
 }

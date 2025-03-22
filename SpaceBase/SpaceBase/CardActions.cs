@@ -49,7 +49,7 @@
         /// </summary>
         /// <param name="player">The player to get the credits.</param>
         /// <param name="amount">The amount of credits to add.</param>
-        internal static void AddCredits(Player player, Card _, int amount, int __)
+        public static void AddCredits(Player player, Card _, int amount, int __)
         {
             player.AddCredits(amount);
         }
@@ -59,7 +59,7 @@
         /// </summary>
         /// <param name="player">The player to get the income.</param>
         /// <param name="amount">The amount of income to add.</param>
-        internal static void AddIncome(Player player, Card _, int amount, int __)
+        public static void AddIncome(Player player, Card _, int amount, int __)
         {
             player.AddIncome(amount);
         }
@@ -69,7 +69,7 @@
         /// </summary>
         /// <param name="player">The player to get the victory points.</param>
         /// <param name="amount">The amount of victory points to add.</param>
-        internal static void AddVictoryPoints(Player player, Card _, int amount, int __)
+        public static void AddVictoryPoints(Player player, Card _, int amount, int __)
         {
             player.AddVictoryPoints(amount);
         }
@@ -80,7 +80,7 @@
         /// <param name="player">The player to get the credits and income.</param>
         /// <param name="amount">The amount of credits to add.</param>
         /// <param name="secondaryAmount">The amount of income to add.</param>
-        internal static void AddCreditsIncome(Player player, Card _, int amount, int secondaryAmount)
+        public static void AddCreditsIncome(Player player, Card _, int amount, int secondaryAmount)
         {
             player.AddCredits(amount);
             player.AddIncome(secondaryAmount);
@@ -92,7 +92,7 @@
         /// <param name="player">The player to get the credits and victory points.</param>
         /// <param name="amount">The amount of credits to add.</param>
         /// <param name="secondaryAmount">The amount of victory points to add.</param>
-        internal static void AddCreditsVictoryPoints(Player player, Card _, int amount, int secondaryAmount)
+        public static void AddCreditsVictoryPoints(Player player, Card _, int amount, int secondaryAmount)
         {
             player.AddCredits(amount);
             player.AddVictoryPoints(secondaryAmount);
@@ -102,7 +102,7 @@
         /// Adds a charge cube to the input card.
         /// </summary>
         /// <param name="card">The card to gain the charge cube.</param>
-        internal static void AddChargeCube(Player _, Card card, int __, int ___)
+        public static void AddChargeCube(Player _, Card card, int __, int ___)
         {
             if (card is ChargeCard chargeCard)
                 chargeCard.AddChargeCube();
@@ -114,7 +114,7 @@
         /// <param name="player">The player to claim the cards.</param>
         /// <param name="numCardsToClaim">The number of cards to claim.</param>
         /// <param name="level">The level at which to claim the cards.</param>
-        internal static void ClaimCardsAtLevel(Player player, Card _, int numCardsToClaim, int level)
+        public static void ClaimCardsAtLevel(Player player, Card _, int numCardsToClaim, int level)
         {
             // TODO
             // Wait for user input
@@ -125,7 +125,7 @@
         /// </summary>
         /// <param name="player">The player whose dice roll is affected.</param>
         /// <param name="amount">The amount to add to the sum of the dice roll.</param>
-        internal static async void AddToSum(Player player, int amount, int _)
+        public static async void AddToSum(Player player, int amount, int _)
         {
             // TODO
             // Wait for user input

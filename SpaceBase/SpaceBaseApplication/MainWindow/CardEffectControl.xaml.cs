@@ -1,6 +1,4 @@
-﻿using System.Windows.Data;
-
-namespace SpaceBase
+﻿namespace SpaceBaseApplication
 {
     /// <summary>
     /// Interaction logic for CardEffectControl.xaml

@@ -12,4 +12,40 @@
     <ProjectReference Include="..\SpaceBase\SpaceBase.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="MainWindow\CardControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MainWindow\CardEffectControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MainWindow\EscapeMenuControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MainWindow\MainWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MainWindow\PlayerBoardControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MainWindow\PlayerScoreControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MainWindow\ScoreboardControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="MainWindow\SectorView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PlayWindow\PlayWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="SharedStyles.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
 </Project>
