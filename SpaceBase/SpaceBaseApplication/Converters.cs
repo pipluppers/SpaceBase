@@ -126,6 +126,9 @@ namespace SpaceBaseApplication
         }
     }
 
+    /// <summary>
+    /// If the cost is equal to the value of a designated Null card, then set visible. Otherwise, set collapsed.
+    /// </summary>
     public class NullCardVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -145,6 +148,9 @@ namespace SpaceBaseApplication
         }
     }
 
+    /// <summary>
+    /// Gets a value of the form "Sector n" where n is the sector ID.
+    /// </summary>
     public class SectorTextConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -161,6 +167,9 @@ namespace SpaceBaseApplication
         }
     }
 
+    /// <summary>
+    /// Gets a value of the form "Player n" where n is the player ID.
+    /// </summary>
     public class IDToPlayerTextConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -177,6 +186,9 @@ namespace SpaceBaseApplication
         }
     }
 
+    /// <summary>
+    /// Gets a value of the form "Current Turn: Player n" where n is the player ID.
+    /// </summary>
     public class IDToPlayerTurnTextConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -193,6 +205,9 @@ namespace SpaceBaseApplication
         }
     }
 
+    /// <summary>
+    /// Gets a value of the form "Dice a: b" where a is the dice ID and b is the rolled value of the dice.
+    /// </summary>
     public class DiceToTextConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
