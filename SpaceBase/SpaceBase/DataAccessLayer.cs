@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using SpaceBase.Models;
 
 namespace SpaceBase
 {
@@ -62,11 +61,12 @@ namespace SpaceBase
         public List<Card> GetCards()
         {
             List<Card> cards = [];
+            SqlConnection? connection = null;
 
-            using SqlConnection connection = new(_connectionString);
             try
             {
-                connection.Open();
+                connection = new(_connectionString);
+                Connect(connection);
 
                 string? table = Environment.GetEnvironmentVariable(Constants.CardsTableEnvironmentVariable, EnvironmentVariableTarget.User);
                 string queryString = $"SELECT * FROM {table}";
@@ -87,7 +87,11 @@ namespace SpaceBase
             }
             finally
             {
-                connection.Close();
+                if (connection != null)
+                {
+                    Disconnect(connection);
+                    connection.Dispose();
+                }
             }
 
             return cards;
