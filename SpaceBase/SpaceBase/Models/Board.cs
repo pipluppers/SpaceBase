@@ -1,12 +1,13 @@
 ﻿namespace SpaceBase.Models
 {
-    public class Board
+    /// <summary>
+    /// Represents an object containing sectors.
+    /// </summary>
+    public sealed class Board
     {
-        private readonly ObservableCollection<Sector> _sectors;
-
         public Board()
         {
-            _sectors =
+            Sectors =
             [
                 new(1, null),
                 new(2, null),
@@ -23,6 +24,9 @@
             ];
         }
 
-        public ObservableCollection<Sector> Sectors { get => _sectors; }
+        /// <summary>
+        /// The list of sectors.
+        /// </summary>
+        public ObservableCollection<Sector> Sectors { get; }
     }
 }

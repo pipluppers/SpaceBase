@@ -74,5 +74,18 @@ namespace SpaceBaseTests
                 Assert.That(sector.StationedCard?.Cost, Is.EqualTo(cost2), "The second card should now be the stationed card.");
             });
         }
+
+        [Test]
+        public void AddingCardToSectorWithColonyCardShouldFail()
+        {
+            int sectorID = 1;
+
+            ColonyCard colonyCard = new(1, 9);
+            Sector sector = new(sectorID, colonyCard);
+
+            Card newCard = new(1, 1, 3, ActionType.AddCredits, 2, null, ActionType.AddCredits, 1, null);
+
+            Assert.Throws<InvalidOperationException>(() => sector.AddCard(newCard));
+        }
     }
 }

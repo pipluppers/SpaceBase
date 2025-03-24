@@ -1,6 +1,15 @@
 ﻿namespace SpaceBase.Models
 {
-    public abstract class CardBase : ISerializable
+    public interface ICard
+    {
+        public int SectorID { get; }
+        public int Cost { get; }
+        public CardType CardType { get; }
+
+        public void ActivateStationedEffect(Player player);
+    }
+
+    public abstract class CardBase : ICard, ISerializable
     {
         private readonly int _sectorID;
         private readonly int _cost;

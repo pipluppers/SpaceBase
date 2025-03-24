@@ -1,6 +1,6 @@
 ﻿namespace SpaceBase.Models
 {
-    public class Game : PropertyChangedBase
+    public sealed class Game : PropertyChangedBase
     {
         private readonly ObservableCollection<Player> _players;
         private bool _isGameOver;
@@ -280,19 +280,25 @@
                     visibleRowOfCards[index] = Utilities.NullLevelCard;
             }
 
-            int cardLevel = args.AddedCard.Level;
+            if (args.AddedCard is ColonyCard)
+                return;
+
+            Card? addedCard = args.AddedCard as Card;
+            Debug.Assert(addedCard != null);
+
+            int cardLevel = addedCard.Level;
 
             if (cardLevel == 1)
             {
-                DrawCard(Level1Deck, Level1Cards, args.AddedCard);
+                DrawCard(Level1Deck, Level1Cards, addedCard);
             }
             else if (cardLevel == 2)
             {
-                DrawCard(Level2Deck, Level2Cards, args.AddedCard);
+                DrawCard(Level2Deck, Level2Cards, addedCard);
             }
             else
             {
-                DrawCard(Level3Deck, Level3Cards, args.AddedCard);
+                DrawCard(Level3Deck, Level3Cards, addedCard);
             }
         }
     }

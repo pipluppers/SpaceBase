@@ -76,7 +76,7 @@
         /// </summary>
         /// <param name="card">The card to add.</param>
         /// <exception cref="ArgumentOutOfRangeException">The ID of the card is invalid.</exception>
-        public void AddCard(Card card)
+        public void AddCard(ICard card)
         {
             if (card.SectorID < Constants.MinSectorID || card.SectorID > Constants.MaxSectorID)
                 throw new ArgumentOutOfRangeException(nameof(card), $"The input sector ID of the card must be between {Constants.MinSectorID} and {Constants.MaxSectorID}");
@@ -151,11 +151,11 @@
         }
     }
 
-    public class HumanPlayer(int id) : Player(id)
+    public sealed class HumanPlayer(int id) : Player(id)
     {
     }
 
-    public class ComputerPlayer(int id) : Player(id)
+    public sealed class ComputerPlayer(int id) : Player(id)
     {
     }
 }

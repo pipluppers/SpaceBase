@@ -1,6 +1,4 @@
-﻿using System.Data;
-
-namespace SpaceBase
+﻿namespace SpaceBase
 {
     internal class DataAccessLayer
     {

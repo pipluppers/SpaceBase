@@ -10,9 +10,9 @@
     public delegate void HelpDiceRollEventHandler<DiceRollEventArgs>(object sender, DiceRollEventArgs e);
     public delegate void RemoveHelpDiceRollEffectsEventHandler<DiceRollEventArgs>(object sender, DiceRollEventArgs e);
 
-    public class AddCardToSectorEventArgs(Card addedCard)
+    public class AddCardToSectorEventArgs(ICard addedCard)
     {
-        public Card AddedCard { get; } = addedCard;
+        public ICard AddedCard { get; } = addedCard;
     }
     public delegate void AddCardToSectorEvent<AddCardToSectorEventArgs>(object sender, AddCardToSectorEventArgs e);
 
