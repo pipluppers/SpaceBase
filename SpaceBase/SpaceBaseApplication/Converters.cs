@@ -187,14 +187,33 @@ namespace SpaceBaseApplication
     }
 
     /// <summary>
-    /// Gets a value of the form "Current Turn: Player n" where n is the player ID.
+    /// Gets a value of the form "Round n" where n is the round number.
+    /// </summary>
+    public class RoundNumberTextConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is int intValue)
+                return $"Round {intValue}";
+
+            return string.Empty;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    /// <summary>
+    /// Gets a value of the form "Active: Player n" where n is the player ID.
     /// </summary>
     public class IDToPlayerTurnTextConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is int intValue)
-                return $"Current Turn: Player {intValue}";
+                return $"Active: Player {intValue}";
 
             return string.Empty;
         }
@@ -216,6 +235,29 @@ namespace SpaceBaseApplication
                 return string.Empty;
 
             return $"Dice {stringParameter}: {intValue}";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class WinningPlayerIDsConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is not ObservableCollection<int> winningPlayerIDs || winningPlayerIDs.Count == 0)
+                return string.Empty;
+
+            if (winningPlayerIDs.Count == 1)
+            {
+                return $"Player {winningPlayerIDs[0]}";
+            }
+            else
+            {
+                return $"Player {string.Join(", ", winningPlayerIDs.Select(id => id.ToString()))}";
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

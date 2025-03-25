@@ -8,8 +8,10 @@
     <sb:CostVisibilityConverter x:Key="CostVisibilityConverter"/>
     <sb:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
     <sb:IDToPlayerTextConverter x:Key="IDToPlayerTextConverter"/>
+    <sb:RoundNumberTextConverter x:Key="RoundNumberTextConverter"/>
     <sb:IDToPlayerTurnTextConverter x:Key="IDToPlayerTurnTextConverter"/>
     <sb:DiceToTextConverter x:Key="DiceToTextConverter"/>
+    <sb:WinningPlayerIDsConverter x:Key="WinningPlayerIDsConverter"/>
 
     <Style x:Key="BubbleBorderStyle" TargetType="Border">
         <Setter Property="Height" Value="{x:Static sb:Constants.CostSectorBubbleWidthHeight}"/>

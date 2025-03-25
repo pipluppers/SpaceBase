@@ -2,7 +2,6 @@
 {
     internal class Constants
     {
-        internal const int MinCardLevel = 0;
         internal const int NullCardCost = 900;
 
         #region UI constants

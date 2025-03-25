@@ -9,6 +9,7 @@
         private int _dice2;
         private bool _canRollDice;
         private bool _canDragCards;
+        private bool _showGameOverScreen;
 
         private readonly RelayCommand _showEscapeMenuCommand;
         private readonly RelayCommand _continuePlayingCommand;
@@ -43,6 +44,9 @@
 
             WaitForPlayerInput = false;
             WaitForPlayerDiceRollSelection = false;
+
+            _showGameOverScreen = false;
+            WinningPlayerIDs = [];
 
             SubscribeToEvents();
         }
@@ -85,6 +89,10 @@
         /// </summary>
         public bool CanDragCards { get => _canDragCards; set => SetProperty(ref _canDragCards, value); }
 
+        public bool ShowGameOverScreen { get => _showGameOverScreen; set => SetProperty(ref _showGameOverScreen, value); }
+
+        public ObservableCollection<int> WinningPlayerIDs { get; }
+
         #endregion Properties
 
         /// <summary>
@@ -120,6 +128,7 @@
             Game.DiceRollEvent += Game_DiceRollEventHandler;
             Game.BuyEvent += Game_BuyEventHandler;
             Game.TurnOverEvent += Game_TurnOverEventHandler;
+            Game.GameOverEvent += Game_GameOverEvent;
         }
 
         /// <summary>
@@ -216,15 +225,6 @@
         }
 
         /// <summary>
-        /// Loop until the user interacts with the appropriate control based on the current state of the game.
-        /// </summary>
-        /// <remarks>This function should be spinning on a worker thread, not the UI thread.</remarks>
-        private void Game_WaitForPlayerInputEventHandler(object? _, EventArgs __)
-        {
-            while (WaitForPlayerInput) { }
-        }
-
-        /// <summary>
         /// Set current state back to waiting for player input.
         /// </summary>
         /// <param name="sender">The game.</param>
@@ -233,6 +233,18 @@
         {
             WaitForPlayerInput = true;
             NotifyPropertyChanged(nameof(IsHumanPlayerActive));
+        }
+
+        private void Game_GameOverEvent(object sender, GameOverEventArgs e)
+        {
+            int maxVictoryPoints = Game.Players.Select(p => p.VictoryPoints).Max();
+            foreach (var player in Game.Players)
+            {
+                if (player.VictoryPoints == maxVictoryPoints)
+                    WinningPlayerIDs.Add(player.ID);
+            }
+
+            ShowGameOverScreen = true;
         }
 
         #endregion Event handlers
@@ -246,6 +258,7 @@
         private void ShowEscapeMenuA()
         {
             ShowEscapeMenu = true;
+            ShowGameOverScreen = false;
         }
 
         public ICommand ContinuePlayingCommand { get => _continuePlayingCommand; }
@@ -255,6 +268,9 @@
         private void ContinuePlaying()
         {
             ShowEscapeMenu = false;
+
+            if (WinningPlayerIDs.Count > 0)
+                ShowGameOverScreen = true;
         }
 
         public ICommand QuitGameCommand { get => _quitGameCommand; }

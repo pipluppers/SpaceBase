@@ -1,6 +1,11 @@
 ﻿namespace SpaceBase.Models
 {
-    public sealed class Game : PropertyChangedBase
+    public interface IGame
+    {
+        public int VictoryThreshold { get; }
+    }
+
+    public sealed class Game : PropertyChangedBase, IGame
     {
         private readonly ObservableCollection<Player> _players;
         private bool _isGameOver;
@@ -26,15 +31,16 @@
             if (numPlayers < Constants.MinNumPlayers || numPlayers > Constants.MaxNumPlayers)
                 throw new ArgumentException($"The number of players must be between {Constants.MinNumPlayers} and {Constants.MaxNumPlayers}.");
 
+            VictoryThreshold = Constants.VictoryThreshold;
             _players = [];
 
-            var humanPlayer = new HumanPlayer(1);
+            var humanPlayer = new HumanPlayer(1, this);
             humanPlayer.PlayerReachedVictoryThresholdEvent += BeginGameOverRoutine;
             Players.Add(humanPlayer);
 
             for (int i = 1; i < numPlayers; ++i)
             {
-                var player = new ComputerPlayer(i + 1);
+                var player = new ComputerPlayer(i + 1, this);
                 player.PlayerReachedVictoryThresholdEvent += BeginGameOverRoutine;
 
                 Players.Add(player);
@@ -59,6 +65,8 @@
 
         #region Properties
 
+        public int VictoryThreshold { get; init; }
+
         /// <summary>
         /// The collection of players.
         /// </summary>
@@ -82,7 +90,7 @@
         /// The current round number.
         /// </summary>
         /// <remarks>A round is defined as full cycle from the beginning of the starting player's turn to the end of the ending player's turn.</remarks>
-        public int RoundNumber { get => _roundNumber; }
+        public int RoundNumber { get => _roundNumber; set => SetProperty(ref _roundNumber, value); }
 
         /// <summary>
         /// The ID of the player rolling the dice and going to receive stationed card effects.
@@ -160,7 +168,7 @@
 
             // TODO Each player draws a card. Player order is determined by highest cost
 
-            _roundNumber = 1;
+            RoundNumber = 1;
             _turnNumber = 1;
             ActivePlayerID = 1; // TODO Just set human player to first player for now
 
@@ -174,7 +182,7 @@
         /// </summary>
         private async Task PlayGame()
         {
-            while (!_isGameOver)
+            while (!_isGameOver || _turnNumber != 1)
             {
                 // Broadcast PreDiceRollEvent
 
@@ -202,7 +210,7 @@
                 else
                 {
                     _turnNumber = 1;
-                    RoundOverEvent?.Invoke(this, new RoundOverEventArgs(_roundNumber++));
+                    RoundOverEvent?.Invoke(this, new RoundOverEventArgs(RoundNumber++));
                 }
 
                 TurnOverEvent?.Invoke(this, new TurnOverEventArgs());

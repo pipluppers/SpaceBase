@@ -51,9 +51,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <local:PlayerBoardControl Grid.Row="0" Player="{Binding Game.Players[1]}"/>
-
-            <Grid Grid.Row="1" Background="DarkGray" Height="50">
+            <Grid Grid.Row="0" Background="DarkGray" Height="50">
                 <Grid.Resources>
                     <Style TargetType="Label">
                         <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -67,7 +65,14 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Label Grid.Column="0" Content="{Binding Game.ActivePlayerID, Converter={StaticResource IDToPlayerTurnTextConverter}, Mode=OneWay}"/>
+                <Grid Grid.Column="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="{Binding Game.RoundNumber, Converter={StaticResource RoundNumberTextConverter}, Mode=OneWay}"/>
+                    <Label Grid.Column="1" Content="{Binding Game.ActivePlayerID, Converter={StaticResource IDToPlayerTurnTextConverter}, Mode=OneWay}"/>
+                </Grid>
 
                 <Grid Grid.Column="1" Background="Navy">
                     <Grid.ColumnDefinitions>
@@ -79,6 +84,8 @@
                     <Label Grid.Column="1" Content="{Binding Dice2, Converter={StaticResource DiceToTextConverter}, ConverterParameter=2, Mode=OneWay}"/>
                 </Grid>
             </Grid>
+            
+            <local:PlayerBoardControl Grid.Row="1" Player="{Binding Game.Players[1]}"/>
 
             <Canvas Grid.Row="2" AllowDrop="True">
                 <Canvas.Resources>
@@ -128,5 +135,7 @@
 
             <local:ScoreboardControl Grid.Row="3" Panel.ZIndex="2"/>
         </Grid>
+
+        <local:GameOverControl Panel.ZIndex="2" Background="Pink" Visibility="{Binding ShowGameOverScreen, Converter={StaticResource BoolVisibilityConverter}}" Width="Auto" Height="Auto"/>
     </Grid>
 </Window>
