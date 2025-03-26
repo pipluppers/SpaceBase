@@ -18,7 +18,7 @@
         public event EventHandler<EventArgs>? PreDiceRollEvent;
         public event DiceRollEventHandler<DiceRollEventArgs>? DiceRollEvent;
         public event EventHandler<EventArgs>? BuyEvent;
-        public event TurnOverEvent<TurnOverEventArgs>? TurnOverEvent;
+        public event TurnOverEvent<EventArgs>? TurnOverEvent;
         public event RoundOverEventHandler<RoundOverEventArgs>? RoundOverEvent;
         public event GameOverEventHandler<GameOverEventArgs>? GameOverEvent;
 
@@ -213,7 +213,7 @@
                     RoundOverEvent?.Invoke(this, new RoundOverEventArgs(RoundNumber++));
                 }
 
-                TurnOverEvent?.Invoke(this, new TurnOverEventArgs());
+                TurnOverEvent?.Invoke(this, new EventArgs());
             }
 
             int curr = 0;

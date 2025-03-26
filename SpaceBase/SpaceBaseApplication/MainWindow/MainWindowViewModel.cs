@@ -227,9 +227,7 @@
         /// <summary>
         /// Set current state back to waiting for player input.
         /// </summary>
-        /// <param name="sender">The game.</param>
-        /// <param name="e">Unused arguments.</param>
-        private void Game_TurnOverEventHandler(object sender, TurnOverEventArgs e)
+        private void Game_TurnOverEventHandler(object _, EventArgs __)
         {
             WaitForPlayerInput = true;
             NotifyPropertyChanged(nameof(IsHumanPlayerActive));
