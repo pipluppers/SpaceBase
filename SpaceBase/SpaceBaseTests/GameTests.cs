@@ -1,32 +1,18 @@
-﻿using NUnit.Framework;
-using SpaceBase.Models;
-
-namespace SpaceBaseTests
+﻿namespace SpaceBaseTests
 {
     [TestFixture]
     internal class GameTests
     {
-        [SetUp]
-        public void SetUp()
-        {
-
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-        }
-
         [Test]
         public void CanCreateGame()
         {
             Assert.Multiple(() =>
             {
-                var game1 = new Game();
+                Game game1 = new();
                 Assert.That(game1.Players.Count, Is.EqualTo(2));
 
                 int numPlayers = 5;
-                var game2 = new Game(numPlayers);
+                Game game2 = new(numPlayers);
                 Assert.That(game2.Players.Count, Is.EqualTo(numPlayers));
             });
         }
@@ -47,7 +33,7 @@ namespace SpaceBaseTests
         [Test]
         public async Task GameRaisesRoundOverEvent()
         {
-            var game = new Game();
+            Game game = new();
 
             bool round1Over = false;
             bool round5Over = false;
@@ -73,7 +59,7 @@ namespace SpaceBaseTests
         {
             // Just let the game play to 30 rounds
 
-            var game = new Game();
+            Game game = new();
 
             game.DiceRollEvent += (sender, args) =>
             {
@@ -98,7 +84,7 @@ namespace SpaceBaseTests
         [Test]
         public async Task GameEndsAt50Rounds()
         {
-            var game = new Game();
+            Game game = new();
 
             game.RoundOverEvent += (sender, args) =>
             {

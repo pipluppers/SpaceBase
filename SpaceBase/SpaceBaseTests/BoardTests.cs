@@ -1,28 +1,14 @@
-﻿using NUnit.Framework;
-using SpaceBase.Models;
-
-namespace SpaceBaseTests
+﻿namespace SpaceBaseTests
 {
     [TestFixture]
     internal class BoardTests
     {
-        [SetUp]
-        public void SetUp()
-        {
-
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-        }
-
         [Test]
         public void CanCreateBoard()
         {
-            var board = new Board();
+            Board board = new();
 
-            var sectors = board.Sectors;
+            ObservableCollection<Sector> sectors = board.Sectors;
             Assert.That(sectors, Is.Not.Null);
             Assert.That(sectors.Count, Is.EqualTo(12));
             

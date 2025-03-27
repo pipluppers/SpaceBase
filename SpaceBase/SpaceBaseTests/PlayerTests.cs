@@ -1,30 +1,18 @@
-﻿using NUnit.Framework;
-using SpaceBase;
-using SpaceBase.Models;
-
-namespace SpaceBaseTests
+﻿namespace SpaceBaseTests
 {
     [TestFixture]
     internal class PlayerTests
     {
-        [SetUp]
-        public void SetUp()
-        {
-
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-        }
-
         [Test]
         public void CanCreatePlayer()
         {
-            var player = new HumanPlayer(1);
+            int id = 1;
+            HumanPlayer player = new(id);
 
             Assert.Multiple(() =>
             {
+                Assert.That(player.ID, Is.EqualTo(id));
+                Assert.That(player.Board, Is.Not.Null);
                 Assert.That(player.Credits, Is.EqualTo(0));
                 Assert.That(player.Income, Is.EqualTo(0));
                 Assert.That(player.VictoryPoints, Is.EqualTo(0));
@@ -36,7 +24,7 @@ namespace SpaceBaseTests
         [TestCase(1, 2, TestName = "ResetWillSetPlayerCreditsToIncomeIfLowerCredits_1Credits_2Income")]
         public void ResetWillSetPlayerCreditsToIncomeIfLowerCredits(int credits, int income)
         {
-            var player = new HumanPlayer(1);
+            HumanPlayer player = new(1);
             player.AddCredits(credits);
             player.AddIncome(income);
 
@@ -54,7 +42,7 @@ namespace SpaceBaseTests
         [TestCase(6, 5, TestName = "ResetWillNotSetPlayerCreditsToIncomeIfHigherOrEqualCredits_6Credits_5Income")]
         public void ResetWillNotSetPlayerCreditsToIncomeIfHigherOrEqualCredits(int credits, int income)
         {
-            var player = new HumanPlayer(1);
+            HumanPlayer player = new(1);
             player.AddCredits(credits);
             player.AddIncome(income);
 
@@ -71,11 +59,11 @@ namespace SpaceBaseTests
         [Test]
         public void PlayerReachedVictoryThresholdEventFiresAt40Points()
         {
-            int playerID = 42;
-            var player = new HumanPlayer(playerID);
+            int id = 1;
+            HumanPlayer player = new(id);
             player.PlayerReachedVictoryThresholdEvent += (sender, e) =>
             {
-                Assert.That(e.PlayerID, Is.EqualTo(playerID));
+                Assert.That(e.PlayerID, Is.EqualTo(id));
                 Assert.Pass("PlayerReachedVictoryThreshold event fired.");
             };
 
@@ -90,8 +78,8 @@ namespace SpaceBaseTests
         [Test]
         public void BuyingACardWithHigherCostThanCreditsShouldFail()
         {
-            var player = new HumanPlayer(1);
-            var card = new Card(1, 10, 3, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
+            HumanPlayer player = new(1);
+            Card card = new(1, 10, 3, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
 
             Assert.Throws<InvalidOperationException>(() => player.BuyCard(card));
             Assert.Throws<InvalidOperationException>(() => player.BuyCard(card, false));
@@ -103,8 +91,8 @@ namespace SpaceBaseTests
             int startingCredits = 10;
             int cardCost = 3;
 
-            var player = new HumanPlayer(1);
-            var card = new Card(1, 10, cardCost, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
+            HumanPlayer player = new(1);
+            Card card = new(1, 10, cardCost, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
 
             player.AddCredits(startingCredits);
             player.BuyCard(card, false);
@@ -114,13 +102,13 @@ namespace SpaceBaseTests
         [Test]
         public void PlayerAddCardToSectorEventFires()
         {
-            var player = new HumanPlayer(1);
+            HumanPlayer player = new(1);
             player.AddCardToSectorEvent += (sender, e) =>
             {
                 Assert.Pass();
             };
 
-            var card = new Card(1, 10, 3, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
+            Card card = new(1, 10, 3, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
 
             player.AddCard(card);
 
@@ -130,13 +118,13 @@ namespace SpaceBaseTests
         [Test]
         public void PlayerBuyCardTriggersAddCardToSectorEvent()
         {
-            var player = new HumanPlayer(1);
+            HumanPlayer player = new(1);
             player.AddCardToSectorEvent += (sender, e) =>
             {
                 Assert.Pass();
             };
 
-            var card = new Card(1, 12, 3, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
+            Card card = new(1, 12, 3, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
 
             // Make sure the player has enough credits
             player.AddCredits(5);
@@ -149,13 +137,13 @@ namespace SpaceBaseTests
         [Test]
         public void PlayerSafeBuyCardTriggersAddCardToSectorEvent()
         {
-            var player = new HumanPlayer(1);
+            HumanPlayer player = new(1);
             player.AddCardToSectorEvent += (sender, e) =>
             {
                 Assert.Pass();
             };
 
-            var card = new Card(1, 12, 3, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
+            Card card = new(1, 12, 3, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
 
             // Make sure the player has enough credits
             player.AddCredits(5);
@@ -173,11 +161,11 @@ namespace SpaceBaseTests
             int deployedNumIncomeToAdd = 5;
             int deployedNumVictoryPointsToAdd = 3;
 
-            var addCreditsCard = new Card(1, sectorID, 2, ActionType.AddCredits, 1, null, ActionType.AddCredits, deployedNumCreditsToAdd, null);
-            var addIncomeCard = new Card(1, sectorID, 2, ActionType.AddIncome, 1, null, ActionType.AddIncome, deployedNumIncomeToAdd, null);
-            var addVictoryPointsCard = new Card(1, sectorID, 2, ActionType.AddVictoryPoints, 1, null, ActionType.AddVictoryPoints, deployedNumVictoryPointsToAdd, null);
+            Card addCreditsCard = new(1, sectorID, 2, ActionType.AddCredits, 1, null, ActionType.AddCredits, deployedNumCreditsToAdd, null);
+            Card addIncomeCard = new(1, sectorID, 2, ActionType.AddIncome, 1, null, ActionType.AddIncome, deployedNumIncomeToAdd, null);
+            Card addVictoryPointsCard = new(1, sectorID, 2, ActionType.AddVictoryPoints, 1, null, ActionType.AddVictoryPoints, deployedNumVictoryPointsToAdd, null);
 
-            var player = new HumanPlayer(1);
+            HumanPlayer player = new(1);
             player.AddCard(addCreditsCard);
             player.AddCard(addIncomeCard);
             player.AddCard(addVictoryPointsCard);
@@ -202,8 +190,8 @@ namespace SpaceBaseTests
             int numCreditsToAdd = 6;
             int deployedNumCreditsToAdd = 4;
 
-            var player = new HumanPlayer(1);
-            var card = new Card(1, sectorID, 3, ActionType.AddCredits, numCreditsToAdd, null, ActionType.AddCredits, deployedNumCreditsToAdd, null);
+            HumanPlayer player = new(1);
+            Card card = new(1, sectorID, 3, ActionType.AddCredits, numCreditsToAdd, null, ActionType.AddCredits, deployedNumCreditsToAdd, null);
 
             player.AddCard(card);
             Assert.That(player.GetSector(sectorID).StationedCard, Is.Not.Null);
@@ -227,8 +215,8 @@ namespace SpaceBaseTests
             int numIncomeToAdd = 6;
             int deployedNumIncomeToAdd = 4;
 
-            var player = new HumanPlayer(1);
-            var card = new Card(1, sectorID, 3, ActionType.AddIncome, numIncomeToAdd, null, ActionType.AddIncome, deployedNumIncomeToAdd, null);
+            HumanPlayer player = new(1);
+            Card card = new(1, sectorID, 3, ActionType.AddIncome, numIncomeToAdd, null, ActionType.AddIncome, deployedNumIncomeToAdd, null);
 
             Assert.That(player.Income, Is.EqualTo(0), "Pre-test: Player should start with 0 income.");
 
@@ -255,8 +243,8 @@ namespace SpaceBaseTests
             int numVictoryPointsToAdd = 6;
             int deployedNumVictoryPointsToAdd = 4;
 
-            var player = new HumanPlayer(1);
-            var card = new Card(1, sectorID, 3, ActionType.AddVictoryPoints, numVictoryPointsToAdd, null, ActionType.AddVictoryPoints, deployedNumVictoryPointsToAdd, null);
+            HumanPlayer player = new(1);
+            Card card = new(1, sectorID, 3, ActionType.AddVictoryPoints, numVictoryPointsToAdd, null, ActionType.AddVictoryPoints, deployedNumVictoryPointsToAdd, null);
 
             Assert.That(player.Income, Is.EqualTo(0), "Pre-test: Player should start with 0 victory points.");
 
@@ -288,12 +276,13 @@ namespace SpaceBaseTests
 
             player.AddCard(chargeCard);
 
-            ChargeCard? playerChargeCard = player.GetSector(sectorID).StationedCard as ChargeCard;
-            Assert.That(playerChargeCard, Is.Not.Null);
+            if (player.GetSector(sectorID).StationedCard is not ChargeCard playerChargeCard)
+            {
+                Assert.Fail("Charge card should not be null.");
+                return;
+            }
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             Assert.That(playerChargeCard.NumChargeCubes, Is.EqualTo(0));
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             player.ActivateCardEffect(sectorID);
             Assert.That(playerChargeCard.NumChargeCubes, Is.EqualTo(1));

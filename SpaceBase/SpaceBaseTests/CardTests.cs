@@ -1,23 +1,8 @@
-﻿using NUnit.Framework;
-using SpaceBase;
-using SpaceBase.Models;
-
-namespace SpaceBaseTests
+﻿namespace SpaceBaseTests
 {
     [TestFixture]
     internal class CardTests
     {
-        [SetUp]
-        public void SetUp()
-        {
-
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-        }
-
         [Test]
         public void CardWithInvalidSectorShouldThrow()
         {
@@ -36,7 +21,7 @@ namespace SpaceBaseTests
         {
             for (int i = 1; i < 13; ++i)
             {
-                var card = new Card(0, i, 1, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null);
+                Card card = new(0, i, 1, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null);
                 Assert.That(i, Is.EqualTo(card.SectorID));
             }
         }
