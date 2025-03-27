@@ -76,6 +76,26 @@
         }
 
         [Test]
+        public void CanChangeVictoryThresholdWithDependencyInjection()
+        {
+            int victoryThreshold = 5;
+
+            Mock<IGame> mock = new();
+            mock.Setup(game => game.VictoryThreshold).Returns(victoryThreshold);
+
+            HumanPlayer player = new(1, mock.Object);
+            player.PlayerReachedVictoryThresholdEvent += (sender, args) =>
+            {
+                Assert.Pass();
+            };
+
+            player.AddVictoryPoints(4);
+            player.AddVictoryPoints(1);
+
+            Assert.Fail($"The PlayerReachedVictoryThresholdEvent should have fired after reaching {victoryThreshold}.");
+        }
+
+        [Test]
         public void BuyingACardWithHigherCostThanCreditsShouldFail()
         {
             HumanPlayer player = new(1);
