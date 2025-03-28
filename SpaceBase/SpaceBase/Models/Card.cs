@@ -9,6 +9,20 @@
         public void ActivateStationedEffect(Player player);
     }
 
+    public interface IStandardCard : ICard
+    {
+        public int Level { get; }
+        public ActionType EffectType { get; }
+        public int Amount { get; }
+        public int? SecondaryAmount { get; }
+        public ActionType DeployedEffectType { get; }
+        public int DeployedAmount { get; }
+        public int? DeployedSecondaryAmount { get; }
+        public void ActivateDeployedEffect(Player player);
+    }
+
+    public interface IColonyCard : ICard { }
+
     public abstract class CardBase : ICard, ISerializable
     {
         private readonly int _sectorID;
@@ -69,7 +83,7 @@
     /// <summary>
     /// A card that has stationed and deployed effects.
     /// </summary>
-    public class Card : CardBase
+    public class Card : CardBase, IStandardCard
     {
         private protected int _level;
         private readonly Action<Player, Card, int, int> _effect;
@@ -292,7 +306,7 @@
     /// <summary>
     /// A colony card is a simple card with only a sector ID and cost.
     /// </summary>
-    public sealed class ColonyCard(int sectorID, int cost) : CardBase(sectorID, cost), ISerializable
+    public sealed class ColonyCard(int sectorID, int cost) : CardBase(sectorID, cost), IColonyCard, ISerializable
     {
         [JsonIgnore]
         public override CardType CardType { get => CardType.Colony; }

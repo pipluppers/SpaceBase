@@ -59,11 +59,17 @@
         [Test]
         public void BuyingACardWithHigherCostThanCreditsShouldFail()
         {
-            HumanPlayer player = new(1);
-            Card card = new(1, 10, 3, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
+            int cardCost = 1;
 
-            Assert.Throws<InvalidOperationException>(() => player.BuyCard(card));
-            Assert.Throws<InvalidOperationException>(() => player.BuyCard(card, false));
+            HumanPlayer player = new(1);
+            Assert.That(player.Credits, Is.EqualTo(0));
+
+            Mock<ICard> mockCard = new();
+            mockCard.Setup(card => card.SectorID).Returns(2);
+            mockCard.Setup(card => card.Cost).Returns(cardCost);
+
+            Assert.Throws<InvalidOperationException>(() => player.BuyCard(mockCard.Object));
+            Assert.Throws<InvalidOperationException>(() => player.BuyCard(mockCard.Object, false));
         }
 
         [Test]
@@ -73,10 +79,13 @@
             int cardCost = 3;
 
             HumanPlayer player = new(1);
-            Card card = new(1, 10, cardCost, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
+
+            Mock<ICard> mockCard = new();
+            mockCard.Setup(card => card.SectorID).Returns(2);
+            mockCard.Setup(card => card.Cost).Returns(cardCost);
 
             player.AddCredits(startingCredits);
-            player.BuyCard(card, false);
+            player.BuyCard(mockCard.Object, false);
             Assert.That(player.Credits, Is.EqualTo(startingCredits - cardCost));
         }
 
@@ -89,9 +98,11 @@
                 Assert.Pass();
             };
 
-            Card card = new(1, 10, 3, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
+            Mock<ICard> mockCard = new();
+            mockCard.Setup(card => card.SectorID).Returns(2);
+            mockCard.Setup(card => card.Cost).Returns(3);
 
-            player.AddCard(card);
+            player.AddCard(mockCard.Object);
 
             Assert.Fail("The AddCardToSectorEvent should have fired.");
         }
@@ -105,12 +116,14 @@
                 Assert.Pass();
             };
 
-            Card card = new(1, 12, 3, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
+            Mock<ICard> mockCard = new();
+            mockCard.Setup(card => card.SectorID).Returns(2);
+            mockCard.Setup(card => card.Cost).Returns(3);
 
             // Make sure the player has enough credits
             player.AddCredits(5);
 
-            player.BuyCard(card);
+            player.BuyCard(mockCard.Object);
 
             Assert.Fail("The AddCardToSectorEvent should have fired.");
         }
@@ -124,12 +137,14 @@
                 Assert.Pass();
             };
 
-            Card card = new(1, 12, 3, ActionType.AddCredits, 5, null, ActionType.AddCredits, 5, null);
+            Mock<ICard> mockCard = new();
+            mockCard.Setup(card => card.SectorID).Returns(2);
+            mockCard.Setup(card => card.Cost).Returns(3);
 
             // Make sure the player has enough credits
             player.AddCredits(5);
 
-            player.BuyCard(card, false);
+            player.BuyCard(mockCard.Object, false);
 
             Assert.Fail("The AddCardToSectorEvent should have fired.");
         }
@@ -142,6 +157,31 @@
             int deployedNumIncomeToAdd = 5;
             int deployedNumVictoryPointsToAdd = 3;
 
+            // TODO
+            //Mock<IStandardCard> mockAddCreditsCard = new();
+            //mockAddCreditsCard.Setup(addCreditsCard => addCreditsCard.SectorID).Returns(sectorID);
+            //mockAddCreditsCard.Setup(addCreditsCard => addCreditsCard.Cost).Returns(2);
+            //mockAddCreditsCard.Setup(addCreditsCard => addCreditsCard.EffectType).Returns(ActionType.AddCredits);
+            //mockAddCreditsCard.Setup(addCreditsCard => addCreditsCard.Amount).Returns(1);
+            //mockAddCreditsCard.Setup(addCreditsCard => addCreditsCard.DeployedEffectType).Returns(ActionType.AddCredits);
+            //mockAddCreditsCard.Setup(addCreditsCard => addCreditsCard.DeployedAmount).Returns(deployedNumCreditsToAdd);
+
+            //Mock<IStandardCard> mockAddIncomeCard = new();
+            //mockAddIncomeCard.Setup(addIncomeCard => addIncomeCard.SectorID).Returns(sectorID);
+            //mockAddIncomeCard.Setup(addIncomeCard => addIncomeCard.Cost).Returns(2);
+            //mockAddIncomeCard.Setup(addIncomeCard => addIncomeCard.EffectType).Returns(ActionType.AddIncome);
+            //mockAddIncomeCard.Setup(addIncomeCard => addIncomeCard.Amount).Returns(1);
+            //mockAddIncomeCard.Setup(addIncomeCard => addIncomeCard.DeployedEffectType).Returns(ActionType.AddIncome);
+            //mockAddIncomeCard.Setup(addIncomeCard => addIncomeCard.DeployedAmount).Returns(deployedNumIncomeToAdd);
+
+            //Mock<IStandardCard> mockAddVictoryPointsCard = new();
+            //mockAddVictoryPointsCard.Setup(card => card.SectorID).Returns(sectorID);
+            //mockAddVictoryPointsCard.Setup(card => card.Cost).Returns(2);
+            //mockAddVictoryPointsCard.Setup(card => card.EffectType).Returns(ActionType.AddVictoryPoints);
+            //mockAddVictoryPointsCard.Setup(card => card.Amount).Returns(1);
+            //mockAddVictoryPointsCard.Setup(card => card.DeployedEffectType).Returns(ActionType.AddVictoryPoints);
+            //mockAddVictoryPointsCard.Setup(card => card.DeployedAmount).Returns(deployedNumVictoryPointsToAdd);
+
             Card addCreditsCard = new(1, sectorID, 2, ActionType.AddCredits, 1, null, ActionType.AddCredits, deployedNumCreditsToAdd, null);
             Card addIncomeCard = new(1, sectorID, 2, ActionType.AddIncome, 1, null, ActionType.AddIncome, deployedNumIncomeToAdd, null);
             Card addVictoryPointsCard = new(1, sectorID, 2, ActionType.AddVictoryPoints, 1, null, ActionType.AddVictoryPoints, deployedNumVictoryPointsToAdd, null);
@@ -151,6 +191,10 @@
             player.AddCard(addIncomeCard);
             player.AddCard(addVictoryPointsCard);
             player.AddCard(addCreditsCard);
+            //player.AddCard(mockAddCreditsCard.Object);
+            //player.AddCard(mockAddIncomeCard.Object);
+            //player.AddCard(mockAddVictoryPointsCard.Object);
+            //player.AddCard(mockAddCreditsCard.Object);
 
             Assert.That(player.GetSector(sectorID).DeployedCards.Count, Is.EqualTo(3), "There should be 3 deployed cards.");
 

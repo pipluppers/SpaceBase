@@ -6,7 +6,7 @@
     public sealed class Sector : PropertyChangedBase
     {
         private ICard? _stationedCard;
-        private readonly ObservableCollection<Card> _deployedCards;
+        private readonly ObservableCollection<IStandardCard> _deployedCards;
 
         public Sector(int id, ICard? card)
         {
@@ -31,7 +31,7 @@
         /// <summary>
         /// The cards that are deployed in the sector. This can not include colony cards.
         /// </summary>
-        public ObservableCollection<Card> DeployedCards => _deployedCards;
+        public ObservableCollection<IStandardCard> DeployedCards => _deployedCards;
 
         /// <summary>
         /// Deploys the currently stationed card and sets the stationed card to the provided one.
@@ -44,14 +44,15 @@
             if (ID != card.SectorID)
                 throw new ArgumentException($"The card has sector ID {card.SectorID} which cannot be added to sector {ID}.");
 
-            if (StationedCard is ColonyCard)
+            if (StationedCard is IColonyCard)
                 throw new InvalidOperationException($"Sector {ID} currently has a colony card stationed that cannot be deployed.");
 
-            if (StationedCard != null)
+            if (StationedCard is IStandardCard standardCard)
             {
-                Card? nonColonyCard = StationedCard as Card;
-                Debug.Assert(nonColonyCard != null);
-                DeployedCards.Add(nonColonyCard);
+                DeployedCards.Add(standardCard);
+                //Card? nonColonyCard = StationedCard as Card;
+                //Debug.Assert(nonColonyCard != null);
+                //DeployedCards.Add(nonColonyCard);
             }
 
             StationedCard = card;
