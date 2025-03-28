@@ -57,45 +57,6 @@
         }
 
         [Test]
-        public void PlayerReachedVictoryThresholdEventFiresAt40Points()
-        {
-            int id = 1;
-            HumanPlayer player = new(id);
-            player.PlayerReachedVictoryThresholdEvent += (sender, e) =>
-            {
-                Assert.That(e.PlayerID, Is.EqualTo(id));
-                Assert.Pass("PlayerReachedVictoryThreshold event fired.");
-            };
-
-            player.AddVictoryPoints(39);
-            Assert.That(player.VictoryPoints, Is.EqualTo(39));
-
-            player.AddVictoryPoints(1);
-
-            Assert.Fail("The game over event did not fire before this assertion.");
-        }
-
-        [Test]
-        public void CanChangeVictoryThresholdWithDependencyInjection()
-        {
-            int victoryThreshold = 5;
-
-            Mock<IGame> mock = new();
-            mock.Setup(game => game.VictoryThreshold).Returns(victoryThreshold);
-
-            HumanPlayer player = new(1, mock.Object);
-            player.PlayerReachedVictoryThresholdEvent += (sender, args) =>
-            {
-                Assert.Pass();
-            };
-
-            player.AddVictoryPoints(4);
-            player.AddVictoryPoints(1);
-
-            Assert.Fail($"The PlayerReachedVictoryThresholdEvent should have fired after reaching {victoryThreshold}.");
-        }
-
-        [Test]
         public void BuyingACardWithHigherCostThanCreditsShouldFail()
         {
             HumanPlayer player = new(1);

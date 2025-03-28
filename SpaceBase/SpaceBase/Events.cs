@@ -16,13 +16,7 @@
     }
     public delegate void AddCardToSectorEvent<AddCardToSectorEventArgs>(object sender, AddCardToSectorEventArgs e);
 
-    public class PlayerReachedVictoryThresholdEventArgs(int playerID)
-    {
-        public int PlayerID { get; } = playerID;
-    }
-    public delegate void PlayerReachedVictoryThresholdEvent<PlayerReachedVictoryThresholdEventArgs>(object sender, PlayerReachedVictoryThresholdEventArgs e);
-
-    public delegate void TurnOverEvent<TurnOverEventArgs>(object sender, EventArgs e);
+    public delegate void TurnOverEvent<EventArgs>(object sender, EventArgs e);
 
     public class RoundOverEventArgs(int endingRoundNumber) : EventArgs
     {

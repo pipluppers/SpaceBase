@@ -1,6 +1,6 @@
 ﻿namespace SpaceBase.Models
 {
-    public abstract class Player(int id, IGame? game) : PropertyChangedBase
+    public abstract class Player(int id) : PropertyChangedBase
     {
         private readonly Board _board = new();
         private int _credits = 0;
@@ -8,12 +8,6 @@
         private int _victoryPoints = 0;
         private int _chargeCubes = 0;
 
-        public Player(int id) : this(id, null)
-        {
-            ID = id;
-        }
-
-        public event PlayerReachedVictoryThresholdEvent<PlayerReachedVictoryThresholdEventArgs>? PlayerReachedVictoryThresholdEvent;
         public event AddCardToSectorEvent<AddCardToSectorEventArgs>? AddCardToSectorEvent;
 
         public Board Board { get => _board; }
@@ -51,15 +45,11 @@
         /// Adds the specified amount of victory points to the player's income pool.
         /// </summary>
         /// <param name="victoryPoints">The amount of victory points to add.</param>
-        /// <remarks>Fires the <see cref="SpaceBase.GameOverEventHandler{GameOverEventArgs}"/> event after reaching the victory threshold.</remarks>
         public void AddVictoryPoints(int victoryPoints)
         {
             // Note: There is a card that removes victory points.
 
             VictoryPoints += victoryPoints;
-
-            if (VictoryPoints >= (game != null ? game.VictoryThreshold : Constants.VictoryThreshold))
-                PlayerReachedVictoryThresholdEvent?.Invoke(this, new PlayerReachedVictoryThresholdEventArgs(ID));
         }
 
         /// <summary>
@@ -156,13 +146,11 @@
         }
     }
 
-    public sealed class HumanPlayer(int id, IGame? game) : Player(id, game)
+    public sealed class HumanPlayer(int id) : Player(id)
     {
-        public HumanPlayer(int id) : this(id, null) { }
     }
 
-    public sealed class ComputerPlayer(int id, IGame? game) : Player(id, game)
+    public sealed class ComputerPlayer(int id) : Player(id)
     {
-        public ComputerPlayer(int id) : this(id, null) { }
     }
 }

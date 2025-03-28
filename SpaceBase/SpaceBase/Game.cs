@@ -34,14 +34,14 @@
             VictoryThreshold = Constants.VictoryThreshold;
             _players = [];
 
-            var humanPlayer = new HumanPlayer(1, this);
-            humanPlayer.PlayerReachedVictoryThresholdEvent += BeginGameOverRoutine;
+            var humanPlayer = new HumanPlayer(1);
+            humanPlayer.PropertyChanged += Player_PropertyChanged;
             Players.Add(humanPlayer);
 
             for (int i = 1; i < numPlayers; ++i)
             {
-                var player = new ComputerPlayer(i + 1, this);
-                player.PlayerReachedVictoryThresholdEvent += BeginGameOverRoutine;
+                var player = new ComputerPlayer(i + 1);
+                player.PropertyChanged += Player_PropertyChanged;
 
                 Players.Add(player);
             }
@@ -247,12 +247,17 @@
         }
 
         /// <summary>
-        /// Mark the game as over.
+        /// Handler to decide when the game is over.
         /// </summary>
-        private void BeginGameOverRoutine(object _, PlayerReachedVictoryThresholdEventArgs __)
+        /// <param name="sender">The player.</param>
+        /// <param name="e">The event args describing the changed property.</param>
+        private void Player_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            // TODO Do something with the winning player
-            _isGameOver = true;
+            if (sender is not Player player || e.PropertyName != nameof(Player.VictoryPoints))
+                return;
+
+            if (player.VictoryPoints >= VictoryThreshold)
+                _isGameOver = true;
         }
 
         /// <summary>
