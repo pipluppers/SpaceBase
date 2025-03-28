@@ -96,6 +96,18 @@
         #endregion Properties
 
         /// <summary>
+        /// Updates the game member with the required amount of points to win.
+        /// </summary>
+        /// <param name="victoryThreshold">The new required amount of points to win.</param>
+        public void UpdateVictoryThreshold(int victoryThreshold)
+        {
+            if (victoryThreshold < 1)
+                return;
+
+            Game.UpdateVictoryThreshold(victoryThreshold);
+        }
+
+        /// <summary>
         /// Show the main window.
         /// </summary>
         public void Show() => _mainWindow.Show();

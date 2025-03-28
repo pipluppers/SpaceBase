@@ -1,14 +1,10 @@
 ﻿namespace SpaceBase.Models
 {
-    public interface IGame
-    {
-        public int VictoryThreshold { get; }
-    }
-
-    public sealed class Game : PropertyChangedBase, IGame
+    public sealed class Game : PropertyChangedBase
     {
         private readonly ObservableCollection<Player> _players;
         private bool _isGameOver;
+        private int _victoryThreshold;
         private readonly int _maxNumRounds;
         private int _roundNumber;
         private int _turnNumber;
@@ -31,7 +27,7 @@
             if (numPlayers < Constants.MinNumPlayers || numPlayers > Constants.MaxNumPlayers)
                 throw new ArgumentException($"The number of players must be between {Constants.MinNumPlayers} and {Constants.MaxNumPlayers}.");
 
-            VictoryThreshold = Constants.VictoryThreshold;
+            _victoryThreshold = Constants.VictoryThreshold;
             _players = [];
 
             var humanPlayer = new HumanPlayer(1);
@@ -64,8 +60,6 @@
         }
 
         #region Properties
-
-        public int VictoryThreshold { get; init; }
 
         /// <summary>
         /// The collection of players.
@@ -101,6 +95,19 @@
         #endregion Properties
 
         #region Public methods
+
+        /// <summary>
+        /// Updates the amount of points required to win the game.
+        /// </summary>
+        /// <param name="victoryThreshold">The new required amount of points to win.</param>
+        /// <exception cref="InvalidOperationException">The value must be greater than 0.</exception>
+        public void UpdateVictoryThreshold(int victoryThreshold)
+        {
+            if (victoryThreshold < 1)
+                throw new InvalidOperationException("Players must score at least 1 point to win.");
+
+            _victoryThreshold = victoryThreshold;
+        }
 
         /// <summary>
         /// Loads all card information from the database.
@@ -256,7 +263,7 @@
             if (sender is not Player player || e.PropertyName != nameof(Player.VictoryPoints))
                 return;
 
-            if (player.VictoryPoints >= VictoryThreshold)
+            if (player.VictoryPoints >= _victoryThreshold)
                 _isGameOver = true;
         }
 
