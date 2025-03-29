@@ -33,7 +33,7 @@
             _canRollDice = true;
             _canDragCards = false;
 
-            _showEscapeMenuCommand = new RelayCommand(ShowEscapeMenuA, () => true);
+            _showEscapeMenuCommand = new RelayCommand(ShowAndHideEscapeMenu, () => true);
             _continuePlayingCommand = new RelayCommand(ContinuePlaying, () => ShowEscapeMenu);
             _quitGameCommand = new RelayCommand(QuitGame, () => ShowEscapeMenu);
             _rollDiceCommand = new RelayCommand(RollDice, () => CanRollDice);
@@ -263,12 +263,19 @@
 
         public ICommand ShowEscapeMenuCommand { get => _showEscapeMenuCommand; }
         /// <summary>
-        /// Hide the game display and show the escape menu.
+        /// Hide the game display and show the escape menu. If the escape menu is currently being displayed, then show the screen before the Esc key was clicked.
         /// </summary>
-        private void ShowEscapeMenuA()
+        private void ShowAndHideEscapeMenu()
         {
-            ShowEscapeMenu = true;
-            ShowGameOverScreen = false;
+            if (!ShowEscapeMenu)
+            {
+                ShowEscapeMenu = true;
+                ShowGameOverScreen = false;
+            }
+            else
+            {
+                ContinuePlaying();
+            }
         }
 
         public ICommand ContinuePlayingCommand { get => _continuePlayingCommand; }

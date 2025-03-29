@@ -49,6 +49,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0" Background="DarkGray" Height="50">
@@ -85,55 +86,24 @@
                 </Grid>
             </Grid>
             
-            <local:PlayerBoardControl Grid.Row="1" Player="{Binding Game.Players[1]}"/>
+            <local:PlayerBoardControl Grid.Row="1" Player="{Binding Game.Players[1]}" HorizontalAlignment="Center"/>
 
-            <Canvas Grid.Row="2" AllowDrop="True">
-                <Canvas.Resources>
-                    <Style x:Key="DraggableCardStyle" TargetType="local:CardControl">
-                        <Setter Property="AllowDrop" Value="True"/>
-                        <Setter Property="Panel.ZIndex" Value="1"/>
-                        <EventSetter Event="MouseMove" Handler="CardControl_MouseMove"/>
-                    </Style>
-                    <Style TargetType="Rectangle">
-                        <Setter Property="Stroke" Value="Black"/>
-                        <Setter Property="Height" Value="{x:Static app:Constants.CardHeight}"/>
-                        <Setter Property="Width" Value="{x:Static app:Constants.CardWidth}"/>
-                        <Setter Property="Panel.ZIndex" Value="1"/>
-                        <Setter Property="Fill" Value="Blue"/>
-                    </Style>
-                    <Style x:Key="CardPoolControlStyle" TargetType="ItemsControl">
-                        <Setter Property="Width" Value="600"/>
-                        <Setter Property="Height" Value="{x:Static app:Constants.CardHeight}"/>
-                        <Setter Property="ItemsPanel">
-                            <Setter.Value>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel Background="Transparent"/>
-                                </ItemsPanelTemplate>
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="ItemTemplate">
-                            <Setter.Value>
-                                <DataTemplate>
-                                    <local:CardControl Style="{StaticResource DraggableCardStyle}" Margin="30,0,0,0"/>
-                                </DataTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Canvas.Resources>
+            <Grid Grid.Row="2" AllowDrop="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-                <Rectangle Canvas.Left="{x:Static app:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static app:Constants.CardPoolTop1}"/>
-                <ItemsControl Style="{StaticResource CardPoolControlStyle}" Canvas.Left="{x:Static app:Constants.CardPoolLeft}" Canvas.Top="{x:Static app:Constants.CardPoolTop1}" ItemsSource="{Binding Game.Level1Cards}"/>
+                <local:LevelControl Grid.Row="0" DisplayedCards="{Binding Game.Level1Cards}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                <local:LevelControl Grid.Row="1" DisplayedCards="{Binding Game.Level2Cards}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                <local:LevelControl Grid.Row="2" DisplayedCards="{Binding Game.Level3Cards}" HorizontalAlignment="Center"/>
+            </Grid>
 
-                <Rectangle Canvas.Left="{x:Static app:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static app:Constants.CardPoolTop2}"/>
-                <ItemsControl Style="{StaticResource CardPoolControlStyle}" Canvas.Left="{x:Static app:Constants.CardPoolLeft}" Canvas.Top="{x:Static app:Constants.CardPoolTop2}" ItemsSource="{Binding Game.Level2Cards}"/>
+            <local:PlayerBoardControl Grid.Row="3" Player="{Binding HumanPlayer}" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
 
-                <Rectangle Canvas.Left="{x:Static app:Constants.CardPoolDeckLeft}" Canvas.Top="{x:Static app:Constants.CardPoolTop3}"/>
-                <ItemsControl Style="{StaticResource CardPoolControlStyle}" Canvas.Left="{x:Static app:Constants.CardPoolLeft}" Canvas.Top="{x:Static app:Constants.CardPoolTop3}" ItemsSource="{Binding Game.Level3Cards}"/>
-
-                <local:PlayerBoardControl Canvas.Left="0" Canvas.Bottom="0" Player="{Binding HumanPlayer}"/>
-            </Canvas>
-
-            <local:ScoreboardControl Grid.Row="3" Panel.ZIndex="2"/>
+            <local:ScoreboardControl Grid.Row="4" Panel.ZIndex="2"/>
         </Grid>
 
         <local:GameOverControl Panel.ZIndex="2" Background="Pink" Visibility="{Binding ShowGameOverScreen, Converter={StaticResource BoolVisibilityConverter}}" Width="Auto" Height="Auto"/>

@@ -172,7 +172,7 @@
         /// </summary>
         /// <param name="sender">The CardControl.</param>
         /// <param name="e">The mouse event args.</param>
-        private void CardControl_MouseMove(object sender, MouseEventArgs e)
+        internal void CardControl_MouseMove(object sender, MouseEventArgs e)
         {
             if (sender is not CardControl cardControl || cardControl.DataContext is not Card card || e.LeftButton != MouseButtonState.Pressed)
                 return;
