@@ -306,8 +306,19 @@
     /// <summary>
     /// A colony card is a simple card with only a sector ID and cost.
     /// </summary>
-    public sealed class ColonyCard(int sectorID, int cost) : CardBase(sectorID, cost), IColonyCard, ISerializable
+    public sealed class ColonyCard : CardBase, IColonyCard, ISerializable
     {
+        private readonly int _amount;
+
+        [JsonConstructor]
+        public ColonyCard(int sectorID, int cost, int amount) : base(sectorID, cost)
+        {
+            _amount = amount;
+        }
+
+        [JsonPropertyOrder(5)]
+        public int Amount { get => _amount; }
+
         [JsonIgnore]
         public override CardType CardType { get => CardType.Colony; }
 

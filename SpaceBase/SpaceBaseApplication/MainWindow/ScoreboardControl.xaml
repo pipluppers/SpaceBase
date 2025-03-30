@@ -23,12 +23,12 @@
             </ItemsControl.Template>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel Background="LightGray"/>
+                    <WrapPanel Background="LightGray" HorizontalAlignment="Right"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <local:PlayerScoreControl Margin="5,0,5,0" Padding="10"/>
+                    <local:PlayerScoreControl Margin="5,0,5,0" Padding="10" HorizontalAlignment="Right"/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

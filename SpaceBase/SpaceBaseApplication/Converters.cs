@@ -95,6 +95,12 @@ namespace SpaceBaseApplication
         /// <returns></returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value is null)
+            {
+                // Colony card
+                return VictoryPointsBrush;
+            }
+
             if (value is not Action<Player, Card, int, int> action)
                 return InvalidBrush;
 

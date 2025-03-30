@@ -48,6 +48,7 @@
             Level1Cards = [];
             Level2Cards = [];
             Level3Cards = [];
+            ColonyCards = [];
 
             _isGameOver = false;
             _maxNumRounds = maxNumRounds;
@@ -73,6 +74,7 @@
         public ObservableCollection<Card> Level1Cards { get; }
         public ObservableCollection<Card> Level2Cards { get; }
         public ObservableCollection<Card> Level3Cards { get; }
+        public ObservableCollection<ColonyCard> ColonyCards { get; }
 
         /// <summary>
         /// The current turn number.
@@ -117,7 +119,7 @@
             try
             {
                 DataAccessLayer dataAccessLayer = new();
-                List<Card> cards = await dataAccessLayer.GetCards();
+                List<CardBase> cards = await dataAccessLayer.GetCards();
 
                 if (cards.Count < Constants.MaxSectorID)
                     throw new Exception($"The database has less than {Constants.MaxSectorID} cards.");
@@ -139,21 +141,27 @@
 
                 for (; i < cards.Count; i++)
                 {
-                    Card card = cards[i];
-                    if (card.Level == 1)
+                    if (cards[i] is Card card)
                     {
-                        if (Level1Cards.Count >= 6) Level1Deck.Push(card);
-                        else Level1Cards.Add(card);
+                        if (card.Level == 1)
+                        {
+                            if (Level1Cards.Count >= 6) Level1Deck.Push(card);
+                            else Level1Cards.Add(card);
+                        }
+                        else if (card.Level == 2)
+                        {
+                            if (Level2Cards.Count >= 6) Level2Deck.Push(card);
+                            else Level2Cards.Add(card);
+                        }
+                        else if (card.Level == 3)
+                        {
+                            if (Level3Cards.Count >= 6) Level3Deck.Push(card);
+                            else Level3Cards.Add(card);
+                        }
                     }
-                    else if (card.Level == 2)
+                    else if (cards[i] is ColonyCard colonyCard)
                     {
-                        if (Level2Cards.Count >= 6) Level2Deck.Push(card);
-                        else Level2Cards.Add(card);
-                    }
-                    else if (card.Level == 3)
-                    {
-                        if (Level3Cards.Count >= 6) Level3Deck.Push(card);
-                        else Level3Cards.Add(card);
+                        ColonyCards.Add(colonyCard);
                     }
                 }
             }

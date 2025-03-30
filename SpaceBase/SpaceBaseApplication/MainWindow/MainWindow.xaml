@@ -88,17 +88,41 @@
             
             <local:PlayerBoardControl Grid.Row="1" Player="{Binding Game.Players[1]}" HorizontalAlignment="Center"/>
 
-            <Grid Grid.Row="2" AllowDrop="True">
+            <Grid Grid.Row="2" AllowDrop="True" HorizontalAlignment="Center">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-                <local:LevelControl Grid.Row="0" DisplayedCards="{Binding Game.Level1Cards}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-                <local:LevelControl Grid.Row="1" DisplayedCards="{Binding Game.Level2Cards}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
-                <local:LevelControl Grid.Row="2" DisplayedCards="{Binding Game.Level3Cards}" HorizontalAlignment="Center"/>
+                <local:LevelControl Grid.Row="0" Grid.Column="0" DisplayedCards="{Binding Game.Level1Cards}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                <local:LevelControl Grid.Row="1" Grid.Column="0" DisplayedCards="{Binding Game.Level2Cards}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                <local:LevelControl Grid.Row="2" Grid.Column="0" DisplayedCards="{Binding Game.Level3Cards}" HorizontalAlignment="Center"/>
+
+                <ItemsControl Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" ItemsSource="{Binding Game.ColonyCards}" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="0,0,0,10">
+                    <ItemsControl.Template>
+                        <ControlTemplate>
+                            <Grid>
+                                <ItemsPresenter VerticalAlignment="Center"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </ItemsControl.Template>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Width="280" VerticalAlignment="Center"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <local:ColonyCardControl Margin="5,0,5,10" Width="{x:Static app:Constants.CardWidth}" Height="{x:Static app:Constants.CardHeight}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </Grid>
 
             <local:PlayerBoardControl Grid.Row="3" Player="{Binding HumanPlayer}" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
