@@ -86,7 +86,7 @@
                 </Grid>
             </Grid>
             
-            <local:PlayerBoardControl Grid.Row="1" Player="{Binding Game.Players[1]}" HorizontalAlignment="Center"/>
+            <local:PlayerBoardControl Grid.Row="1" DataContext="{Binding Game.Players[1]}" HorizontalAlignment="Center"/>
 
             <Grid Grid.Row="2" AllowDrop="True" HorizontalAlignment="Center">
                 <Grid.RowDefinitions>
@@ -121,7 +121,7 @@
                 </ItemsControl>
             </Grid>
 
-            <local:PlayerBoardControl Grid.Row="3" Player="{Binding HumanPlayer}" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+            <local:PlayerBoardControl Grid.Row="3" DataContext="{Binding HumanPlayer}" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
 
             <local:ScoreboardControl Grid.Row="4" Panel.ZIndex="2"/>
         </Grid>

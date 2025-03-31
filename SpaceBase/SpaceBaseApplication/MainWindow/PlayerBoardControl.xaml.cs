@@ -13,20 +13,6 @@
             _mainWindow = null;
         }
 
-        public static readonly DependencyProperty PlayerProperty =
-            DependencyProperty.Register(nameof(Player), typeof(Player), typeof(PlayerBoardControl), new PropertyMetadata(Callback));
-
-        public Player Player { get => (Player)GetValue(PlayerProperty); set => SetValue(PlayerProperty, value); }
-
-        private static void Callback(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is not PlayerBoardControl playerBoardControl || e.NewValue is not Player player)
-                return;
-
-            playerBoardControl.DataContext = player;
-            playerBoardControl.Player = player;
-        }
-
         /// <summary>
         /// Store a reference to the parent window and load all of the borders and deployed areas into the MainWindow.
         /// </summary>
@@ -41,7 +27,13 @@
 
             _mainWindow = mainWindow;
 
-            if (Player == null || Player.ID != 1 || _mainWindow == null)
+            if (DataContext is not Player player)
+            {
+                Debug.Assert(false);
+                return;
+            }
+
+            if (player == null || player.ID != 1 || _mainWindow == null)
                 return;
 
             StoreBordersAndDeployedAreaIntoMainWindow();
