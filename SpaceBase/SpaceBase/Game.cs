@@ -285,13 +285,14 @@
         }
 
         /// <summary>
-        /// Draws a new card from the appropriate deck and replaces the added card.
+        /// If the added card is a standard card, then draw a new card from the appropriate deck and replaces the added card.
+        /// If the added card is a colony card, then remove it from the collection of colony cards and increase the player's victory points.
         /// </summary>
         /// <param name="sender">The player.</param>
         /// <param name="args">The arguments describing the added card.</param>
         private void AddCardToSectorHandler(object sender, AddCardToSectorEventArgs args)
         {
-            if (sender == null || args == null)
+            if (sender is not Player player || args == null)
                 return;
 
             // Draw the next card from the stack of the appropriate level.
@@ -308,25 +309,22 @@
                     visibleRowOfCards[index] = Utilities.NullLevelCard;
             }
 
-            if (args.AddedCard is ColonyCard)
-                return;
-
-            Card? addedCard = args.AddedCard as Card;
-            Debug.Assert(addedCard != null);
-
-            int cardLevel = addedCard.Level;
-
-            if (cardLevel == 1)
+            if (args.AddedCard is Card card)
             {
-                DrawCard(Level1Deck, Level1Cards, addedCard);
+                int cardLevel = card.Level;
+                Debug.Assert(cardLevel > 0 && cardLevel < 4);
+
+                if (cardLevel == 1)
+                    DrawCard(Level1Deck, Level1Cards, card);
+                else if (cardLevel == 2)
+                    DrawCard(Level2Deck, Level2Cards, card);
+                else if (cardLevel == 3)
+                    DrawCard(Level3Deck, Level3Cards, card);
             }
-            else if (cardLevel == 2)
+            else if (args.AddedCard is ColonyCard colonyCard)
             {
-                DrawCard(Level2Deck, Level2Cards, addedCard);
-            }
-            else
-            {
-                DrawCard(Level3Deck, Level3Cards, addedCard);
+                ColonyCards[colonyCard.SectorID - 1] = Utilities.NullColonyCard;
+                player.AddVictoryPoints(colonyCard.Amount);
             }
         }
     }

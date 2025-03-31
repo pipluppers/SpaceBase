@@ -21,7 +21,10 @@
         public void ActivateDeployedEffect(Player player);
     }
 
-    public interface IColonyCard : ICard { }
+    public interface IColonyCard : ICard
+    {
+        public int Amount { get; }
+    }
 
     public abstract class CardBase : ICard, ISerializable
     {

@@ -157,31 +157,6 @@
             int deployedNumIncomeToAdd = 5;
             int deployedNumVictoryPointsToAdd = 3;
 
-            // TODO
-            //Mock<IStandardCard> mockAddCreditsCard = new();
-            //mockAddCreditsCard.Setup(addCreditsCard => addCreditsCard.SectorID).Returns(sectorID);
-            //mockAddCreditsCard.Setup(addCreditsCard => addCreditsCard.Cost).Returns(2);
-            //mockAddCreditsCard.Setup(addCreditsCard => addCreditsCard.EffectType).Returns(ActionType.AddCredits);
-            //mockAddCreditsCard.Setup(addCreditsCard => addCreditsCard.Amount).Returns(1);
-            //mockAddCreditsCard.Setup(addCreditsCard => addCreditsCard.DeployedEffectType).Returns(ActionType.AddCredits);
-            //mockAddCreditsCard.Setup(addCreditsCard => addCreditsCard.DeployedAmount).Returns(deployedNumCreditsToAdd);
-
-            //Mock<IStandardCard> mockAddIncomeCard = new();
-            //mockAddIncomeCard.Setup(addIncomeCard => addIncomeCard.SectorID).Returns(sectorID);
-            //mockAddIncomeCard.Setup(addIncomeCard => addIncomeCard.Cost).Returns(2);
-            //mockAddIncomeCard.Setup(addIncomeCard => addIncomeCard.EffectType).Returns(ActionType.AddIncome);
-            //mockAddIncomeCard.Setup(addIncomeCard => addIncomeCard.Amount).Returns(1);
-            //mockAddIncomeCard.Setup(addIncomeCard => addIncomeCard.DeployedEffectType).Returns(ActionType.AddIncome);
-            //mockAddIncomeCard.Setup(addIncomeCard => addIncomeCard.DeployedAmount).Returns(deployedNumIncomeToAdd);
-
-            //Mock<IStandardCard> mockAddVictoryPointsCard = new();
-            //mockAddVictoryPointsCard.Setup(card => card.SectorID).Returns(sectorID);
-            //mockAddVictoryPointsCard.Setup(card => card.Cost).Returns(2);
-            //mockAddVictoryPointsCard.Setup(card => card.EffectType).Returns(ActionType.AddVictoryPoints);
-            //mockAddVictoryPointsCard.Setup(card => card.Amount).Returns(1);
-            //mockAddVictoryPointsCard.Setup(card => card.DeployedEffectType).Returns(ActionType.AddVictoryPoints);
-            //mockAddVictoryPointsCard.Setup(card => card.DeployedAmount).Returns(deployedNumVictoryPointsToAdd);
-
             Card addCreditsCard = new(1, sectorID, 2, ActionType.AddCredits, 1, null, ActionType.AddCredits, deployedNumCreditsToAdd, null);
             Card addIncomeCard = new(1, sectorID, 2, ActionType.AddIncome, 1, null, ActionType.AddIncome, deployedNumIncomeToAdd, null);
             Card addVictoryPointsCard = new(1, sectorID, 2, ActionType.AddVictoryPoints, 1, null, ActionType.AddVictoryPoints, deployedNumVictoryPointsToAdd, null);
@@ -191,10 +166,6 @@
             player.AddCard(addIncomeCard);
             player.AddCard(addVictoryPointsCard);
             player.AddCard(addCreditsCard);
-            //player.AddCard(mockAddCreditsCard.Object);
-            //player.AddCard(mockAddIncomeCard.Object);
-            //player.AddCard(mockAddVictoryPointsCard.Object);
-            //player.AddCard(mockAddCreditsCard.Object);
 
             Assert.That(player.GetSector(sectorID).DeployedCards.Count, Is.EqualTo(3), "There should be 3 deployed cards.");
 
@@ -311,6 +282,38 @@
 
             player.ActivateCardEffect(sectorID);
             Assert.That(playerChargeCard.NumChargeCubes, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void ActivatingColonyCardsShouldNotAffectPlayer()
+        {
+            int sectorID = 1;
+
+            HumanPlayer player = new(1);
+
+            Mock<IColonyCard> mockColonyCard = new();
+            mockColonyCard.Setup(card => card.SectorID).Returns(sectorID);
+            mockColonyCard.Setup(card => card.Amount).Returns(3);
+
+            player.AddCard(mockColonyCard.Object);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(player.Credits, Is.EqualTo(0));
+                Assert.That(player.Income, Is.EqualTo(0));
+                Assert.That(player.VictoryPoints, Is.EqualTo(0));
+                Assert.That(player.ChargeCubes, Is.EqualTo(0));
+            });
+
+            player.ActivateCardEffect(1);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(player.Credits, Is.EqualTo(0));
+                Assert.That(player.Income, Is.EqualTo(0));
+                Assert.That(player.VictoryPoints, Is.EqualTo(0));
+                Assert.That(player.ChargeCubes, Is.EqualTo(0));
+            });
         }
     }
 }

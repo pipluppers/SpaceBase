@@ -11,6 +11,7 @@
     <sb:RoundNumberTextConverter x:Key="RoundNumberTextConverter"/>
     <sb:IDToPlayerTurnTextConverter x:Key="IDToPlayerTurnTextConverter"/>
     <sb:DiceToTextConverter x:Key="DiceToTextConverter"/>
+    <sb:CardTypeVisibilityConverter x:Key="CardTypeVisibilityConverter"/>
     <sb:WinningPlayerIDsConverter x:Key="WinningPlayerIDsConverter"/>
 
     <Style x:Key="BubbleBorderStyle" TargetType="Border">

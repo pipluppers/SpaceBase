@@ -185,7 +185,8 @@
         }
 
         /// <summary>
-        /// If the active player is the current player, set up the window to allow buying a card. If the active player is a computer player, select a card based on a heuristic.
+        /// If the active player is the current player, set up the window to allow buying a card.
+        /// If the active player is a computer player, select a card based on a heuristic.
         /// </summary>
         private void Game_BuyEventHandler(object? _, EventArgs __)
         {

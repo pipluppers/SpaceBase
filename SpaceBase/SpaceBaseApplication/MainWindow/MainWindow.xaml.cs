@@ -174,25 +174,39 @@
         /// <param name="e">The mouse event args.</param>
         internal void CardControl_MouseMove(object sender, MouseEventArgs e)
         {
-            if (sender is not CardControl cardControl || cardControl.DataContext is not Card card || e.LeftButton != MouseButtonState.Pressed)
+            if (e.LeftButton != MouseButtonState.Pressed || sender is not CardControl cardControl || cardControl.DataContext is not CardBase cardBase)
                 return;
 
-            if (DataContext is not MainWindowViewModel viewModel || !viewModel.CanDragCards || card.Cost > viewModel.HumanPlayer.Credits)
+            if (DataContext is not MainWindowViewModel viewModel || !viewModel.CanDragCards || cardBase.Cost > viewModel.HumanPlayer.Credits)
                 return;
 
-            Border? border = _sectorViewBorders[card.SectorID - 1];
+            Border? border = _sectorViewBorders[cardBase.SectorID - 1];
             Debug.Assert(border != null);
+
+            if (border.DataContext is not Sector sector)
+                return;
 
             var borderHighlightAdorner = new BorderDragAdorner(border);
             AdornerLayer layer = AdornerLayer.GetAdornerLayer(border);
 
             try
             {
-                layer.Add(borderHighlightAdorner);
+                if (sector.StationedCard is IStandardCard)
+                {
+                    layer.Add(borderHighlightAdorner);
 
-                for (int i = 0; i < 12; ++i) if (i != card.SectorID - 1) _sectorViewBorders[i].Opacity = 0.5;
+                    for (int i = 0; i < 12; ++i) if (i != cardBase.SectorID - 1) _sectorViewBorders[i].Opacity = 0.5;
+                }
+                else
+                {
+                    // Colony card
+                    _sectorViewBorders.ForEach(b => b.Opacity = 0.5);
+                }
 
-                DragDrop.DoDragDrop(cardControl, Utilities.Serialize(card), DragDropEffects.Move);
+                if (cardBase is Card card1)
+                    DragDrop.DoDragDrop(cardControl, Utilities.Serialize(card1), DragDropEffects.Move);
+                else if (cardBase is ColonyCard colonyCard)
+                    DragDrop.DoDragDrop(cardControl, Utilities.Serialize(colonyCard), DragDropEffects.Move);
             }
             catch (Exception ex)
             {
@@ -202,7 +216,7 @@
             {
                 layer.Remove(borderHighlightAdorner);
 
-                for (int i = 0; i < 12; ++i) if (i != card.SectorID - 1) _sectorViewBorders[i].Opacity = 1.0;
+                for (int i = 0; i < 12; ++i) if (i != cardBase.SectorID - 1) _sectorViewBorders[i].Opacity = 1.0;
             }
         }
 

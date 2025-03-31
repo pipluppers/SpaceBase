@@ -249,6 +249,27 @@ namespace SpaceBaseApplication
         }
     }
 
+    /// <summary>
+    /// Set visible if the card type matches the provided type. Otherwise, set collapsed.
+    /// </summary>
+    public class CardTypeVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is not CardType cardType || !int.TryParse(parameter?.ToString(), out int paramInteger))
+                return Visibility.Collapsed;
+
+            CardType parameterType = (CardType)paramInteger;
+
+            return cardType == parameterType ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class WinningPlayerIDsConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
