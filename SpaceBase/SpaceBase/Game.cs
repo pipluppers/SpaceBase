@@ -143,6 +143,10 @@
                 {
                     if (cards[i] is Card card)
                     {
+                        // TODO Add support for charge cards
+                        if (card is ChargeCard)
+                            continue;
+
                         if (card.Level == 1)
                         {
                             if (Level1Cards.Count >= 6) Level1Deck.Push(card);

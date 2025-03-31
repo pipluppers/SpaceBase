@@ -11,6 +11,9 @@
                 ActionType.AddVictoryPoints => CardActions.AddVictoryPoints,
                 ActionType.AddCreditsIncome => CardActions.AddCreditsIncome,
                 ActionType.AddCreditsVictoryPoints => CardActions.AddCreditsVictoryPoints,
+                ActionType.DoubleArrow => CardActions.AddRewardFromLeftOrRightSector,
+                ActionType.AddCreditsArrow => CardActions.AddCreditsRewardFromAdjacentSector,
+                ActionType.AddVictoryPointsArrow => CardActions.AddVictoryPointsRewardFromAdjacentSector,
                 ActionType.ClaimCardsAtLevel => CardActions.ClaimCardsAtLevel,
                 ActionType.AddChargeCube => CardActions.AddChargeCube,
                 _ => throw new ArgumentOutOfRangeException(nameof(actionType), $"ActionType {actionType} is not valid"),
@@ -81,14 +84,21 @@
             player.AddVictoryPoints(secondaryAmount);
         }
 
-        /// <summary>
-        /// Adds a charge cube to the input card.
-        /// </summary>
-        /// <param name="card">The card to gain the charge cube.</param>
-        public static void AddChargeCube(Player _, Card card, int __, int ___)
+        public static void AddRewardFromLeftOrRightSector(Player player, Card card, int amount, int secondaryAmount)
         {
-            if (card is ChargeCard chargeCard)
-                chargeCard.AddChargeCube();
+            // TODO
+        }
+
+        public static void AddCreditsRewardFromAdjacentSector(Player player, Card card, int amount, int secondaryAmount)
+        {
+            // TODO
+            // Amount of 0 means left sector, 1 means right sector
+        }
+
+        public static void AddVictoryPointsRewardFromAdjacentSector(Player player, Card card, int amount, int secondaryAmount)
+        {
+            // TODO
+            // Amount of 0 means left sector, 1 means right sector
         }
 
         /// <summary>
@@ -101,6 +111,16 @@
         {
             // TODO
             // Wait for user input
+        }
+
+        /// <summary>
+        /// Adds a charge cube to the input card.
+        /// </summary>
+        /// <param name="card">The card to gain the charge cube.</param>
+        public static void AddChargeCube(Player _, Card card, int __, int ___)
+        {
+            if (card is ChargeCard chargeCard)
+                chargeCard.AddChargeCube();
         }
 
         /// <summary>

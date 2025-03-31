@@ -86,8 +86,11 @@
         AddVictoryPoints = 3,
         AddCreditsIncome = 4,
         AddCreditsVictoryPoints = 5,
-        ClaimCardsAtLevel = 6,
-        AddChargeCube = 20
+        DoubleArrow = 6,
+        AddCreditsArrow = 7, // SecondaryAmount of 0 means Left and 1 means Right
+        AddVictoryPointsArrow = 8, // SecondaryAmount of 0 means Left and 1 means Right
+        ClaimCardsAtLevel = 9,
+        AddChargeCube = 10
     }
 
     /// <summary>
@@ -97,6 +100,36 @@
     {
         AddToSum1 = 1,
         AddToSum2 = 2,
+        BuyCardAndAdd3Credits = 3,
+        BuyCardAndAdd4Credits = 4,
+        BuyCardAndAdd4VictoryPoints = 5,
+        BuyCardAndPlaceInAnySector7To12 = 6,
+        RerollDie = 7,
+        Set1DieBeforeRoll = 8,
+        Set1DieBeforeRollAndAdd1Credit = 9,
+        Set1DieBeforeRollAndAdd4Credits = 10,
+        Swap112Sectors = 11,
+        Swap211Sectors = 12,
+        Swap49Sectors = 13,
+        Swap410Sectors = 14,
+        Swap58Sectors = 15,
+        Swap67Sectors = 16,
+        Add3Credits = 17,
+        Add20Credits = 18,
+        Claim2Level1Cards = 19,
+        Claim3Level1Cards = 20,
+        Claim1Level2Card = 21,
+        Claim2Level2Cards = 22,
+        Claim1Level2CardAnd1Level1Card = 23,
+        Claim1Level3Card = 24,
+        Claim1Level3CardAnd1Level1Card = 25,
+        OppLose3VictoryPointsAndBuy1Card = 26,
+        OppLose4VictoryPointsAndBuy2Cards = 27,
+        Place1ChargeAnywhere = 28,
+        Place1ChargeAnywhereAndMove1Charge = 29,
+        DoubleSectorRewards = 30,
+        ExchangeWithAnyCard = 31,
+        InstantVictory = 32
     }
 
     #endregion Enumerations
