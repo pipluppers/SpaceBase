@@ -48,7 +48,7 @@
         </AdornerDecorator>
 
         <AdornerDecorator Grid.Row="2">
-            <Border BorderBrush="Black" BorderThickness="1" Width="82" Padding="10,10,10,10" AllowDrop="True" Drop="Border_Drop" IsHitTestVisible="True">
+            <Border BorderBrush="Black" BorderThickness="1" Width="82" Padding="10,10,10,10" AllowDrop="True" Drop="Border_Drop" IsHitTestVisible="True" Background="LightGreen">
                 <Grid AllowDrop="False">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>

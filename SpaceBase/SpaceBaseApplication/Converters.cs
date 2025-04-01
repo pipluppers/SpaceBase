@@ -83,6 +83,7 @@ namespace SpaceBaseApplication
         private static readonly SolidColorBrush CreditsBrush = Brushes.Yellow;
         private static readonly SolidColorBrush IncomeBrush = Brushes.LightGreen;
         private static readonly SolidColorBrush VictoryPointsBrush = Brushes.DodgerBlue;
+        private static readonly SolidColorBrush ArrowBrush = Brushes.LightGray;
         private static readonly SolidColorBrush InvalidBrush = Brushes.Red;
 
         /// <summary>
@@ -122,6 +123,15 @@ namespace SpaceBaseApplication
 
             if (action == CardActions.AddCreditsVictoryPoints)
                 return parameterString == "1" ? CreditsBrush : VictoryPointsBrush;
+
+            if (action == CardActions.AddRewardFromLeftOrRightSector)
+                return ArrowBrush;
+
+            if (action == CardActions.AddCreditsRewardFromAdjacentSector)
+                return parameterString == "1" ? CreditsBrush : ArrowBrush;
+
+            if (action == CardActions.AddVictoryPointsRewardFromAdjacentSector)
+                return parameterString == "1" ? VictoryPointsBrush : ArrowBrush;
 
             return InvalidBrush;
         }
