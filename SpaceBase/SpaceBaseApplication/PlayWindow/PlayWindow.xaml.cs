@@ -1,5 +1,7 @@
 ﻿namespace SpaceBaseApplication.PlayWindow
 {
+    public delegate void InitializeHandler(object sender, EventArgs e);
+
     /// <summary>
     /// Interaction logic for PlayWindow.xaml
     /// </summary>
@@ -31,6 +33,16 @@
         {
             _disposeMainWindow = false;
             Close();
+        }
+
+        internal event InitializeHandler? InitializeEvent;
+
+        private void PlayWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is not PlayWindow playWindow)
+                return;
+
+            InitializeEvent?.Invoke(this, new EventArgs());
         }
     }
 }

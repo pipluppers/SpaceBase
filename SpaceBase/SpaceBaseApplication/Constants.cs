@@ -2,6 +2,8 @@
 {
     internal class Constants
     {
+        internal const string ConfigurationDirectory = "%LOCALAPPDATA%\\SpaceBase";
+        internal const string ConfigurationFile = "config.json";
         internal const int NullCardCost = 900;
 
         #region UI constants

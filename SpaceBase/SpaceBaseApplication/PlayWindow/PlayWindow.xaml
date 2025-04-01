@@ -8,6 +8,7 @@
         d:DataContext="{d:DesignInstance Type=local:PlayWindowViewModel}"
         mc:Ignorable="d"
         Title="Play Window" Height="800" Width="800" MinHeight="800" MinWidth="800" MaxHeight="800" MaxWidth="800"
+        Loaded="PlayWindow_Loaded"
         Closed="PlayWindow_Closed">
     <Window.Resources>
         <ResourceDictionary>
