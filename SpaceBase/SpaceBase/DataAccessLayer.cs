@@ -61,13 +61,13 @@
             List<CardBase> cards = [];
             SqlConnection? connection = null;
 
+            string? table = Environment.GetEnvironmentVariable(Constants.CardsTableEnvironmentVariable, EnvironmentVariableTarget.User);
+            string queryString = $"SELECT * FROM {table}";
+
             try
             {
                 connection = new(_connectionString);
                 await Connect(connection);
-
-                string? table = Environment.GetEnvironmentVariable(Constants.CardsTableEnvironmentVariable, EnvironmentVariableTarget.User);
-                string queryString = $"SELECT * FROM {table}";
 
                 using var command = new SqlCommand(queryString, connection);
                 using SqlDataReader reader = command.ExecuteReader();
@@ -108,7 +108,7 @@
 
             int effectAmount = reader.GetInt32(4);
 
-            if (level != 4)
+            if (level != Constants.ColonyCardLevel)
             {
                 int effect = reader.GetInt32(3);
                 int? secondaryEffectAmount = !reader.IsDBNull(5) ? reader.GetInt32(5) : null;

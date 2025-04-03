@@ -10,6 +10,7 @@
         internal const int MaxSectorID = 12;
         internal const int MinCardLevel = 0;
         internal const int MaxCardLevel = 3;
+        internal const int ColonyCardLevel = 4;
         internal const int NullCardCost = 900;
 
         #region Database constants

@@ -17,7 +17,7 @@ namespace SpaceBaseApplication.PlayWindow
         private readonly RelayCommand _playGameCommand;
         private readonly RelayCommand _quitGameCommand;
         private readonly RelayCommand _showOptionsCommand;
-        private readonly RelayCommand _applyChangesCommand;
+        private readonly RelayCommandAsync _applyChangesCommand;
         private readonly RelayCommand _cancelChangesCommand;
 
         public PlayWindowViewModel()
@@ -117,14 +117,14 @@ namespace SpaceBaseApplication.PlayWindow
         /// <summary>
         /// Save any customizations made by the user and close the options display.
         /// </summary>
-        private void ApplyChanges()
+        private async Task ApplyChanges()
         {
             if (!int.TryParse(VictoryThreshold, out int victoryThreshold))
                 return;
 
             _acceptedVictoryThreshold = victoryThreshold;
 
-            WriteToConfigurationFile(victoryThreshold);
+            await WriteToConfigurationFile(victoryThreshold);
 
             ShowOptions = false;
         }
@@ -177,7 +177,7 @@ namespace SpaceBaseApplication.PlayWindow
         /// If the directory or configuration file does not exist, create them.
         /// </remarks>
         /// <param name="victoryThreshold">The data to write to the file.</param>
-        private void WriteToConfigurationFile(int victoryThreshold)
+        private async Task WriteToConfigurationFile(int victoryThreshold)
         {
             FileStream? fileStream = null;
             try
@@ -195,7 +195,7 @@ namespace SpaceBaseApplication.PlayWindow
 
                 Byte[] text = new UTF8Encoding(true).GetBytes(dataJson);
 
-                fileStream.Write(text, 0, text.Length);
+                await fileStream.WriteAsync(text);
             }
             catch (Exception ex)
             {
