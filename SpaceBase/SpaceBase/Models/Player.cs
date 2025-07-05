@@ -121,7 +121,10 @@
         /// <exception cref="ArgumentOutOfRangeException">The ID is invalid.</exception>
         public void ActivateCardEffect(int sectorID)
         {
-            GetSector(sectorID).StationedCard?.ActivateStationedEffect(this);
+            ICard? stationedCard = GetSector(sectorID).StationedCard;
+            Debug.Assert(stationedCard != null);
+
+            CardActivationService.ActivateStationedEffect(stationedCard, this);
         }
 
         /// <summary>
@@ -133,7 +136,7 @@
         {
             var deployedCards = GetSector(sectorID).DeployedCards;
             foreach (var deployedCard in deployedCards)
-                deployedCard.ActivateDeployedEffect(this);
+                CardActivationService.ActivateDeployedEffect((Card)deployedCard, this); // TODO Update to not require casting to Card
         }
 
         /// <summary>

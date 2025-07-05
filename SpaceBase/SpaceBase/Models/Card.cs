@@ -5,8 +5,6 @@
         public int SectorID { get; }
         public int Cost { get; }
         public CardType CardType { get; }
-
-        public void ActivateStationedEffect(Player player);
     }
 
     public interface IStandardCard : ICard
@@ -15,10 +13,11 @@
         public ActionType EffectType { get; }
         public int Amount { get; }
         public int? SecondaryAmount { get; }
+        public Action<Player, Card, int, int> Effect { get; }
         public ActionType DeployedEffectType { get; }
         public int DeployedAmount { get; }
         public int? DeployedSecondaryAmount { get; }
-        public void ActivateDeployedEffect(Player player);
+        public Action<Player, Card, int, int> DeployedEffect { get; }
     }
 
     public interface IColonyCard : ICard
@@ -48,8 +47,6 @@
 
         [JsonIgnore]
         public abstract CardType CardType { get; }
-
-        public abstract void ActivateStationedEffect(Player player);
 
         #region ISerializable methods
 
@@ -150,18 +147,6 @@
 
         [JsonIgnore]
         public override CardType CardType { get => CardType.Standard; }
-
-        /// <summary>
-        /// Activates the stationed effect and updates the given player's resources.
-        /// </summary>
-        /// <param name="player">The player to receive the resources.</param>
-        public override void ActivateStationedEffect(Player player) => Effect.Invoke(player, this, Amount, _secondaryAmount);
-
-        /// <summary>
-        /// Activates the deployed effect and updates the given player's resources.
-        /// </summary>
-        /// <param name="player">The player to receive the resources.</param>
-        public void ActivateDeployedEffect(Player player) => DeployedEffect.Invoke(player, this, DeployedAmount, _deployedSecondaryAmount);
 
         #region ISerializable methods
 
@@ -324,11 +309,6 @@
 
         [JsonIgnore]
         public override CardType CardType { get => CardType.Colony; }
-
-        /// <summary>
-        /// Colony cards have no stationed effects so this will do nothing.
-        /// </summary>
-        public override void ActivateStationedEffect(Player _) { }
 
         #region ISerializable methods
 
