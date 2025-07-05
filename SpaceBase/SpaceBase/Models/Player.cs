@@ -12,45 +12,10 @@
 
         public Board Board { get => _board; }
         public int ID { get; } = id;
-        public int Credits { get => _credits; private set => SetProperty(ref _credits, value); }
-        public int Income { get => _income; private set => SetProperty(ref _income, value); }
-        public int VictoryPoints { get => _victoryPoints; private set => SetProperty(ref _victoryPoints, value); }
+        public int Credits { get => _credits; internal set => SetProperty(ref _credits, value); }
+        public int Income { get => _income; internal set => SetProperty(ref _income, value); }
+        public int VictoryPoints { get => _victoryPoints; internal set => SetProperty(ref _victoryPoints, value); }
         public int ChargeCubes { get => _chargeCubes; set => _chargeCubes = value; }
-
-        /// <summary>
-        /// Adds the specified amount of credits to the player's credits pool.
-        /// </summary>
-        /// <param name="credits">The amount of credits to add.</param>
-        /// <exception cref="NotSupportedException"><paramref name="credits"/> cannot be negative.</exception>
-        public void AddCredits(int credits)
-        {
-            if (credits < 0) throw new NotSupportedException("This API cannot be used to subtract or reset credits.");
-
-            Credits += credits;
-        }
-
-        /// <summary>
-        /// Adds the specified amount of income to the player's income pool.
-        /// </summary>
-        /// <param name="income">The amount of income to add.</param>
-        /// <exception cref="NotSupportedException"><paramref name="income"/> cannot be negative.</exception>
-        public void AddIncome(int income)
-        {
-            if (income < 0) throw new NotSupportedException("Income cannot be removed");
-
-            Income += income;
-        }
-
-        /// <summary>
-        /// Adds the specified amount of victory points to the player's income pool.
-        /// </summary>
-        /// <param name="victoryPoints">The amount of victory points to add.</param>
-        public void AddVictoryPoints(int victoryPoints)
-        {
-            // Note: There is a card that removes victory points.
-
-            VictoryPoints += victoryPoints;
-        }
 
         /// <summary>
         /// Gets the sector with the given ID.
@@ -139,14 +104,6 @@
                 CardActivationService.ActivateDeployedEffect((Card)deployedCard, this); // TODO Update to not require casting to Card
         }
 
-        /// <summary>
-        /// Resets the player's credits to their income if the number of credits is less than the income.
-        /// </summary>
-        public void ResetCredits()
-        {
-            if (Credits < Income)
-                Credits = Income;
-        }
     }
 
     public sealed class HumanPlayer(int id) : Player(id)

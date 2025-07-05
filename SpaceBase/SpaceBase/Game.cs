@@ -183,7 +183,7 @@
             if (Players.Count < 2) return;
 
             foreach (var player in Players)
-                player.AddCredits(5);
+                PlayerResourcesService.AddCredits(player, 5);
 
             // TODO Each player draws a card. Player order is determined by highest cost
 
@@ -215,7 +215,7 @@
                 //   Current player can choose to buy and/or use charge cubes
                 //   Other players can choose to use charge cubes
 
-                Players[ActivePlayerID - 1].ResetCredits();
+                PlayerResourcesService.ResetCredits(Players[ActivePlayerID - 1]);
 
                 if (ActivePlayerID < Players.Count)
                     ++ActivePlayerID;
@@ -328,7 +328,7 @@
             else if (args.AddedCard is ColonyCard colonyCard)
             {
                 ColonyCards[colonyCard.SectorID - 1] = Utilities.NullColonyCard;
-                player.AddVictoryPoints(colonyCard.Amount);
+                PlayerResourcesService.AddVictoryPoints(player, colonyCard.Amount);
             }
         }
     }

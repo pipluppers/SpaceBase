@@ -37,7 +37,7 @@
         /// <param name="amount">The amount of credits to add.</param>
         public static void AddCredits(Player player, Card _, int amount, int __)
         {
-            player.AddCredits(amount);
+            PlayerResourcesService.AddCredits(player, amount);
         }
 
         /// <summary>
@@ -47,7 +47,7 @@
         /// <param name="amount">The amount of income to add.</param>
         public static void AddIncome(Player player, Card _, int amount, int __)
         {
-            player.AddIncome(amount);
+            PlayerResourcesService.AddIncome(player, amount);
         }
 
         /// <summary>
@@ -57,7 +57,7 @@
         /// <param name="amount">The amount of victory points to add.</param>
         public static void AddVictoryPoints(Player player, Card _, int amount, int __)
         {
-            player.AddVictoryPoints(amount);
+            PlayerResourcesService.AddVictoryPoints(player, amount);
         }
 
         /// <summary>
@@ -68,8 +68,8 @@
         /// <param name="secondaryAmount">The amount of income to add.</param>
         public static void AddCreditsIncome(Player player, Card _, int amount, int secondaryAmount)
         {
-            player.AddCredits(amount);
-            player.AddIncome(secondaryAmount);
+            PlayerResourcesService.AddCredits(player, amount);
+            PlayerResourcesService.AddIncome(player, secondaryAmount);
         }
 
         /// <summary>
@@ -80,8 +80,8 @@
         /// <param name="secondaryAmount">The amount of victory points to add.</param>
         public static void AddCreditsVictoryPoints(Player player, Card _, int amount, int secondaryAmount)
         {
-            player.AddCredits(amount);
-            player.AddVictoryPoints(secondaryAmount);
+            PlayerResourcesService.AddCredits(player, amount);
+            PlayerResourcesService.AddVictoryPoints(player, amount);
         }
 
         public static void AddRewardFromLeftOrRightSector(Player player, Card card, int amount, int secondaryAmount)

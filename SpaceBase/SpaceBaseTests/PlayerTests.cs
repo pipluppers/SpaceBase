@@ -1,4 +1,6 @@
-﻿namespace SpaceBaseTests
+﻿using SpaceBase.Services;
+
+namespace SpaceBaseTests
 {
     [TestFixture]
     internal class PlayerTests
@@ -25,8 +27,8 @@
         public void ResetWillSetPlayerCreditsToIncomeIfLowerCredits(int credits, int income)
         {
             HumanPlayer player = new(1);
-            player.AddCredits(credits);
-            player.AddIncome(income);
+            PlayerResourcesService.AddCredits(player, credits);
+            PlayerResourcesService.AddIncome(player, income);
 
             Assert.Multiple(() =>
             {
@@ -34,7 +36,7 @@
                 Assert.That(player.Income, Is.EqualTo(income));
             });
 
-            player.ResetCredits();
+            PlayerResourcesService.ResetCredits(player);
             Assert.That(player.Credits, Is.EqualTo(income));
         }
 
@@ -43,8 +45,8 @@
         public void ResetWillNotSetPlayerCreditsToIncomeIfHigherOrEqualCredits(int credits, int income)
         {
             HumanPlayer player = new(1);
-            player.AddCredits(credits);
-            player.AddIncome(income);
+            PlayerResourcesService.AddCredits(player, credits);
+            PlayerResourcesService.AddIncome(player, income);
 
             Assert.Multiple(() =>
             {
@@ -52,7 +54,7 @@
                 Assert.That(player.Income, Is.EqualTo(income));
             });
 
-            player.ResetCredits();
+            PlayerResourcesService.ResetCredits(player);
             Assert.That(player.Credits, Is.EqualTo(credits));
         }
 
@@ -84,7 +86,7 @@
             mockCard.Setup(card => card.SectorID).Returns(2);
             mockCard.Setup(card => card.Cost).Returns(cardCost);
 
-            player.AddCredits(startingCredits);
+            PlayerResourcesService.AddCredits(player, startingCredits);
             player.BuyCard(mockCard.Object, false);
             Assert.That(player.Credits, Is.EqualTo(startingCredits - cardCost));
         }
@@ -121,7 +123,7 @@
             mockCard.Setup(card => card.Cost).Returns(3);
 
             // Make sure the player has enough credits
-            player.AddCredits(5);
+            PlayerResourcesService.AddCredits(player, 5);
 
             player.BuyCard(mockCard.Object);
 
@@ -142,7 +144,7 @@
             mockCard.Setup(card => card.Cost).Returns(3);
 
             // Make sure the player has enough credits
-            player.AddCredits(5);
+            PlayerResourcesService.AddCredits(player, 5);
 
             player.BuyCard(mockCard.Object, false);
 
