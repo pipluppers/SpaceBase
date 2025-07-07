@@ -56,9 +56,9 @@
         /// Gets the list of cards from the database connection.
         /// </summary>
         /// <returns>The list of cards from the database connection.</returns>
-        public async Task<List<CardBase>> GetCards()
+        public async Task<List<ICard>> GetCards()
         {
-            List<CardBase> cards = [];
+            List<ICard> cards = [];
             SqlConnection? connection = null;
 
             string? table = Environment.GetEnvironmentVariable(Constants.CardsTableEnvironmentVariable, EnvironmentVariableTarget.User);
@@ -100,7 +100,7 @@
         /// </summary>
         /// <param name="reader">The iterator over the current row in the table.</param>
         /// <returns>A card based on the table row.</returns>
-        private static CardBase CreateCard(SqlDataReader reader)
+        private static ICard CreateCard(SqlDataReader reader)
         {
             int level = reader.GetInt32(0);
             int sectorID = reader.GetInt32(1);
@@ -118,7 +118,7 @@
 
                 if (reader.IsDBNull(9))
                 {
-                    return new Card(level, sectorID, cost,
+                    return CardFactory.CreateStandardCard(level, sectorID, cost,
                         (ActionType)effect, effectAmount, secondaryEffectAmount,
                         (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount);
                 }
@@ -142,8 +142,7 @@
             }
             else
             {
-                // Colony card
-                return new ColonyCard(sectorID, cost, effectAmount);
+                return CardFactory.CreateColonyCard(sectorID, cost, effectAmount);
             }
 
         }

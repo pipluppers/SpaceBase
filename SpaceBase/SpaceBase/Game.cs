@@ -119,7 +119,7 @@
             try
             {
                 DataAccessLayer dataAccessLayer = new();
-                List<CardBase> cards = await dataAccessLayer.GetCards();
+                List<ICard> cards = await dataAccessLayer.GetCards();
 
                 if (cards.Count < Constants.MaxSectorID)
                     throw new Exception($"The database has less than {Constants.MaxSectorID} cards.");
