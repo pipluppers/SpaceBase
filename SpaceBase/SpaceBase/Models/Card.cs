@@ -5,13 +5,13 @@
         public int SectorID { get; }
         public int Cost { get; }
         public CardType CardType { get; }
+        public int Amount { get; }
     }
 
     public interface IStandardCard : ICard
     {
         public int Level { get; }
         public ActionType EffectType { get; }
-        public int Amount { get; }
         public int? SecondaryAmount { get; }
         public Action<Player, Card, int, int> Effect { get; }
         public ActionType DeployedEffectType { get; }
@@ -22,21 +22,22 @@
 
     public interface IColonyCard : ICard
     {
-        public int Amount { get; }
     }
 
     public abstract class CardBase : ICard, ISerializable
     {
         private readonly int _sectorID;
         private readonly int _cost;
+        private readonly int _amount;
 
-        protected CardBase(int sectorID, int cost)
+        protected CardBase(int sectorID, int cost, int amount)
         {
             if (sectorID < Constants.MinSectorID || sectorID > Constants.MaxSectorID)
                 throw new ArgumentOutOfRangeException(nameof(sectorID), $"The sector must be between {Constants.MinSectorID} and {Constants.MaxSectorID} inclusive.");
 
             _sectorID = sectorID;
             _cost = cost;
+            _amount = amount;
         }
 
         [JsonPropertyOrder(2)]
@@ -44,6 +45,9 @@
 
         [JsonPropertyOrder(3)]
         public int Cost { get => _cost; }
+
+        [JsonPropertyOrder(5)]
+        public int Amount { get => _amount; }
 
         [JsonIgnore]
         public abstract CardType CardType { get; }
@@ -87,7 +91,6 @@
     {
         private protected int _level;
         private readonly Action<Player, Card, int, int> _effect;
-        private readonly int _amount;
         private readonly int _secondaryAmount;
         private readonly Action<Player, Card, int, int> _deployedEffect;
         private readonly int _deployedAmount;
@@ -95,7 +98,7 @@
 
         [JsonConstructor]
         public Card(int level, int sectorID, int cost, ActionType effectType, int amount, int? secondaryAmount,
-            ActionType deployedEffectType, int deployedAmount, int? deployedSecondaryAmount) : base(sectorID, cost)
+            ActionType deployedEffectType, int deployedAmount, int? deployedSecondaryAmount) : base(sectorID, cost, amount)
         {
             if (level != 0 && level < Constants.MinCardLevel || level > Constants.MaxCardLevel)
                 throw new ArgumentOutOfRangeException($"The card level must be between {Constants.MinCardLevel} and {Constants.MaxCardLevel} inclusive.");
@@ -110,7 +113,6 @@
             _level = level;
             EffectType = effectType;
             _effect = CardActions.GetAction(effectType);
-            _amount = amount;
             _secondaryAmount = secondaryAmount ?? 0;
             DeployedEffectType = deployedEffectType;
             _deployedEffect = CardActions.GetAction(deployedEffectType);
@@ -123,9 +125,6 @@
 
         [JsonPropertyOrder(4), JsonConverter(typeof(JsonStringEnumConverter))]
         public ActionType EffectType { get; }
-
-        [JsonPropertyOrder(5)]
-        public int Amount { get => _amount; }
 
         [JsonPropertyOrder(6)]
         public int? SecondaryAmount { get => _secondaryAmount; }
@@ -296,16 +295,10 @@
     /// </summary>
     public sealed class ColonyCard : CardBase, IColonyCard, ISerializable
     {
-        private readonly int _amount;
-
         [JsonConstructor]
-        public ColonyCard(int sectorID, int cost, int amount) : base(sectorID, cost)
+        public ColonyCard(int sectorID, int cost, int amount) : base(sectorID, cost, amount)
         {
-            _amount = amount;
         }
-
-        [JsonPropertyOrder(5)]
-        public int Amount { get => _amount; }
 
         [JsonIgnore]
         public override CardType CardType { get => CardType.Colony; }
