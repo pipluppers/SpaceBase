@@ -17,7 +17,10 @@
                 return;
 
             // TODO Extend to ICard
-            card.Effect.Invoke(player, card, card.Amount, card.SecondaryAmount ?? 0);
+            //card.Effect.Invoke(player, card, card.Amount, card.SecondaryAmount ?? 0);
+
+            // TODO Test
+            card.StationedCommand.Execute(player);
         }
 
         /// <summary>
@@ -31,7 +34,10 @@
                 return;
 
             // TODO Extend to ICard
-            card.DeployedEffect.Invoke(player, card, card.DeployedAmount, card.DeployedSecondaryAmount?? 0);
+            //card.DeployedEffect.Invoke(player, card, card.DeployedAmount, card.DeployedSecondaryAmount?? 0);
+
+            // TODO Test
+            card.DeployedCommand.Execute(player);
         }
     }
 }

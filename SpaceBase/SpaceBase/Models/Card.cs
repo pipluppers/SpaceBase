@@ -1,4 +1,6 @@
-﻿namespace SpaceBase.Models
+﻿using SpaceBase.Commands;
+
+namespace SpaceBase.Models
 {
     public interface ICard
     {
@@ -96,6 +98,9 @@
         private readonly int _deployedAmount;
         private readonly int _deployedSecondaryAmount;
 
+        private readonly ICardCommand _stationedCommand;
+        private readonly ICardCommand _deployedCommand;
+
         [JsonConstructor]
         internal Card(int level, int sectorID, int cost, ActionType effectType, int amount, int? secondaryAmount,
             ActionType deployedEffectType, int deployedAmount, int? deployedSecondaryAmount) : base(sectorID, cost, amount)
@@ -108,6 +113,9 @@
             _deployedEffect = CardActions.GetAction(deployedEffectType);
             _deployedAmount = deployedAmount;
             _deployedSecondaryAmount = deployedSecondaryAmount ?? 0;
+
+            _stationedCommand = GetCommand(effectType, amount, secondaryAmount ?? 0);
+            _deployedCommand = GetCommand(deployedEffectType, deployedAmount, deployedSecondaryAmount ?? 0);
         }
 
         [JsonPropertyOrder(1)]
@@ -136,6 +144,41 @@
 
         [JsonIgnore]
         public override CardType CardType { get => CardType.Standard; }
+
+        [JsonIgnore]
+        public ICardCommand StationedCommand { get => _stationedCommand; }
+
+        [JsonIgnore]
+        public ICardCommand DeployedCommand { get => _deployedCommand; }
+
+        private ICardCommand GetCommand(ActionType actionType, int amount, int secondaryAmount)
+        {
+            switch (actionType)
+            {
+                case ActionType.AddCredits:
+                    return new AddCreditsCommand(amount);
+                case ActionType.AddIncome:
+                    return new AddIncomeCommand(amount);
+                case ActionType.AddVictoryPoints:
+                    return new AddVictoryPointsCommand(amount);
+                case ActionType.AddCreditsIncome:
+                    return new AddCreditsIncomeCommand(amount, secondaryAmount);
+                case ActionType.AddCreditsVictoryPoints:
+                    return new AddCreditsVictoryPointsCommand(amount, secondaryAmount);
+                case ActionType.DoubleArrow:
+                    return new DoubleArrowCommand();
+                case ActionType.AddCreditsArrow:
+                    return new AddCreditsArrowCommand(amount);
+                case ActionType.AddVictoryPointsArrow:
+                    return new AddVictoryPointsArrowCommand(amount);
+                case ActionType.ClaimCardsAtLevel:
+                    return new ClaimCardsCommand();
+                case ActionType.AddChargeCube:
+                    return new AddChargeCubeCommand(this as ChargeCard);
+                default:
+                    throw new NotSupportedException($"Invalid action type: {actionType}");
+            }
+        }
 
         #region ISerializable methods
 
