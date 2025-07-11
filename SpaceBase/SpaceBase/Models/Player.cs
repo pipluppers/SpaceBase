@@ -41,9 +41,20 @@
             if (card.SectorID < Constants.MinSectorID || card.SectorID > Constants.MaxSectorID)
                 throw new ArgumentOutOfRangeException(nameof(card), $"The input sector ID of the card must be between {Constants.MinSectorID} and {Constants.MaxSectorID}");
 
-            GetSector(card.SectorID).AddCard(card);
+            Sector sector = GetSector(card.SectorID);
+            AddCard(sector, card);
 
             AddCardToSectorEvent?.Invoke(this, new AddCardToSectorEventArgs(card));
+        }
+
+        /// <summary>
+        /// Adds the card to the provided sector.
+        /// </summary>
+        /// <param name="sector">The sector to get the card.</param>
+        /// <param name="card">The card to add.</param>
+        private static void AddCard(Sector sector, ICard card)
+        {
+            sector.AddCard(card);
         }
 
         /// <summary>
@@ -66,17 +77,12 @@
         /// <exception cref="InvalidOperationException">The player does not have enough credits to purchase this card.</exception>
         public void BuyCard(ICard card, bool removeAllCredits)
         {
-            if (card.SectorID < Constants.MinSectorID || card.SectorID > Constants.MaxSectorID)
-                throw new ArgumentOutOfRangeException(nameof(card), $"The input sector ID of the card must be between {Constants.MinSectorID} and {Constants.MaxSectorID}");
-
             if (Credits < card.Cost)
                 throw new InvalidOperationException("The player does not have enough credits to purchase this card.");
 
-            GetSector(card.SectorID).AddCard(card);
+            AddCard(card);
 
             Credits = removeAllCredits ? 0 : Credits - card.Cost;
-
-            AddCardToSectorEvent?.Invoke(this, new AddCardToSectorEventArgs(card));
         }
 
         /// <summary>
@@ -101,7 +107,7 @@
         {
             var deployedCards = GetSector(sectorID).DeployedCards;
             foreach (var deployedCard in deployedCards)
-                CardActivationService.ActivateDeployedEffect((Card)deployedCard, this); // TODO Update to not require casting to Card
+                CardActivationService.ActivateDeployedEffect(deployedCard, this);
         }
 
     }
