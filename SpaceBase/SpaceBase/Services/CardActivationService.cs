@@ -16,10 +16,6 @@
             if (inputCard is not Card card)
                 return;
 
-            // TODO Extend to ICard
-            //card.Effect.Invoke(player, card, card.Amount, card.SecondaryAmount ?? 0);
-
-            // TODO Test
             card.StationedCommand.Execute(player);
         }
 
@@ -33,10 +29,6 @@
             if (standardCard is not Card card)
                 return;
 
-            // TODO Extend to ICard
-            //card.DeployedEffect.Invoke(player, card, card.DeployedAmount, card.DeployedSecondaryAmount?? 0);
-
-            // TODO Test
             card.DeployedCommand.Execute(player);
         }
     }

@@ -172,9 +172,12 @@ namespace SpaceBase.Models
                 case ActionType.AddVictoryPointsArrow:
                     return new AddVictoryPointsArrowCommand(amount);
                 case ActionType.ClaimCardsAtLevel:
-                    return new ClaimCardsCommand();
+                    return new ClaimCardsCommand(1, 1); // TODO
                 case ActionType.AddChargeCube:
-                    return new AddChargeCubeCommand(this as ChargeCard);
+                    {
+                        ChargeCard chargeCard = (ChargeCard)this;
+                        return new AddChargeCubeCommand(chargeCard);
+                    }
                 default:
                     throw new NotSupportedException($"Invalid action type: {actionType}");
             }
