@@ -89,7 +89,7 @@ namespace SpaceBaseApplication
         /// <summary>
         /// Returns the appropriate color given the action defined by <paramref name="value"/> and the <paramref name="parameter"/> describing whether it is a primary or secondary effect.
         /// </summary>
-        /// <param name="value">The action.</param>
+        /// <param name="value">The type of effect.</param>
         /// <param name="targetType"></param>
         /// <param name="parameter">"1" if primary effect or "2" if secondary effect.</param>
         /// <param name="culture"></param>
@@ -102,38 +102,34 @@ namespace SpaceBaseApplication
                 return VictoryPointsBrush;
             }
 
-            if (value is not Action<Player, Card, int, int> action)
+            if (value is not ActionType actionType)
                 return InvalidBrush;
 
             string parameterString = parameter?.ToString() ?? string.Empty;
             if (string.IsNullOrEmpty(parameterString) || (parameterString != "1" && parameterString != "2"))
                 return InvalidBrush;
 
-            if (action == CardActions.AddCredits)
-                return CreditsBrush;
-
-            if (action == CardActions.AddIncome)
-                return IncomeBrush;
-
-            if (action == CardActions.AddVictoryPoints)
-                return VictoryPointsBrush;
-
-            if (action == CardActions.AddCreditsIncome)
-                return parameterString == "1" ? CreditsBrush : IncomeBrush;
-
-            if (action == CardActions.AddCreditsVictoryPoints)
-                return parameterString == "1" ? CreditsBrush : VictoryPointsBrush;
-
-            if (action == CardActions.AddRewardFromLeftOrRightSector)
-                return ArrowBrush;
-
-            if (action == CardActions.AddCreditsRewardFromAdjacentSector)
-                return parameterString == "1" ? CreditsBrush : ArrowBrush;
-
-            if (action == CardActions.AddVictoryPointsRewardFromAdjacentSector)
-                return parameterString == "1" ? VictoryPointsBrush : ArrowBrush;
-
-            return InvalidBrush;
+            switch (actionType)
+            {
+                case ActionType.AddCredits:
+                    return CreditsBrush;
+                case ActionType.AddIncome:
+                    return IncomeBrush;
+                case ActionType.AddVictoryPoints:
+                    return VictoryPointsBrush;
+                case ActionType.AddCreditsIncome:
+                    return parameterString == "1" ? CreditsBrush : IncomeBrush;
+                case ActionType.AddCreditsVictoryPoints:
+                    return parameterString == "1" ? CreditsBrush : VictoryPointsBrush;
+                case ActionType.DoubleArrow:
+                    return ArrowBrush;
+                case ActionType.AddCreditsArrow:
+                    return parameterString == "1" ? CreditsBrush : ArrowBrush;
+                case ActionType.AddVictoryPointsArrow:
+                    return parameterString == "1" ? VictoryPointsBrush : ArrowBrush;
+                default:
+                    return InvalidBrush;
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -10,7 +10,7 @@
             InitializeComponent();
 
             if (!IsStationedEffect)
-                SetBindings(this, "DeployedEffect", "DeployedAmount", "DeployedSecondaryAmount");
+                SetBindings(this, "DeployedEffectType", "DeployedAmount", "DeployedSecondaryAmount");
         }
 
         public static readonly DependencyProperty IsStationedEffectProperty =
@@ -23,14 +23,14 @@
             CardEffectControl cardEffectControl = (CardEffectControl)d;
 
             if ((bool)e.NewValue)
-                SetBindings(cardEffectControl, "Effect", "Amount", "SecondaryAmount");
+                SetBindings(cardEffectControl, "EffectType", "Amount", "SecondaryAmount");
         }
 
         /// <summary>
         /// Sets the background bindings for each border and text amount for the text blocks.
         /// </summary>
         /// <param name="control">The CardEffectControl.</param>
-        /// <param name="effectName">Either "Effect" or "DeployedEffect".</param>
+        /// <param name="effectName">Either "EffectType" or "DeployedEffectType".</param>
         /// <param name="amountName">Either "Amount" or "DeployedAmount".</param>
         /// <param name="secondaryAmountName">Either "SecondaryAmount" or "DeployedSecondaryAmount".</param>
         private static void SetBindings(CardEffectControl control, string effectName, string amountName, string secondaryAmountName)

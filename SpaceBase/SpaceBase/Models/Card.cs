@@ -13,13 +13,12 @@ namespace SpaceBase.Models
     public interface IStandardCard : ICard
     {
         public int Level { get; }
-        public ActionType EffectType { get; }
-        public int? SecondaryAmount { get; }
-        public Action<Player, Card, int, int> Effect { get; }
-        public ActionType DeployedEffectType { get; }
-        public int DeployedAmount { get; }
-        public int? DeployedSecondaryAmount { get; }
-        public Action<Player, Card, int, int> DeployedEffect { get; }
+        //public ActionType EffectType { get; }
+        //public int? SecondaryAmount { get; }
+        //public ActionType DeployedEffectType { get; }
+        //public int DeployedAmount { get; }
+        //public int? DeployedSecondaryAmount { get; }
+        //public Action<Player, Card, int, int> DeployedEffect { get; }
     }
 
     public interface IColonyCard : ICard
@@ -92,9 +91,8 @@ namespace SpaceBase.Models
     public class Card : CardBase, IStandardCard
     {
         private protected int _level;
-        private readonly Action<Player, Card, int, int> _effect;
+        private readonly ActionType _effectType;
         private readonly int _secondaryAmount;
-        private readonly Action<Player, Card, int, int> _deployedEffect;
         private readonly int _deployedAmount;
         private readonly int _deployedSecondaryAmount;
 
@@ -107,10 +105,9 @@ namespace SpaceBase.Models
         {
             _level = level;
             EffectType = effectType;
-            _effect = CardActions.GetAction(effectType);
+            _effectType = effectType;
             _secondaryAmount = secondaryAmount ?? 0;
             DeployedEffectType = deployedEffectType;
-            _deployedEffect = CardActions.GetAction(deployedEffectType);
             _deployedAmount = deployedAmount;
             _deployedSecondaryAmount = deployedSecondaryAmount ?? 0;
 
@@ -135,12 +132,6 @@ namespace SpaceBase.Models
 
         [JsonPropertyOrder(9)]
         public int? DeployedSecondaryAmount { get => _deployedSecondaryAmount; }
-
-        [JsonIgnore]
-        public Action<Player, Card, int, int> Effect { get => _effect; }
-
-        [JsonIgnore]
-        public Action<Player, Card, int, int> DeployedEffect { get => _deployedEffect; }
 
         [JsonIgnore]
         public override CardType CardType { get => CardType.Standard; }
@@ -200,7 +191,7 @@ namespace SpaceBase.Models
 
             if (!base.Equals(obj)) return false;
 
-            return EffectType == otherCard.EffectType &&
+            return _effectType == otherCard._effectType &&
                 Amount == otherCard.Amount &&
                 SecondaryAmount == otherCard.SecondaryAmount &&
                 DeployedEffectType == otherCard.DeployedEffectType &&
@@ -208,7 +199,7 @@ namespace SpaceBase.Models
                 DeployedSecondaryAmount == otherCard.DeployedSecondaryAmount;
         }
 
-        public override int GetHashCode() => base.GetHashCode() + (int)EffectType * 17 + (int)DeployedEffectType * 17;
+        public override int GetHashCode() => base.GetHashCode() + (int)_effectType * 17 + (int)DeployedEffectType * 17;
 
         #endregion Equatable methods
     }
