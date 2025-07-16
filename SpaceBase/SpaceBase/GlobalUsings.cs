@@ -10,5 +10,6 @@ global using System.Windows.Data;
 global using System.Windows.Media;
 
 global using Microsoft.Data.SqlClient;
+global using SpaceBase.Commands;
 global using SpaceBase.Models;
 global using SpaceBase.Services;

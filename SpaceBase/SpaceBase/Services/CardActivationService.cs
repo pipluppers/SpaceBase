@@ -7,16 +7,9 @@
         /// </summary>
         /// <param name="card">The card whose effect to activate.</param>
         /// <param name="player">The player to receive the resources.</param>
-        internal static void ActivateStationedEffect(ICard inputCard, Player player)
+        internal static void ActivateStationedEffect(IStandardCard standardCard, Player player)
         {
-            // Colony cards do not have any stationed effects.
-            if (inputCard is ColonyCard)
-                return;
-
-            if (inputCard is not Card card)
-                return;
-
-            card.StationedCommand.Execute(player);
+            standardCard.StationedCommand.Execute(player);
         }
 
         /// <summary>
@@ -26,10 +19,17 @@
         /// <param name="player">The player to receive the resources.</param>
         internal static void ActivateDeployedEffect(IStandardCard standardCard, Player player)
         {
-            if (standardCard is not Card card)
-                return;
+            standardCard.DeployedCommand.Execute(player);
+        }
 
-            card.DeployedCommand.Execute(player);
+        /// <summary>
+        /// Activates the charge effect of the provided card.
+        /// </summary>
+        /// <param name="chargeCard">The charge card.</param>
+        /// <param name="player">The player to receive the effects.</param>
+        internal static void ActivateChargeEffect(IChargeCard chargeCard, Player player)
+        {
+            chargeCard.ChargeCommand.Execute(player);
         }
     }
 }

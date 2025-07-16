@@ -95,7 +95,8 @@
             ICard? stationedCard = GetSector(sectorID).StationedCard;
             Debug.Assert(stationedCard != null);
 
-            CardActivationService.ActivateStationedEffect(stationedCard, this);
+            if (stationedCard is IStandardCard standardCard)
+                CardActivationService.ActivateStationedEffect(standardCard, this);
         }
 
         /// <summary>

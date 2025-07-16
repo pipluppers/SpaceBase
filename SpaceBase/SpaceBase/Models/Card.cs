@@ -1,6 +1,4 @@
-﻿using SpaceBase.Commands;
-
-namespace SpaceBase.Models
+﻿namespace SpaceBase.Models
 {
     public interface ICard
     {
@@ -13,12 +11,13 @@ namespace SpaceBase.Models
     public interface IStandardCard : ICard
     {
         public int Level { get; }
-        //public ActionType EffectType { get; }
-        //public int? SecondaryAmount { get; }
-        //public ActionType DeployedEffectType { get; }
-        //public int DeployedAmount { get; }
-        //public int? DeployedSecondaryAmount { get; }
-        //public Action<Player, Card, int, int> DeployedEffect { get; }
+        public ICardCommand StationedCommand { get; }
+        public ICardCommand DeployedCommand { get; }
+    }
+
+    public interface IChargeCard : IStandardCard
+    {
+        public ICardCommand ChargeCommand { get; }
     }
 
     public interface IColonyCard : ICard
@@ -207,8 +206,10 @@ namespace SpaceBase.Models
     /// <summary>
     /// A card that can use charge cubes.
     /// </summary>
-    public sealed class ChargeCard : Card
+    public sealed class ChargeCard : Card, IChargeCard
     {
+        private readonly ICardCommand _chargeCommand;
+
         [JsonConstructor]
         public ChargeCard(int level, int sectorID, int cost, ActionType effectType, int amount, int? secondaryAmount,
             ActionType deployedEffectType, int deployedAmount, int? deployedSecondaryAmount,
@@ -223,7 +224,7 @@ namespace SpaceBase.Models
 
             NumChargeCubes = 0;
             ChargeEffectType = chargeEffectType;
-            ChargeEffect = CardActions.GetChargeAction(ChargeEffectType);
+            _chargeCommand = GetCommand(chargeEffectType);
             RequiredChargeCubes = requiredChargeCubes;
             ChargeCubeLimit = chargeCubeLimit;
             ChargeCardType = chargeCardType;
@@ -261,7 +262,7 @@ namespace SpaceBase.Models
         public override CardType CardType { get => CardType.Charge; }
 
         [JsonIgnore]
-        public Action<Player, int, int> ChargeEffect { get; }
+        public ICardCommand ChargeCommand { get => _chargeCommand; }
 
         [JsonIgnore]
         public int NumChargeCubes { get; private set; }
@@ -284,8 +285,51 @@ namespace SpaceBase.Models
             if (NumChargeCubes < RequiredChargeCubes)
                 return;
 
-            ChargeEffect.Invoke(player, 1, 1);
+            _chargeCommand.Execute(player);
             NumChargeCubes -= RequiredChargeCubes;
+        }
+
+        private ICardCommand GetCommand(ChargeActionType chargeActionType)
+        {
+            switch (chargeActionType)
+            {
+                case ChargeActionType.AddToSum1:
+                    return new AddToSumCommand(1);
+                case ChargeActionType.AddToSum2:
+                    return new AddToSumCommand(2);
+                case ChargeActionType.BuyCardAndAdd3Credits:
+                case ChargeActionType.BuyCardAndAdd4Credits:
+                case ChargeActionType.BuyCardAndAdd4VictoryPoints:
+                case ChargeActionType.BuyCardAndPlaceInAnySector7To12:
+                case ChargeActionType.RerollDie:
+                case ChargeActionType.Set1DieBeforeRoll:
+                case ChargeActionType.Set1DieBeforeRollAndAdd1Credit:
+                case ChargeActionType.Set1DieBeforeRollAndAdd4Credits:
+                case ChargeActionType.Swap112Sectors:
+                case ChargeActionType.Swap211Sectors:
+                case ChargeActionType.Swap49Sectors:
+                case ChargeActionType.Swap410Sectors:
+                case ChargeActionType.Swap58Sectors:
+                case ChargeActionType.Swap67Sectors:
+                case ChargeActionType.Add3Credits:
+                case ChargeActionType.Add20Credits:
+                case ChargeActionType.Claim2Level1Cards:
+                case ChargeActionType.Claim3Level1Cards:
+                case ChargeActionType.Claim1Level2Card:
+                case ChargeActionType.Claim2Level2Cards:
+                case ChargeActionType.Claim1Level2CardAnd1Level1Card:
+                case ChargeActionType.Claim1Level3Card:
+                case ChargeActionType.Claim1Level3CardAnd1Level1Card:
+                case ChargeActionType.OppLose3VictoryPointsAndBuy1Card:
+                case ChargeActionType.OppLose4VictoryPointsAndBuy2Cards:
+                case ChargeActionType.Place1ChargeAnywhere:
+                case ChargeActionType.Place1ChargeAnywhereAndMove1Charge:
+                case ChargeActionType.DoubleSectorRewards:
+                case ChargeActionType.ExchangeWithAnyCard:
+                case ChargeActionType.InstantVictory:
+                default:
+                    throw new NotSupportedException($"Invalid action type: {chargeActionType}");
+            }
         }
 
         #region ISerializable methods

@@ -2,24 +2,6 @@
 {
     public static class CardActions
     {
-        public static Action<Player, Card, int, int> GetAction(ActionType actionType)
-        {
-            return actionType switch
-            {
-                ActionType.AddCredits => CardActions.AddCredits,
-                ActionType.AddIncome => CardActions.AddIncome,
-                ActionType.AddVictoryPoints => CardActions.AddVictoryPoints,
-                ActionType.AddCreditsIncome => CardActions.AddCreditsIncome,
-                ActionType.AddCreditsVictoryPoints => CardActions.AddCreditsVictoryPoints,
-                ActionType.DoubleArrow => CardActions.AddRewardFromLeftOrRightSector,
-                ActionType.AddCreditsArrow => CardActions.AddCreditsRewardFromAdjacentSector,
-                ActionType.AddVictoryPointsArrow => CardActions.AddVictoryPointsRewardFromAdjacentSector,
-                ActionType.ClaimCardsAtLevel => CardActions.ClaimCardsAtLevel,
-                ActionType.AddChargeCube => CardActions.AddChargeCube,
-                _ => throw new ArgumentOutOfRangeException(nameof(actionType), $"ActionType {actionType} is not valid"),
-            };
-        }
-
         public static Action<Player, int, int> GetChargeAction(ChargeActionType chargeActionType)
         {
             return chargeActionType switch
