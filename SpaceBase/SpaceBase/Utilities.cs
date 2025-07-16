@@ -139,9 +139,9 @@
         /// <summary>
         /// A card representing an empty space for the UI.
         /// </summary>
-        public static Card NullLevelCard => new(Constants.MinCardLevel, 1, Constants.NullCardCost, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null);
+        public static Card NullLevelCard => (Card)CardFactory.CreateStandardCard(Constants.MinCardLevel, 1, Constants.NullCardCost, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null); // TODO remove casting
 
-        public static ColonyCard NullColonyCard => new(1, Constants.NullCardCost, 0);
+        public static IColonyCard NullColonyCard => CardFactory.CreateColonyCard(1, Constants.NullCardCost, 0);
     }
 
 }

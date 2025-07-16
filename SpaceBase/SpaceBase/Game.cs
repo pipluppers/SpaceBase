@@ -67,14 +67,14 @@
         /// </summary>
         public ObservableCollection<Player> Players { get => _players; }
 
-        public Stack<Card> Level1Deck { get; }
-        public Stack<Card> Level2Deck { get; }
-        public Stack<Card> Level3Deck { get; }
+        public Stack<IStandardCard> Level1Deck { get; }
+        public Stack<IStandardCard> Level2Deck { get; }
+        public Stack<IStandardCard> Level3Deck { get; }
 
-        public ObservableCollection<Card> Level1Cards { get; }
-        public ObservableCollection<Card> Level2Cards { get; }
-        public ObservableCollection<Card> Level3Cards { get; }
-        public ObservableCollection<ColonyCard> ColonyCards { get; }
+        public ObservableCollection<IStandardCard> Level1Cards { get; }
+        public ObservableCollection<IStandardCard> Level2Cards { get; }
+        public ObservableCollection<IStandardCard> Level3Cards { get; }
+        public ObservableCollection<IColonyCard> ColonyCards { get; }
 
         /// <summary>
         /// The current turn number.
@@ -163,7 +163,7 @@
                             else Level3Cards.Add(card);
                         }
                     }
-                    else if (cards[i] is ColonyCard colonyCard)
+                    else if (cards[i] is IColonyCard colonyCard)
                     {
                         ColonyCards.Add(colonyCard);
                     }
@@ -301,13 +301,13 @@
 
             // Draw the next card from the stack of the appropriate level.
 
-            static void DrawCard(Stack<Card> stackOfCards, ObservableCollection<Card> visibleRowOfCards, Card addedCard)
+            static void DrawCard(Stack<IStandardCard> stackOfCards, ObservableCollection<IStandardCard> visibleRowOfCards, Card addedCard)
             {
                 int index = visibleRowOfCards.IndexOf(addedCard);
                 if (index == -1)
                     return;
 
-                if (stackOfCards.TryPop(out Card? card) && card != null)
+                if (stackOfCards.TryPop(out IStandardCard? card) && card != null)
                     visibleRowOfCards[index] = card;
                 else
                     visibleRowOfCards[index] = Utilities.NullLevelCard;

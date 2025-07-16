@@ -206,8 +206,8 @@
                 ComputerPlayer? computerPlayer = Game.Players[Game.ActivePlayerID - 1] as ComputerPlayer;
                 Debug.Assert(computerPlayer != null);
 
-                Card? cardToBuy = null;
-                static Card? GetCardToBuy(ObservableCollection<Card> cards, int credits)
+                IStandardCard? cardToBuy = null;
+                static IStandardCard? GetCardToBuy(ObservableCollection<IStandardCard> cards, int credits)
                 {
                     // TODO Always buy the first card you can
                     foreach (var card in cards)

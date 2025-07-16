@@ -14,12 +14,12 @@
         }
 
         public static readonly DependencyProperty DisplayedCardsProperty =
-            DependencyProperty.Register(nameof(DisplayedCards), typeof(ObservableCollection<Card>), typeof(LevelControl), new PropertyMetadata(Callback));
+            DependencyProperty.Register(nameof(DisplayedCards), typeof(ObservableCollection<IStandardCard>), typeof(LevelControl), new PropertyMetadata(Callback));
 
         /// <summary>
         /// The set of cards to be displayed for each level and from which the players will be buying from.
         /// </summary>
-        public ObservableCollection<Card> DisplayedCards { get => (ObservableCollection<Card>)GetValue(DisplayedCardsProperty); set => SetValue(DisplayedCardsProperty, value); }
+        public ObservableCollection<IStandardCard> DisplayedCards { get => (ObservableCollection<IStandardCard>)GetValue(DisplayedCardsProperty); set => SetValue(DisplayedCardsProperty, value); }
 
         /// <summary>
         /// Set the ItemsSource for the ItemsControl.
@@ -30,7 +30,7 @@
         {
             LevelControl levelControl = (LevelControl)d;
 
-            if (e.NewValue is ObservableCollection<Card> cards)
+            if (e.NewValue is ObservableCollection<IStandardCard> cards)
             {
                 levelControl.LevelItemsControl.ItemsSource = cards;
             }
