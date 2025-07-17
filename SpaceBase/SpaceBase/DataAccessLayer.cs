@@ -48,7 +48,7 @@
             catch (Exception ex)
             {
                 // Do not throw here since we are already trying to close the connection.
-                Trace.WriteLine($"Error connecting to {_connectionString}\n{ex.Message}");
+                Trace.WriteLine($"Error closing the connection to {_connectionString}\n{ex.Message}");
             }
         }
 
