@@ -112,70 +112,6 @@
         }
 
         /// <summary>
-        /// Loads all card information from the database.
-        /// </summary>
-        public async Task LoadCards()
-        {
-            try
-            {
-                DataAccessLayer dataAccessLayer = new();
-                List<ICard> cards = await dataAccessLayer.GetCards();
-
-                if (cards.Count < Constants.MaxSectorID)
-                    throw new Exception($"The database has less than {Constants.MaxSectorID} cards.");
-
-                int i = 0;
-
-                // First load the initial cards for each player.
-
-                for (; i < Constants.MaxSectorID; i++)
-                {
-                    foreach (Player player in Players)
-                        player.AddCard(cards[i]);
-                }
-
-                foreach (Player player in Players)
-                    player.AddCardToSectorEvent += AddCardToSectorHandler;
-
-                // Now load the decks.
-
-                for (; i < cards.Count; i++)
-                {
-                    if (cards[i] is Card card)
-                    {
-                        // TODO Add support for charge cards
-                        if (card is ChargeCard)
-                            continue;
-
-                        if (card.Level == 1)
-                        {
-                            if (Level1Cards.Count >= 6) Level1Deck.Push(card);
-                            else Level1Cards.Add(card);
-                        }
-                        else if (card.Level == 2)
-                        {
-                            if (Level2Cards.Count >= 6) Level2Deck.Push(card);
-                            else Level2Cards.Add(card);
-                        }
-                        else if (card.Level == 3)
-                        {
-                            if (Level3Cards.Count >= 6) Level3Deck.Push(card);
-                            else Level3Cards.Add(card);
-                        }
-                    }
-                    else if (cards[i] is IColonyCard colonyCard)
-                    {
-                        ColonyCards.Add(colonyCard);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine($"Error loading the cards from the database: {ex.Message}");
-            }
-        }
-
-        /// <summary>
         /// Initialize members and start the game.
         /// </summary>
         public async Task StartGame()
@@ -294,7 +230,7 @@
         /// </summary>
         /// <param name="sender">The player.</param>
         /// <param name="args">The arguments describing the added card.</param>
-        private void AddCardToSectorHandler(object sender, AddCardToSectorEventArgs args)
+        internal void AddCardToSectorHandler(object sender, AddCardToSectorEventArgs args)
         {
             if (sender is not Player player || args == null)
                 return;

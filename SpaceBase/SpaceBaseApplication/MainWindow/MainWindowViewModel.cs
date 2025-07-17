@@ -117,7 +117,7 @@
         /// </summary>
         public async Task StartGame()
         {
-            await Game.LoadCards();
+            await SpaceBase.Services.CardLoadingService.LoadCards(Game);
             WaitForPlayerInput = true;
             await Game.StartGame();
         }
