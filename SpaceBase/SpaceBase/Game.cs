@@ -9,7 +9,7 @@
         private int _roundNumber;
         private int _turnNumber;
         private int _activePlayerID;
-        private readonly Random _randomNumberGenerator;
+        private readonly DiceRollService _diceRollService;
 
         public event EventHandler<EventArgs>? PreDiceRollEvent;
         public event DiceRollEventHandler<DiceRollEventArgs>? DiceRollEvent;
@@ -55,7 +55,7 @@
             _roundNumber = 0;
             _turnNumber = 0;
             _activePlayerID = 0;
-            _randomNumberGenerator = new Random(1);
+            _diceRollService = new DiceRollService();
 
             RoundOverEvent += MaxNumRoundsHandler;
         }
@@ -143,6 +143,7 @@
 
                 if (PreDiceRollEvent != null) await Task.Run(() => PreDiceRollEvent.Invoke(this, new EventArgs()));
 
+
                 await RollDice();
 
                 if (BuyEvent != null) await Task.Run(() => BuyEvent.Invoke(this, new EventArgs()));
@@ -190,15 +191,15 @@
         }
 
         /// <summary>
-        /// Selects two random numbers for the two die and invokes the DiceRollEvent.
+        /// Simulates the dice roll and notifies any listeners.
         /// </summary>
         private async Task RollDice()
         {
-            int dice1 = (_randomNumberGenerator.Next() % 6) + 1;
-            int dice2 = (_randomNumberGenerator.Next() % 6) + 1;
+            if (DiceRollEvent == null)
+                return;
 
-            if (DiceRollEvent != null)
-                await Task.Run(() => DiceRollEvent.Invoke(this, new DiceRollEventArgs(dice1, dice2, ActivePlayerID)));
+            DiceRollResult result = _diceRollService.RollDice();
+            await Task.Run(() => DiceRollEvent.Invoke(this, new DiceRollEventArgs(result.Dice1, result.Dice2, ActivePlayerID)));
         }
 
         /// <summary>
