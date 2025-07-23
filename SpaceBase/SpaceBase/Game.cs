@@ -7,7 +7,6 @@
         private int _victoryThreshold;
         private readonly int _maxNumRounds;
         private int _roundNumber;
-        private int _turnNumber;
         private int _activePlayerID;
         private readonly DiceRollService _diceRollService;
 
@@ -53,7 +52,6 @@
             _isGameOver = false;
             _maxNumRounds = maxNumRounds;
             _roundNumber = 0;
-            _turnNumber = 0;
             _activePlayerID = 0;
             _diceRollService = new DiceRollService();
 
@@ -75,12 +73,6 @@
         public ObservableCollection<IStandardCard> Level2Cards { get; }
         public ObservableCollection<IStandardCard> Level3Cards { get; }
         public ObservableCollection<IColonyCard> ColonyCards { get; }
-
-        /// <summary>
-        /// The current turn number.
-        /// </summary>
-        /// <remarks>A turn is defined as the full set of a player's actions from the <see cref="Game.PreDiceRollEvent"/> to the <see cref="Game.TurnOverEvent"/>.</remarks>
-        public int TurnNumber { get => _turnNumber; }
 
         /// <summary>
         /// The current round number.
@@ -124,7 +116,6 @@
             // TODO Each player draws a card. Player order is determined by highest cost
 
             RoundNumber = 1;
-            _turnNumber = 1;
             ActivePlayerID = 1; // TODO Just set human player to first player for now
 
             await PlayGame();
@@ -137,12 +128,11 @@
         /// </summary>
         private async Task PlayGame()
         {
-            while (!_isGameOver || _turnNumber != 1)
+            while (!_isGameOver)
             {
                 // Broadcast PreDiceRollEvent
 
                 if (PreDiceRollEvent != null) await Task.Run(() => PreDiceRollEvent.Invoke(this, new EventArgs()));
-
 
                 await RollDice();
 
@@ -154,20 +144,7 @@
 
                 PlayerResourcesService.ResetCredits(Players[ActivePlayerID - 1]);
 
-                if (ActivePlayerID < Players.Count)
-                    ++ActivePlayerID;
-                else
-                    ActivePlayerID = 1;
-
-                if (_turnNumber < Players.Count)
-                {
-                    ++_turnNumber;
-                }
-                else
-                {
-                    _turnNumber = 1;
-                    RoundOverEvent?.Invoke(this, new RoundOverEventArgs(RoundNumber++));
-                }
+                UpdateActivePlayer();
 
                 TurnOverEvent?.Invoke(this, new EventArgs());
             }
@@ -238,11 +215,10 @@
 
             // Draw the next card from the stack of the appropriate level.
 
-            static void DrawCard(Stack<IStandardCard> stackOfCards, ObservableCollection<IStandardCard> visibleRowOfCards, Card addedCard)
+            static void DrawCard(Stack<IStandardCard> stackOfCards, ObservableCollection<IStandardCard> visibleRowOfCards, IStandardCard addedCard)
             {
                 int index = visibleRowOfCards.IndexOf(addedCard);
-                if (index == -1)
-                    return;
+                Debug.Assert(index >= 0);
 
                 if (stackOfCards.TryPop(out IStandardCard? card) && card != null)
                     visibleRowOfCards[index] = card;
@@ -250,7 +226,7 @@
                     visibleRowOfCards[index] = Utilities.NullLevelCard;
             }
 
-            if (args.AddedCard is Card card)
+            if (args.AddedCard is IStandardCard card)
             {
                 int cardLevel = card.Level;
                 Debug.Assert(cardLevel > 0 && cardLevel < 4);
@@ -262,11 +238,28 @@
                 else if (cardLevel == 3)
                     DrawCard(Level3Deck, Level3Cards, card);
             }
-            else if (args.AddedCard is ColonyCard colonyCard)
+            else if (args.AddedCard is IColonyCard colonyCard)
             {
                 ColonyCards[colonyCard.SectorID - 1] = Utilities.NullColonyCard;
                 PlayerResourcesService.AddVictoryPoints(player, colonyCard.Amount);
             }
         }
+
+        /// <summary>
+        /// If the active player is not the last player, move the counter to next player. Otherwise, move the counter to the first player and broadcast the RoundOverEvent.
+        /// </summary>
+        private void UpdateActivePlayer()
+        {
+            if (ActivePlayerID < Players.Count)
+            {
+                ++ActivePlayerID;
+            }
+            else
+            {
+                ActivePlayerID = 1;
+                RoundOverEvent?.Invoke(this, new RoundOverEventArgs(RoundNumber++));
+            }
+        }
+
     }
 }
