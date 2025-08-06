@@ -8,6 +8,7 @@
         /// <summary>
         /// Factory method to create a standard card.
         /// </summary>
+        /// <param name="id">The id of the card.</param>
         /// <param name="level">The level.</param>
         /// <param name="sectorID">The ID of the sector.</param>
         /// <param name="cost">The cost.</param>
@@ -19,7 +20,7 @@
         /// <param name="deployedSecondaryAmount">The amount of secondary resources.</param>
         /// <returns>The card as an IStandardCard.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Either one of multiple of <paramref name="sectorID"/>, <paramref name="level"/>, or <paramref name="cost"/> are invalid.</exception>
-        public static IStandardCard CreateStandardCard(int level, int sectorID, int cost, ActionType effectType, int amount, int? secondaryAmount,
+        public static IStandardCard CreateStandardCard(int id, int level, int sectorID, int cost, ActionType effectType, int amount, int? secondaryAmount,
             ActionType deployedEffectType, int deployedAmount, int? deployedSecondaryAmount)
         {
             if (sectorID < Constants.MinSectorID || sectorID > Constants.MaxSectorID)
@@ -35,7 +36,7 @@
             else if (level == 3 && (cost < 12 || cost > 14))
                 throw new ArgumentOutOfRangeException(nameof(cost), "If the level is 3, then the cost must be between 12 and 14.");
 
-            return new Card(level, sectorID, cost, effectType, amount, secondaryAmount, deployedEffectType, deployedAmount, deployedSecondaryAmount);
+            return new Card(id, level, sectorID, cost, effectType, amount, secondaryAmount, deployedEffectType, deployedAmount, deployedSecondaryAmount);
         }
 
         /// <summary>
@@ -46,12 +47,12 @@
         /// <param name="amount">The amount of resources.</param>
         /// <returns>The colony card as an IColonyCard.</returns>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="sectorID"/> is invalid.</exception>
-        public static IColonyCard CreateColonyCard(int sectorID, int cost, int amount)
+        public static IColonyCard CreateColonyCard(int id, int sectorID, int cost, int amount)
         {
             if (sectorID < Constants.MinSectorID || sectorID > Constants.MaxSectorID)
                 throw new ArgumentOutOfRangeException(nameof(sectorID), $"The sector must be between {Constants.MinSectorID} and {Constants.MaxSectorID} inclusive.");
 
-            return new ColonyCard(sectorID, cost, amount);
+            return new ColonyCard(id, sectorID, cost, amount);
         }
     }
 }

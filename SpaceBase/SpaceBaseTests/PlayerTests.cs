@@ -159,9 +159,9 @@ namespace SpaceBaseTests
             int deployedNumIncomeToAdd = 5;
             int deployedNumVictoryPointsToAdd = 3;
 
-            IStandardCard addCreditsCard = CardFactory.CreateStandardCard(1, sectorID, 2, ActionType.AddCredits, 1, null, ActionType.AddCredits, deployedNumCreditsToAdd, null);
-            IStandardCard addIncomeCard = CardFactory.CreateStandardCard(1, sectorID, 2, ActionType.AddIncome, 1, null, ActionType.AddIncome, deployedNumIncomeToAdd, null);
-            IStandardCard addVictoryPointsCard = CardFactory.CreateStandardCard(1, sectorID, 2, ActionType.AddVictoryPoints, 1, null, ActionType.AddVictoryPoints, deployedNumVictoryPointsToAdd, null);
+            IStandardCard addCreditsCard = CardFactory.CreateStandardCard(1, 1, sectorID, 2, ActionType.AddCredits, 1, null, ActionType.AddCredits, deployedNumCreditsToAdd, null);
+            IStandardCard addIncomeCard = CardFactory.CreateStandardCard(1, 1, sectorID, 2, ActionType.AddIncome, 1, null, ActionType.AddIncome, deployedNumIncomeToAdd, null);
+            IStandardCard addVictoryPointsCard = CardFactory.CreateStandardCard(1, 1, sectorID, 2, ActionType.AddVictoryPoints, 1, null, ActionType.AddVictoryPoints, deployedNumVictoryPointsToAdd, null);
 
             HumanPlayer player = new(1);
             player.AddCard(addCreditsCard);
@@ -189,7 +189,7 @@ namespace SpaceBaseTests
             int deployedNumCreditsToAdd = 4;
 
             HumanPlayer player = new(1);
-            IStandardCard card = CardFactory.CreateStandardCard(1, sectorID, 3, ActionType.AddCredits, numCreditsToAdd, null, ActionType.AddCredits, deployedNumCreditsToAdd, null);
+            IStandardCard card = CardFactory.CreateStandardCard(1, 1, sectorID, 3, ActionType.AddCredits, numCreditsToAdd, null, ActionType.AddCredits, deployedNumCreditsToAdd, null);
 
             player.AddCard(card);
             Assert.That(player.GetSector(sectorID).StationedCard, Is.Not.Null);
@@ -214,7 +214,7 @@ namespace SpaceBaseTests
             int deployedNumIncomeToAdd = 4;
 
             HumanPlayer player = new(1);
-            IStandardCard card = CardFactory.CreateStandardCard(1, sectorID, 3, ActionType.AddIncome, numIncomeToAdd, null, ActionType.AddIncome, deployedNumIncomeToAdd, null);
+            IStandardCard card = CardFactory.CreateStandardCard(1, 1, sectorID, 3, ActionType.AddIncome, numIncomeToAdd, null, ActionType.AddIncome, deployedNumIncomeToAdd, null);
 
             Assert.That(player.Income, Is.EqualTo(0), "Pre-test: Player should start with 0 income.");
 
@@ -242,7 +242,7 @@ namespace SpaceBaseTests
             int deployedNumVictoryPointsToAdd = 4;
 
             HumanPlayer player = new(1);
-            IStandardCard card = CardFactory.CreateStandardCard(1, sectorID, 3, ActionType.AddVictoryPoints, numVictoryPointsToAdd, null, ActionType.AddVictoryPoints, deployedNumVictoryPointsToAdd, null);
+            IStandardCard card = CardFactory.CreateStandardCard(1, 1, sectorID, 3, ActionType.AddVictoryPoints, numVictoryPointsToAdd, null, ActionType.AddVictoryPoints, deployedNumVictoryPointsToAdd, null);
 
             Assert.That(player.Income, Is.EqualTo(0), "Pre-test: Player should start with 0 victory points.");
 
@@ -268,7 +268,7 @@ namespace SpaceBaseTests
             int sectorID = 1;
 
             HumanPlayer player = new(1);
-            ChargeCard chargeCard = new(1, sectorID, 4, ActionType.AddChargeCube, 1, null, ActionType.AddChargeCube, 1, null,
+            ChargeCard chargeCard = new(1, 1, sectorID, 4, ActionType.AddChargeCube, 1, null, ActionType.AddChargeCube, 1, null,
                 ChargeActionType.AddToSum1, 1, 2, ChargeCardType.Anytime,
                 ChargeActionType.AddToSum1, 2, 2, ChargeCardType.Anytime);
 

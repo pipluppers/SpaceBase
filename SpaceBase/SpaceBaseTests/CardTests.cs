@@ -11,8 +11,8 @@
 
             Assert.Multiple(() =>
             {
-                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(1, invalidSectorID1, 3, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
-                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(1, invalidSectorID2, 3, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(1, 1, invalidSectorID1, 3, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(1, 1, invalidSectorID2, 3, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
             });
         }
 
@@ -21,7 +21,7 @@
         {
             for (int i = 1; i < 13; ++i)
             {
-                IStandardCard card = CardFactory.CreateStandardCard(0, i, 1, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null);
+                IStandardCard card = CardFactory.CreateStandardCard(1, 0, i, 1, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null);
                 Assert.That(i, Is.EqualTo(card.SectorID));
             }
         }
@@ -34,8 +34,8 @@
 
             Assert.Multiple(() =>
             {
-                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(invalidLevel1, 2, 3, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
-                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(invalidLevel2, 2, 3, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(1, invalidLevel1, 2, 3, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(1, invalidLevel2, 2, 3, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
             });
         }
 
@@ -45,34 +45,34 @@
             Assert.Multiple(() =>
             {
                 // Level 1
-                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(1, 2, 1, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
-                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(1, 2, 6, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(1, 1, 2, 1, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(1, 1, 2, 6, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
 
                 // Level 2
-                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(2, 2, 6, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
-                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(2, 2, 10, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(1, 2, 2, 6, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(1, 2, 2, 10, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
 
                 // Level 3
-                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(3, 2, 11, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
-                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(3, 2, 15, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(1, 3, 2, 11, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+                Assert.Throws<ArgumentOutOfRangeException>(() => CardFactory.CreateStandardCard(1, 3, 2, 15, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
             });
         }
 
         [Test]
         public void CanCreateCardWithValidLevelCostCombo()
         {
-            Assert.DoesNotThrow(() => CardFactory.CreateStandardCard(1, 2, 2, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
-            Assert.DoesNotThrow(() => CardFactory.CreateStandardCard(1, 2, 3, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
-            Assert.DoesNotThrow(() => CardFactory.CreateStandardCard(1, 2, 4, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
-            Assert.DoesNotThrow(() => CardFactory.CreateStandardCard(1, 2, 5, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+            Assert.DoesNotThrow(() => CardFactory.CreateStandardCard(1, 1, 2, 2, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+            Assert.DoesNotThrow(() => CardFactory.CreateStandardCard(1, 1, 2, 3, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+            Assert.DoesNotThrow(() => CardFactory.CreateStandardCard(1, 1, 2, 4, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+            Assert.DoesNotThrow(() => CardFactory.CreateStandardCard(1, 1, 2, 5, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
 
-            Assert.DoesNotThrow(() => CardFactory.CreateStandardCard(2, 2, 7, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
-            Assert.DoesNotThrow(() => CardFactory.CreateStandardCard(2, 2, 8, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
-            Assert.DoesNotThrow(() => CardFactory.CreateStandardCard(2, 2, 9, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+            Assert.DoesNotThrow(() => CardFactory.CreateStandardCard(1, 2, 2, 7, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+            Assert.DoesNotThrow(() => CardFactory.CreateStandardCard(1, 2, 2, 8, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+            Assert.DoesNotThrow(() => CardFactory.CreateStandardCard(1, 2, 2, 9, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
 
-            Assert.DoesNotThrow(() =>  CardFactory.CreateStandardCard(3, 2, 12, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
-            Assert.DoesNotThrow(() =>  CardFactory.CreateStandardCard(3, 2, 13, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
-            Assert.DoesNotThrow(() =>  CardFactory.CreateStandardCard(3, 2, 14, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+            Assert.DoesNotThrow(() =>  CardFactory.CreateStandardCard(1, 3, 2, 12, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+            Assert.DoesNotThrow(() =>  CardFactory.CreateStandardCard(1, 3, 2, 13, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
+            Assert.DoesNotThrow(() =>  CardFactory.CreateStandardCard(1, 3, 2, 14, ActionType.AddCredits, 1, null, ActionType.AddCredits, 1, null));
         }
 
         [Test]
@@ -84,7 +84,7 @@
             int deployedChargeCubeLimit = 2;
 
             // This is the add to sum card
-            ChargeCard chargeCard = new(1, 1, 4, ActionType.AddChargeCube, 1, null, ActionType.AddChargeCube, 1, null,
+            ChargeCard chargeCard = new(1, 1, 1, 4, ActionType.AddChargeCube, 1, null, ActionType.AddChargeCube, 1, null,
                 ChargeActionType.AddToSum1, requiredChargeCubes, chargeCubeLimit, ChargeCardType.Anytime,
                 ChargeActionType.AddToSum1, deployedRequiredChargeCubes, deployedChargeCubeLimit, ChargeCardType.Anytime);
 
@@ -97,15 +97,15 @@
         [Test]
         public void CreatingAChargeCardThatRequiresMoreCubesThanLimitShouldFail()
         {
-            Assert.Throws<ArgumentException>(() => new ChargeCard(0, 1, 1, ActionType.AddChargeCube, 1, null, ActionType.AddChargeCube, 1, null,
+            Assert.Throws<ArgumentException>(() => new ChargeCard(1, 0, 1, 1, ActionType.AddChargeCube, 1, null, ActionType.AddChargeCube, 1, null,
                 ChargeActionType.AddToSum1, 3, 2, ChargeCardType.Anytime,
                 ChargeActionType.AddToSum1, 2, 2, ChargeCardType.Anytime));
 
-            Assert.Throws<ArgumentException>(() => new ChargeCard(0, 1, 1, ActionType.AddChargeCube, 1, null, ActionType.AddChargeCube, 1, null,
+            Assert.Throws<ArgumentException>(() => new ChargeCard(1, 0, 1, 1, ActionType.AddChargeCube, 1, null, ActionType.AddChargeCube, 1, null,
                 ChargeActionType.AddToSum1, 2, 2, ChargeCardType.Anytime,
                 ChargeActionType.AddToSum1, 3, 2, ChargeCardType.Anytime));
 
-            Assert.Throws<ArgumentException>(() => new ChargeCard(0, 1, 1, ActionType.AddChargeCube, 1, null, ActionType.AddChargeCube, 1, null,
+            Assert.Throws<ArgumentException>(() => new ChargeCard(1, 0, 1, 1, ActionType.AddChargeCube, 1, null, ActionType.AddChargeCube, 1, null,
                 ChargeActionType.AddToSum1, 3, 2, ChargeCardType.Anytime,
                 ChargeActionType.AddToSum1, 3, 2, ChargeCardType.Anytime));
         }

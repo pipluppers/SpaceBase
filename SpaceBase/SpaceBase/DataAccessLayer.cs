@@ -102,38 +102,39 @@
         /// <returns>A card based on the table row.</returns>
         private static ICard CreateCard(SqlDataReader reader)
         {
-            int level = reader.GetInt32(0);
-            int sectorID = reader.GetInt32(1);
-            int cost = reader.GetInt32(2);
+            int id = reader.GetInt32(0);
+            int level = reader.GetInt32(1);
+            int sectorID = reader.GetInt32(2);
+            int cost = reader.GetInt32(3);
 
-            int effectAmount = reader.GetInt32(4);
+            int effectAmount = reader.GetInt32(5);
 
             if (level != Constants.ColonyCardLevel)
             {
-                int effect = reader.GetInt32(3);
-                int? secondaryEffectAmount = !reader.IsDBNull(5) ? reader.GetInt32(5) : null;
-                int deployedEffect = reader.GetInt32(6);
-                int deployedEffectAmount = reader.GetInt32(7);
-                int? secondaryDeployedEffectAmount = !reader.IsDBNull(8) ? reader.GetInt32(7) : null;
+                int effect = reader.GetInt32(4);
+                int? secondaryEffectAmount = !reader.IsDBNull(6) ? reader.GetInt32(6) : null;
+                int deployedEffect = reader.GetInt32(7);
+                int deployedEffectAmount = reader.GetInt32(8);
+                int? secondaryDeployedEffectAmount = !reader.IsDBNull(9) ? reader.GetInt32(9) : null;
 
-                if (reader.IsDBNull(9))
+                if (reader.IsDBNull(10))
                 {
-                    return CardFactory.CreateStandardCard(level, sectorID, cost,
+                    return CardFactory.CreateStandardCard(id, level, sectorID, cost,
                         (ActionType)effect, effectAmount, secondaryEffectAmount,
                         (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount);
                 }
                 else
                 {
-                    int chargeEffect = reader.GetInt32(9);
-                    int requiredChargeCubes = reader.GetInt32(10);
-                    int chargeCubeLimit = reader.GetInt32(11);
-                    int chargeCardType = reader.GetInt32(12);
-                    int deployedChargeEffect = reader.GetInt32(13);
-                    int deployedRequiredChargeCubes = reader.GetInt32(14);
-                    int deployedChargeCubeLimit = reader.GetInt32(15);
-                    int deployedChargeCardType = reader.GetInt32(16);
+                    int chargeEffect = reader.GetInt32(10);
+                    int requiredChargeCubes = reader.GetInt32(11);
+                    int chargeCubeLimit = reader.GetInt32(12);
+                    int chargeCardType = reader.GetInt32(13);
+                    int deployedChargeEffect = reader.GetInt32(14);
+                    int deployedRequiredChargeCubes = reader.GetInt32(15);
+                    int deployedChargeCubeLimit = reader.GetInt32(16);
+                    int deployedChargeCardType = reader.GetInt32(17);
 
-                    return new ChargeCard(level, sectorID, cost,
+                    return new ChargeCard(id, level, sectorID, cost,
                         (ActionType)effect, effectAmount, secondaryEffectAmount,
                         (ActionType)deployedEffect, deployedEffectAmount, secondaryDeployedEffectAmount,
                         (ChargeActionType)chargeEffect, requiredChargeCubes, chargeCubeLimit, (ChargeCardType)chargeCardType,
@@ -142,7 +143,7 @@
             }
             else
             {
-                return CardFactory.CreateColonyCard(sectorID, cost, effectAmount);
+                return CardFactory.CreateColonyCard(id, sectorID, cost, effectAmount);
             }
 
         }

@@ -24,21 +24,43 @@
     {
     }
 
+    // JsonPropertyOrder
+    //   1:  Id
+    //   2:  SectorId
+    //   3:  Cost
+    //   4:  Level
+    //   5:  EffectType
+    //   6:  Amount
+    //   7:  SecondaryAmount
+    //   8:  DeployedEffectType
+    //   9:  DeployedAmount
+    //   10: DeployedSecondaryAmount
+    //   11: ChargeEffectType
+    //   12: RequiredChargeCubes
+    //   13: ChargeCubeLimit
+    //   14: ChargeCardType
+    //   15: DeployedChargeCardType
+
+
     public abstract class CardBase : ICard, ISerializable
     {
         private readonly int _sectorID;
         private readonly int _cost;
         private readonly int _amount;
 
-        protected CardBase(int sectorID, int cost, int amount)
+        protected CardBase(int id, int sectorID, int cost, int amount)
         {
             if (sectorID < Constants.MinSectorID || sectorID > Constants.MaxSectorID)
                 throw new ArgumentOutOfRangeException(nameof(sectorID), $"The sector must be between {Constants.MinSectorID} and {Constants.MaxSectorID} inclusive.");
 
+            Id = id;
             _sectorID = sectorID;
             _cost = cost;
             _amount = amount;
         }
+
+        [JsonPropertyOrder(1)]
+        public int Id { get; }
 
         [JsonPropertyOrder(2)]
         public int SectorID { get => _sectorID; }
@@ -46,7 +68,7 @@
         [JsonPropertyOrder(3)]
         public int Cost { get => _cost; }
 
-        [JsonPropertyOrder(5)]
+        [JsonPropertyOrder(6)]
         public int Amount { get => _amount; }
 
         [JsonIgnore]
@@ -99,8 +121,8 @@
         private readonly ICardCommand _deployedCommand;
 
         [JsonConstructor]
-        internal Card(int level, int sectorID, int cost, ActionType effectType, int amount, int? secondaryAmount,
-            ActionType deployedEffectType, int deployedAmount, int? deployedSecondaryAmount) : base(sectorID, cost, amount)
+        internal Card(int id, int level, int sectorID, int cost, ActionType effectType, int amount, int? secondaryAmount,
+            ActionType deployedEffectType, int deployedAmount, int? deployedSecondaryAmount) : base(id, sectorID, cost, amount)
         {
             _level = level;
             EffectType = effectType;
@@ -114,22 +136,22 @@
             _deployedCommand = GetCommand(deployedEffectType, deployedAmount, deployedSecondaryAmount ?? 0);
         }
 
-        [JsonPropertyOrder(1)]
+        [JsonPropertyOrder(4)]
         public int Level { get => _level; }
 
-        [JsonPropertyOrder(4), JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonPropertyOrder(5), JsonConverter(typeof(JsonStringEnumConverter))]
         public ActionType EffectType { get; }
 
-        [JsonPropertyOrder(6)]
+        [JsonPropertyOrder(7)]
         public int? SecondaryAmount { get => _secondaryAmount; }
 
-        [JsonPropertyOrder(7), JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonPropertyOrder(8), JsonConverter(typeof(JsonStringEnumConverter))]
         public ActionType DeployedEffectType { get; }
 
-        [JsonPropertyOrder(8)]
+        [JsonPropertyOrder(9)]
         public int DeployedAmount { get => _deployedAmount; }
 
-        [JsonPropertyOrder(9)]
+        [JsonPropertyOrder(10)]
         public int? DeployedSecondaryAmount { get => _deployedSecondaryAmount; }
 
         [JsonIgnore]
@@ -211,11 +233,11 @@
         private readonly ICardCommand _chargeCommand;
 
         [JsonConstructor]
-        public ChargeCard(int level, int sectorID, int cost, ActionType effectType, int amount, int? secondaryAmount,
+        public ChargeCard(int id, int level, int sectorID, int cost, ActionType effectType, int amount, int? secondaryAmount,
             ActionType deployedEffectType, int deployedAmount, int? deployedSecondaryAmount,
             ChargeActionType chargeEffectType, int requiredChargeCubes, int chargeCubeLimit, ChargeCardType chargeCardType,
             ChargeActionType deployedChargeEffectType, int deployedRequiredChargeCubes, int deployedChargeCubeLimit, ChargeCardType deployedChargeCardType)
-            : base(level, sectorID, cost, effectType, amount, secondaryAmount, deployedEffectType, deployedAmount, deployedSecondaryAmount)
+            : base(id, level, sectorID, cost, effectType, amount, secondaryAmount, deployedEffectType, deployedAmount, deployedSecondaryAmount)
         {
             // Note: A charge card doesn't have to have charge effects for both stationed and deployed effects.
 
@@ -234,28 +256,28 @@
             DeployedChargeCardType = deployedChargeCardType;
         }
 
-        [JsonPropertyOrder(10), JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonPropertyOrder(11), JsonConverter(typeof(JsonStringEnumConverter))]
         public ChargeActionType ChargeEffectType { get; }
 
-        [JsonPropertyOrder(11)]
+        [JsonPropertyOrder(12)]
         public int RequiredChargeCubes { get; }
 
-        [JsonPropertyOrder(12)]
+        [JsonPropertyOrder(13)]
         public int ChargeCubeLimit { get; }
 
-        [JsonPropertyOrder(13), JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonPropertyOrder(14), JsonConverter(typeof(JsonStringEnumConverter))]
         public ChargeCardType ChargeCardType { get; }
 
-        [JsonPropertyOrder(14), JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonPropertyOrder(15), JsonConverter(typeof(JsonStringEnumConverter))]
         public ChargeActionType DeployedChargeEffectType { get; }
 
-        [JsonPropertyOrder(15)]
+        [JsonPropertyOrder(16)]
         public int DeployedRequiredChargeCubes { get; }
 
-        [JsonPropertyOrder(16)]
+        [JsonPropertyOrder(17)]
         public int DeployedChargeCubeLimit { get; }
 
-        [JsonPropertyOrder(17), JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonPropertyOrder(18), JsonConverter(typeof(JsonStringEnumConverter))]
         public ChargeCardType DeployedChargeCardType { get; }
 
         [JsonIgnore]
@@ -367,7 +389,7 @@
     public sealed class ColonyCard : CardBase, IColonyCard, ISerializable
     {
         [JsonConstructor]
-        internal ColonyCard(int sectorID, int cost, int amount) : base(sectorID, cost, amount) { }
+        internal ColonyCard(int id, int sectorID, int cost, int amount) : base(id, sectorID, cost, amount) { }
 
         [JsonIgnore]
         public override CardType CardType { get => CardType.Colony; }
