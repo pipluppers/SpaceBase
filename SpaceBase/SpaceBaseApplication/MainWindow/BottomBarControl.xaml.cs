@@ -1,11 +1,11 @@
 ﻿namespace SpaceBaseApplication.MainWindow
 {
     /// <summary>
-    /// Interaction logic for PlayerScoreControl.xaml
+    /// Interaction logic for BottomBarControl.xaml
     /// </summary>
-    public partial class PlayerScoreControl : UserControl
+    public partial class BottomBarControl : UserControl
     {
-        public PlayerScoreControl()
+        public BottomBarControl()
         {
             InitializeComponent();
         }

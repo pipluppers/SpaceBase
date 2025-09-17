@@ -28,10 +28,10 @@
     <Compile Update="MainWindow\PlayerBoardControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="MainWindow\PlayerScoreControl.xaml.cs">
+    <Compile Update="MainWindow\ScoreboardControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="MainWindow\ScoreboardControl.xaml.cs">
+    <Compile Update="MainWindow\BottomBarControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="MainWindow\SectorView.xaml.cs">

@@ -123,7 +123,7 @@
 
             <local:PlayerBoardControl Grid.Row="3" DataContext="{Binding HumanPlayer}" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
 
-            <local:ScoreboardControl Grid.Row="4" Panel.ZIndex="2"/>
+            <local:BottomBarControl Grid.Row="4" Panel.ZIndex="2"/>
         </Grid>
 
         <local:GameOverControl Panel.ZIndex="2" Background="Pink" Visibility="{Binding ShowGameOverScreen, Converter={StaticResource BoolVisibilityConverter}}" Width="Auto" Height="Auto"/>
