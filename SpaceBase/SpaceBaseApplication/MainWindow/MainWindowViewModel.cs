@@ -20,8 +20,8 @@
 
         #region Events
 
-        public event HelpDiceRollEventHandler<DiceRollEventArgs>? HelpDiceRollEvent;
-        public event RemoveHelpDiceRollEffectsEventHandler<DiceRollEventArgs>? RemoveHelpDiceRollEffectsEvent;
+        public event ShowDiceRollHintsEventHandler<DiceRollEventArgs>? ShowDiceRollHintsEventHandler;
+        public event RemoveDiceRollHintsEventHandler<DiceRollEventArgs>? RemoveDiceRollHintsEventHandler;
 
         #endregion Events
 
@@ -179,7 +179,7 @@
             Dice1 = e.Dice1;
             Dice2 = e.Dice2;
 
-            HelpDiceRollEvent?.Invoke(this, e);
+            ShowDiceRollHintsEventHandler?.Invoke(this, e);
 
             while (WaitForPlayerDiceRollSelection) { }
         }
@@ -334,7 +334,8 @@
             Utilities.ActivateCurrentPlayerCardEffects(HumanPlayer, chosenValue, Dice1, Dice2, Game.ActivePlayerID);
             Utilities.ChooseComputerPlayersSectors(Game.Players, Dice1, Dice2, Game.ActivePlayerID);
 
-            RemoveHelpDiceRollEffectsEvent?.Invoke(this, new DiceRollEventArgs(Dice1, Dice2, Game.ActivePlayerID));
+            // Remove all hint adorners
+            RemoveDiceRollHintsEventHandler?.Invoke(this, new DiceRollEventArgs(Dice1, Dice2, Game.ActivePlayerID));
 
             WaitForPlayerDiceRollSelection = false;
         }

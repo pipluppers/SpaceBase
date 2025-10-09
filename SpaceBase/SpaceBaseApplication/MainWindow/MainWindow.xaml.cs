@@ -33,14 +33,14 @@
         {
             if (e.OldValue is MainWindowViewModel oldViewModel)
             {
-                oldViewModel.HelpDiceRollEvent -= ViewModel_HelpDiceRollEventHandler;
-                oldViewModel.RemoveHelpDiceRollEffectsEvent -= ViewModel_RemoveHelpDiceRollEffectsEvent;
+                oldViewModel.ShowDiceRollHintsEventHandler -= ViewModel_ShowDiceRollHintsEventHandler;
+                oldViewModel.RemoveDiceRollHintsEventHandler -= ViewModel_RemoveDiceRollHintsEventHandler;
             }
 
             if (e.NewValue is MainWindowViewModel newViewModel)
             {
-                newViewModel.HelpDiceRollEvent += ViewModel_HelpDiceRollEventHandler;
-                newViewModel.RemoveHelpDiceRollEffectsEvent += ViewModel_RemoveHelpDiceRollEffectsEvent;
+                newViewModel.ShowDiceRollHintsEventHandler += ViewModel_ShowDiceRollHintsEventHandler;
+                newViewModel.RemoveDiceRollHintsEventHandler += ViewModel_RemoveDiceRollHintsEventHandler;
             }
         }
 
@@ -49,10 +49,18 @@
         /// </summary>
         /// <param name="sender">The view model.</param>
         /// <param name="e">The arguments describing the dice roll.</param>
-        private async void ViewModel_HelpDiceRollEventHandler(object sender, DiceRollEventArgs e)
+        private async void ViewModel_ShowDiceRollHintsEventHandler(object sender, DiceRollEventArgs e)
         {
             if (_sectorViewBorders == null)
                 return;
+
+            static void UpdateOpacity(int activePlayerID, Border border, ItemsControl itemsControl)
+            {
+                if (activePlayerID != 1)
+                    border.Opacity = 0.5;
+                else
+                    itemsControl.Opacity = 0.5;
+            }
 
             _currentDiceRollArgs = e;
 
@@ -66,37 +74,21 @@
 
                     if (i == e.Dice1 - 1 || i == e.Dice2 - 1)
                     {
-                        var borderHighlightAdorner = new BorderIndividualRewardAdorner(border);
-                        AdornerLayer layer = AdornerLayer.GetAdornerLayer(border);
-                        layer.Add(borderHighlightAdorner);
+                        AdornerLayer.GetAdornerLayer(border).Add(new BorderIndividualRewardAdorner(border));
+                        AdornerLayer.GetAdornerLayer(itemsControl).Add(new BorderIndividualRewardAdorner(itemsControl));
 
                         border.MouseDown += SectorView_MouseDown;
 
-                        var deployedBorderHighlightAdorner = new BorderIndividualRewardAdorner(itemsControl);
-                        AdornerLayer deployedLayer = AdornerLayer.GetAdornerLayer(itemsControl);
-                        deployedLayer.Add(deployedBorderHighlightAdorner);
-
-                        if (e.ActivePlayerID != 1)
-                            border.Opacity = 0.5;
-                        else
-                            itemsControl.Opacity = 0.5;
+                        UpdateOpacity(e.ActivePlayerID, border, itemsControl);
                     }
                     else if (i == e.Dice1 + e.Dice2 - 1)
                     {
-                        var borderHighlightAdorner = new BorderSumRewardAdorner(border);
-                        AdornerLayer layer = AdornerLayer.GetAdornerLayer(border);
-                        layer.Add(borderHighlightAdorner);
+                        AdornerLayer.GetAdornerLayer(border).Add(new BorderSumRewardAdorner(border));
+                        AdornerLayer.GetAdornerLayer(itemsControl).Add(new BorderSumRewardAdorner(itemsControl));
 
                         border.MouseDown += SectorView_MouseDown;
 
-                        var deployedBorderHighlightAdorner = new BorderSumRewardAdorner(itemsControl);
-                        AdornerLayer deployedLayer = AdornerLayer.GetAdornerLayer(itemsControl);
-                        deployedLayer.Add(deployedBorderHighlightAdorner);
-
-                        if (e.ActivePlayerID != 1)
-                            border.Opacity = 0.5;
-                        else
-                            itemsControl.Opacity = 0.5;
+                        UpdateOpacity(e.ActivePlayerID, border, itemsControl);
                     }
                     else
                     {
@@ -129,7 +121,7 @@
             Utilities.ActivateCurrentPlayerCardEffects(player, sector.ID, dice1, dice2, _currentDiceRollArgs.ActivePlayerID);
             Utilities.ChooseComputerPlayersSectors(viewModel.Game.Players, dice1, dice2, _currentDiceRollArgs.ActivePlayerID);
 
-            RemoveHelpDiceRollEffects(dice1, dice2);
+            RemoveDiceRollHints(dice1, dice2);
 
             viewModel.WaitForPlayerDiceRollSelection = false;
         }
@@ -138,9 +130,9 @@
         /// Removes adorners, event handlers, and transparencies.
         /// </summary>
         /// <param name="e">The dice roll event arguments.</param>
-        private void ViewModel_RemoveHelpDiceRollEffectsEvent(object _, DiceRollEventArgs e)
+        private void ViewModel_RemoveDiceRollHintsEventHandler(object _, DiceRollEventArgs e)
         {
-            RemoveHelpDiceRollEffects(e.Dice1, e.Dice2);
+            RemoveDiceRollHints(e.Dice1, e.Dice2);
         }
 
         /// <summary>
@@ -148,7 +140,7 @@
         /// </summary>
         /// <param name="dice1">The value of the first sector to remove adorners and event handlers.</param>
         /// <param name="dice2">The value of the second sector to remove adorners and event handlers.</param>
-        private void RemoveHelpDiceRollEffects(int dice1, int dice2)
+        private void RemoveDiceRollHints(int dice1, int dice2)
         {
             for (int i = 0; i < _sectorViewBorders.Count; ++i)
             {
