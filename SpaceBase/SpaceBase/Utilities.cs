@@ -145,6 +145,30 @@
         /// A card representing an empty space for the UI.
         /// </summary>
         public static IColonyCard NullColonyCard => CardFactory.CreateColonyCard(0, 1, Constants.NullCardCost, 0);
+
+        /// <summary>
+        /// Shuffles the cards according to the Fisher-Yates algorithm.
+        /// </summary>
+        /// <param name="cards">The cards to shuffle.</param>
+        public static void Shuffle(List<ICard> cards)
+        {
+            // Iterate backwards through the cards.
+            // Get a random number between 0 and the current index value. Swap the card at that number with the current number.
+            // O(n) time due to looping once, O(1) space due to swapping
+
+            int count = cards.Count;
+
+            var random = new Random();
+
+            int i = count - 1;
+            while (i > 0)
+            {
+                int index = random.Next() % i;
+                (cards[i], cards[index]) = (cards[index], cards[i]);
+
+                i--;
+            }
+        }
     }
 
 }

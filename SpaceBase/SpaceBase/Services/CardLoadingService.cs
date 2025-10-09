@@ -31,9 +31,12 @@
 
                 // Now load the decks.
 
-                for (; i < cards.Count; i++)
+                List<ICard> nonPlayerCards = cards[Constants.MaxSectorID..];
+                Utilities.Shuffle(nonPlayerCards);
+
+                for (i = 0; i < nonPlayerCards.Count; i++)
                 {
-                    if (cards[i] is IStandardCard card)
+                    if (nonPlayerCards[i] is IStandardCard card)
                     {
                         // TODO Add support for charge cards
                         if (card is IChargeCard)
@@ -61,7 +64,7 @@
                                 game.Level3Cards.Add(card);
                         }
                     }
-                    else if (cards[i] is IColonyCard colonyCard)
+                    else if (nonPlayerCards[i] is IColonyCard colonyCard)
                     {
                         game.ColonyCards.Add(colonyCard);
                     }
