@@ -119,7 +119,15 @@
         {
             await SpaceBase.Services.CardLoadingService.LoadCards(Game);
             WaitForPlayerInput = true;
-            await Game.StartGame();
+
+            try
+            {
+                await Game.StartGame();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+            }
         }
 
         /// <summary>

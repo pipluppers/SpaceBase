@@ -2,6 +2,7 @@
 {
     public sealed class Game : PropertyChangedBase
     {
+        private readonly ILogger? _logger;
         private readonly ObservableCollection<Player> _players;
         private bool _isGameOver;
         private int _victoryThreshold;
@@ -17,15 +18,12 @@
         public event RoundOverEventHandler<RoundOverEventArgs>? RoundOverEvent;
         public event GameOverEventHandler<GameOverEventArgs>? GameOverEvent;
 
-        public Game() : this(Constants.MinNumPlayers) { }
-
-        public Game(int numPlayers) : this(numPlayers, Constants.MaxNumRounds) { }
-
-        private Game(int numPlayers, int maxNumRounds)
+        public Game(int numPlayers = Constants.MinNumPlayers, ILogger? logger = null)
         {
             if (numPlayers < Constants.MinNumPlayers || numPlayers > Constants.MaxNumPlayers)
                 throw new ArgumentException($"The number of players must be between {Constants.MinNumPlayers} and {Constants.MaxNumPlayers}.");
 
+            _logger = logger;
             _victoryThreshold = Constants.VictoryThreshold;
             _players = [];
 
@@ -50,7 +48,7 @@
             ColonyCards = [];
 
             _isGameOver = false;
-            _maxNumRounds = maxNumRounds;
+            _maxNumRounds = Constants.MaxNumRounds;
             _roundNumber = 0;
             _activePlayerID = 0;
             _diceRollService = new DiceRollService();
@@ -110,6 +108,9 @@
         {
             if (Players.Count < 2) return;
 
+            if (DiceRollEvent == null)
+                throw new InvalidOperationException("The DiceRollEvent must be set.");
+
             foreach (var player in Players)
                 PlayerResourcesService.AddCredits(player, 5);
 
@@ -128,10 +129,14 @@
         /// </summary>
         private async Task PlayGame()
         {
+            _logger?.LogMessage("Game started");
+
             while (!_isGameOver)
             {
-                // Broadcast PreDiceRollEvent
+                _logger?.LogRoundMessage(RoundNumber);
 
+                // Broadcast PreDiceRollEvent
+                // Users should be able to activate charge cube effects
                 if (PreDiceRollEvent != null) await Task.Run(() => PreDiceRollEvent.Invoke(this, new EventArgs()));
 
                 await RollDice();
@@ -164,6 +169,8 @@
                 }
             }
 
+            _logger?.LogMessage($"Game over. Winners: {string.Join(", ", victoryPlayerIDs.Select(id => $"Player {id}"))}");
+
             GameOverEvent?.Invoke(this, new GameOverEventArgs(victoryPlayerIDs));
         }
 
@@ -172,8 +179,7 @@
         /// </summary>
         private async Task RollDice()
         {
-            if (DiceRollEvent == null)
-                return;
+            Debug.Assert(DiceRollEvent != null);
 
             DiceRollResult result = _diceRollService.RollDice();
             await Task.Run(() => DiceRollEvent.Invoke(this, new DiceRollEventArgs(result.Dice1, result.Dice2, ActivePlayerID)));
